@@ -1,0 +1,1508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Exotic Plant Farm Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,600..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: one reading column (~68ch) with wider figure rows; tool sections use an inputs | results grid that stacks below 880px. */
+:root {
+  --bg: #f3f5f1;          /* page plane, a grey biased toward leaf green */
+  --surface: #fcfdfb;     /* cards and chart surface */
+  --ink: #101813;
+  --ink-2: #434e46;
+  --muted: #69736c;
+  --line: #dce1da;        /* hairlines, gridlines */
+  --axis: #c0c8bf;
+  --accent: #17633f;      /* shade-net green: links, buttons, focus */
+  --accent-ink: #ffffff;
+  --accent-soft: #e1ede4;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;   /* validated chart slots, fixed order */
+  --pos: #2a78d6; --neg: #e34948;                                 /* diverging poles for money in / out */
+  --good: #0ca30c; --good-text: #006300;
+  --warn: #fab219; --warn-text: #865600;
+  --crit: #d03b3b; --crit-text: #b42727;
+  --font-display: "Archivo", "Arial Narrow", "Helvetica Neue", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --step--1: 0.875rem; --step-0: 1rem; --step-1: 1.2rem; --step-2: 1.45rem; --step-3: 1.9rem; --step-4: 2.6rem;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1310; --surface: #161c18; --ink: #edf1ec; --ink-2: #bcc5be; --muted: #8f9891;
+    --line: #29312b; --axis: #3b443d; --accent: #5cc08b; --accent-ink: #08130d; --accent-soft: #1a2a20;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --pos: #3987e5; --neg: #e66767;
+    --good-text: #2fc42f; --warn-text: #fab219; --crit-text: #f07a7a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1310; --surface: #161c18; --ink: #edf1ec; --ink-2: #bcc5be; --muted: #8f9891;
+  --line: #29312b; --axis: #3b443d; --accent: #5cc08b; --accent-ink: #08130d; --accent-soft: #1a2a20;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --pos: #3987e5; --neg: #e66767;
+  --good-text: #2fc42f; --warn-text: #fab219; --crit-text: #f07a7a;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 var(--step-0)/1.6 var(--font-body); }
+.wrap { max-width: 1120px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--font-display); font-stretch: 112%; line-height: 1.15; text-wrap: balance; margin: 0; letter-spacing: -0.005em; }
+h1 { font-size: var(--step-4); font-weight: 800; }
+h2 { font-size: var(--step-3); font-weight: 750; }
+h3 { font-size: var(--step-1); font-weight: 700; }
+p { margin: 0; }
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+:is(a, button, input, select, summary, [tabindex]):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.eyebrow { font: 600 var(--step--1)/1.3 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
+.muted { color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+code, .mono { font-family: var(--font-mono); font-size: 0.92em; }
+
+/* Source links: small, always beside the claim they back */
+a.src { display: inline-block; font: 500 0.72rem/1.2 var(--font-mono); letter-spacing: 0.02em; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 7px 2px 7px; margin-left: 2px; text-decoration: none; white-space: nowrap; vertical-align: 1px; }
+a.src::after { content: " \2197"; }
+a.src:hover { text-decoration: underline; }
+
+/* Tables */
+.scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+table.tbl { width: 100%; border-collapse: collapse; font-size: var(--step--1); background: var(--surface); }
+.tbl th, .tbl td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tbl th { font-weight: 700; color: var(--ink-2); background: var(--surface); position: sticky; top: 0; }
+.tbl td.r, .tbl th.r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tbl tbody tr:last-child td { border-bottom: 0; }
+.tbl tr.total td { font-weight: 700; border-top: 1px solid var(--axis); }
+
+/* Status chips: color + icon + word, never color alone */
+.chip { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: var(--step--1); padding: 2px 10px 2px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.chip::before { font-size: 0.85em; }
+.chip.good { color: var(--good-text); } .chip.good::before { content: "\2714"; }
+.chip.warn { color: var(--warn-text); } .chip.warn::before { content: "\25B2"; }
+.chip.crit { color: var(--crit-text); } .chip.crit::before { content: "\2716"; }
+
+/* Charts */
+.chart { width: 100%; min-width: 0; position: relative; }
+.chart svg { display: block; max-width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--font-body); }
+.chart .tick { fill: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.chart .ttl { fill: var(--ink-2); font-size: 12px; font-weight: 700; }
+.chart .lbl { fill: var(--ink); font-size: 12px; font-weight: 700; }
+.chart .lbl2 { fill: var(--ink-2); font-size: 11.5px; }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .axis { stroke: var(--axis); stroke-width: 1; }
+.chart .cross { stroke: var(--ink-2); stroke-width: 1; }
+.chart .ring { stroke: var(--surface); stroke-width: 2; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--step--1); color: var(--ink-2); margin-bottom: 6px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { display: inline-block; width: 16px; height: 3px; border-radius: 2px; }
+.legend i.rect { width: 11px; height: 11px; border-radius: 3px; }
+.legend i.dot { width: 10px; height: 10px; border-radius: 50%; }
+details.tableview { margin-top: 8px; font-size: var(--step--1); }
+details.tableview summary { cursor: pointer; color: var(--accent); font-weight: 700; }
+details.tableview .scroll-x { margin-top: 8px; max-height: 340px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; }
+
+/* Tooltip */
+.tip { position: absolute; z-index: 50; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: 0 6px 24px rgba(0,0,0,0.14); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; line-height: 1.4; min-width: 150px; max-width: 280px; }
+.tip-h { font-weight: 700; color: var(--ink-2); margin-bottom: 4px; }
+.tip-r { display: grid; grid-template-columns: 14px auto 1fr; align-items: center; gap: 6px; }
+.tip-k { width: 12px; height: 3px; border-radius: 2px; }
+.tip-r strong { font-variant-numeric: tabular-nums; }
+.tip-l { color: var(--ink-2); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
+/* Ranked horizontal bars (HTML) */
+.hbars { display: grid; gap: 8px; }
+.hb-row { display: grid; grid-template-columns: minmax(0, 12rem) minmax(0, 1fr) auto; align-items: center; gap: 10px; font-size: var(--step--1); }
+.hb-l { color: var(--ink-2); overflow-wrap: anywhere; line-height: 1.3; }
+.hb-track { display: block; height: 14px; }
+.hb-bar { display: block; height: 14px; background: var(--s1); border-radius: 0 4px 4px 0; }
+.hb-v { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+@media (max-width: 520px) { .hb-row { grid-template-columns: minmax(0, 1fr) auto; } .hb-track { grid-column: 1 / -1; grid-row: 2; } }
+
+
+/* ---------- Calculator ---------- */
+header.top { border-bottom: 1px solid var(--line); background: var(--surface); }
+header.top .wrap { padding-block: 28px 22px; display: grid; gap: 10px; }
+header.top .lede { color: var(--ink-2); max-width: 70ch; }
+header.top nav { display: flex; flex-wrap: wrap; gap: 8px 18px; font-weight: 700; font-size: var(--step--1); }
+main.wrap { padding-block: 22px 64px; display: grid; gap: 28px; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: end; }
+.seg { border: 0; margin: 0; padding: 0; display: grid; gap: 6px; min-width: 0; }
+.seg legend { font-weight: 700; font-size: var(--step--1); color: var(--ink-2); padding: 0; margin-bottom: 6px; }
+.seg .opts { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--axis); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.seg label { padding: 9px 14px; cursor: pointer; font-weight: 700; font-size: var(--step--1); color: var(--ink-2); border-right: 1px solid var(--axis); user-select: none; }
+.seg label:last-of-type { border-right: 0; }
+.seg input:checked + label { background: var(--accent); color: var(--accent-ink); }
+.seg input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: -4px; }
+button.ghost { font: 700 var(--step--1)/1 var(--font-body); color: var(--accent); background: transparent; border: 1px solid var(--axis); border-radius: 10px; padding: 10px 14px; cursor: pointer; }
+button.ghost:hover { background: var(--accent-soft); }
+
+/* Summary */
+.summary { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 16px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px 18px; }
+.tile { display: grid; gap: 4px; align-content: start; padding-right: 8px; min-width: 0; }
+.tile .k { font-size: var(--step--1); color: var(--ink-2); font-weight: 700; }
+.tile .v { font: 700 var(--step-3)/1.1 var(--font-body); letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.tile .s { font-size: 0.8rem; color: var(--muted); line-height: 1.35; }
+.verdict { border-top: 1px solid var(--line); padding-top: 14px; display: grid; gap: 6px; }
+.verdict p { max-width: 90ch; }
+
+/* Sections */
+section.block { display: grid; gap: 16px; }
+section.block > header { display: grid; gap: 6px; }
+section.block > header p { color: var(--ink-2); max-width: 75ch; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 880px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+.inputs { display: grid; gap: 14px; }
+.inputs h3.grp { font-size: var(--step-0); font-family: var(--font-body); font-stretch: 100%; font-weight: 700; color: var(--ink); padding-top: 6px; border-top: 1px solid var(--line); }
+.inputs h3.grp:first-child { border-top: 0; padding-top: 0; }
+.field { display: grid; gap: 5px; }
+.field label { font-weight: 700; font-size: var(--step--1); line-height: 1.3; }
+.field .unit { font-weight: 400; color: var(--muted); }
+.field .ctl { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 10px; align-items: center; }
+.field .ctl:has(> :only-child) { grid-template-columns: 9rem; }
+.field input[type=number] { width: 100%; font: 600 var(--step-0)/1.2 var(--font-body); font-variant-numeric: tabular-nums; color: var(--ink); background: var(--bg); border: 1px solid var(--axis); border-radius: 8px; padding: 7px 9px; }
+.field input[type=range] { width: 100%; accent-color: var(--accent); }
+.plan-pick { min-width: min(100%, 300px); }
+.field select { width: 100%; font: 600 var(--step--1)/1.3 var(--font-body); color: var(--ink); background: var(--bg); border: 1px solid var(--axis); border-radius: 8px; padding: 8px 9px; }
+.field.check { grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 10px; }
+.field.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.field.check .hint { grid-column: 1 / -1; }
+.hint { font-size: 0.8rem; color: var(--muted); line-height: 1.45; }
+.out { display: grid; gap: 16px; min-width: 0; }
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 18px; }
+.kv div { display: grid; gap: 2px; min-width: 0; }
+.kv span { font-size: 0.8rem; color: var(--ink-2); font-weight: 700; }
+.kv b { font-size: var(--step-1); overflow-wrap: anywhere; }
+.formula { font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.7; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; overflow-x: auto; white-space: pre; }
+.note { font-size: var(--step--1); color: var(--ink-2); max-width: 80ch; }
+.foot { color: var(--muted); font-size: var(--step--1); border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 6px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Hyderabad · research values as of Nov 2026</p>
+    <h1>Exotic Plant Farm Calculator</h1>
+    <p class="lede">Every box holds a number from the research. Change any of them and the whole page updates. Small green tags open the source behind a default.</p>
+    <nav><a href="index.html">Read the full report</a><a href="#where">1 · Where to farm</a><a href="#setup">2 · Setup cost</a><a href="#running">3 · Running the farm</a><a href="#loan">4 · Loan and salary</a><a href="#support">5 · Government support</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="controls">
+    <fieldset class="seg" id="pick-model">
+      <legend>What will you grow?</legend>
+      <div class="opts">
+        <input type="radio" name="model" id="m-nursery" value="nursery"><label for="m-nursery">Indoor plant nursery</label>
+        <input type="radio" name="model" id="m-polyhouse" value="polyhouse"><label for="m-polyhouse">Polyhouse exotic vegetables</label>
+        <input type="radio" name="model" id="m-dragon" value="dragon"><label for="m-dragon">Dragon fruit</label>
+      </div>
+    </fieldset>
+    <fieldset class="seg" id="pick-land">
+      <legend>Land</legend>
+      <div class="opts">
+        <input type="radio" name="landMode" id="l-buy" value="buy"><label for="l-buy">Buy</label>
+        <input type="radio" name="landMode" id="l-lease" value="lease"><label for="l-lease">Lease</label>
+      </div>
+    </fieldset>
+    <div class="field plan-pick"><label for="plan">Start from a plan in the report</label><select id="plan"><option value="">Choose a plan…</option></select></div>
+    <button class="ghost" id="reset" type="button">Reset to research values</button>
+  </div>
+
+  <section class="summary" aria-live="polite">
+    <div class="tiles">
+      <div class="tile"><span class="k">Money needed at the start</span><span class="v" id="t-upfront">–</span><span class="s" id="t-upfront-s"></span></div>
+      <div class="tile"><span class="k">Profit per year at full production</span><span class="v" id="t-profit">–</span><span class="s" id="t-profit-s"></span></div>
+      <div class="tile"><span class="k">Money back in</span><span class="v" id="t-payback">–</span><span class="s" id="t-payback-s"></span></div>
+      <div class="tile"><span class="k">Loan EMI per month</span><span class="v" id="t-emi">–</span><span class="s" id="t-emi-s"></span></div>
+      <div class="tile"><span class="k">Cheapest distance</span><span class="v" id="t-best">–</span><span class="s" id="t-best-s"></span></div>
+    </div>
+    <div class="verdict" id="verdict"></div>
+  </section>
+
+  <section class="block" id="where">
+    <header><h2>1 · Where to farm: land vs transport</h2>
+      <p>Land gets cheaper as you move away from Hyderabad, but every extra kilometre adds truck trips, your own visits and plant damage. The chart adds these yearly costs at each distance and finds the lowest point.</p></header>
+    <div class="grid2">
+      <div class="panel inputs" id="in-where"></div>
+      <div class="out">
+        <div class="panel">
+          <div class="legend" id="lg-loc"></div>
+          <div class="chart" id="c-loc"></div>
+          <details class="tableview"><summary>Show as table</summary><div class="scroll-x" id="tv-loc"></div></details>
+        </div>
+        <div class="panel kv" id="o-where"></div>
+        <div class="panel"><h3>The equation, with your numbers</h3><div class="formula" id="o-formula"></div><p class="note" id="o-formula-note"></p></div>
+        <div class="panel" id="p-landdata">
+          <h3>Land price data vs the curve</h3>
+          <p class="note">Dots are real asking prices and news reports collected for this study (log scale). The line is the curve used above; change its settings on the left.</p>
+          <div class="chart" id="c-land"></div>
+          <details class="tableview"><summary>Show all land data points with sources</summary><div class="scroll-x" id="tv-land"></div></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="setup">
+    <header><h2>2 · Setup cost</h2><p>One-time spending before the first sale. Rates come from government cost norms and market quotes.</p></header>
+    <div class="grid2">
+      <div class="panel inputs" id="in-setup"></div>
+      <div class="out">
+        <div class="panel"><div class="chart" id="c-capex"></div></div>
+        <div class="panel"><div class="scroll-x" id="o-capex"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="running">
+    <header><h2>3 · Running the farm</h2><p>What you grow, what it sells for, and what it costs every year. Output builds up over the first years.</p></header>
+    <div class="grid2">
+      <div class="panel inputs" id="in-running"></div>
+      <div class="out">
+        <div class="panel kv" id="o-running"></div>
+        <div class="panel">
+          <h3>Cash by year</h3>
+          <div class="legend"><span><i class="rect" style="background:var(--pos)"></i>Cash in (year)</span><span><i class="rect" style="background:var(--neg)"></i>Cash out (year)</span><span><i style="background:var(--ink)"></i>Running total</span></div>
+          <div class="chart" id="c-cash"></div>
+          <details class="tableview" open><summary>Year-by-year table</summary><div class="scroll-x" id="tv-cash"></div></details>
+        </div>
+        <div class="panel"><h3>One full-production year</h3><div class="scroll-x" id="o-pl"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="loan">
+    <header><h2>4 · Your loan and salary</h2><p>Banks usually allow all your EMIs together to take 40–50% of your take-home pay. The safest plan is an EMI you can pay from salary alone, even if the farm earns nothing for two years.</p></header>
+    <div class="grid2">
+      <div class="panel inputs" id="in-loan"></div>
+      <div class="out"><div class="panel kv" id="o-loan"></div><div class="panel" id="o-loan-note"></div></div>
+    </div>
+  </section>
+
+  <section class="block" id="support">
+    <header><h2>5 · Government support</h2><p>Subsidies arrive after you build, and only if your application is sanctioned. Switch them off to see the farm without help.</p></header>
+    <div class="grid2">
+      <div class="panel inputs" id="in-support"></div>
+      <div class="out"><div class="panel kv" id="o-support"></div><div class="panel note" id="o-support-note"></div></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>Built for planning, not as financial advice. Prices change; confirm land quotes, wages and subsidy terms locally before you commit money.</p>
+    <p id="data-date"></p>
+  </footer>
+</main>
+
+<script>
+// ---------- Formatting (Indian number system) ----------
+const fmt = {
+  inr(n) { if (n == null || !isFinite(n)) return '–'; return (n < 0 ? '−₹' : '₹') + Math.round(Math.abs(n)).toLocaleString('en-IN'); },
+  // "₹12.3 lakh", "₹1.24 crore", "₹45,000"
+  money(n, dp) {
+    if (n == null || !isFinite(n)) return '–';
+    const a = Math.abs(n), sign = n < 0 ? '−' : '';
+    if (a >= 1e7) return sign + '₹' + (a / 1e7).toFixed(dp ?? (a >= 1e8 ? 1 : 2)) + ' crore';
+    if (a >= 1e5) return sign + '₹' + (a / 1e5).toFixed(dp ?? (a >= 1e6 ? 1 : 2)) + ' lakh';
+    return sign + '₹' + Math.round(a).toLocaleString('en-IN');
+  },
+  lakhAxis(v) { return (v < 0 ? '−' : '') + '₹' + (Math.abs(v) / 1e5).toLocaleString('en-IN', { maximumFractionDigits: 1 }) + 'L'; },
+  int(n) { return n == null || !isFinite(n) ? '–' : Math.round(n).toLocaleString('en-IN'); },
+  pct(n, dp = 0) { return n == null || !isFinite(n) ? '–' : n.toFixed(dp) + '%'; },
+};
+
+// ---------- SVG helpers ----------
+const SVGNS = 'http://www.w3.org/2000/svg';
+function sv(tag, attrs, parent) {
+  const e = document.createElementNS(SVGNS, tag);
+  if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function svText(parent, x, y, str, cls, anchor = 'start') {
+  const t = sv('text', { x, y, class: cls, 'text-anchor': anchor }, parent);
+  t.textContent = str;
+  return t;
+}
+function niceTicks(min, max, count = 5) {
+  if (!(max > min)) max = min + 1;
+  const raw = (max - min) / Math.max(1, count);
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const n = raw / mag;
+  const step = (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * mag;
+  const lo = Math.floor(min / step + 1e-9) * step, hi = Math.ceil(max / step - 1e-9) * step;
+  const ticks = [];
+  for (let v = lo; v <= hi + step / 2; v += step) ticks.push(Math.round(v / step) * step);
+  return { lo, hi, ticks };
+}
+// Column/bar path: 4px rounded data end, square at the baseline.
+function barPath(x, w, yBase, yEnd, r = 4) {
+  const h = Math.abs(yEnd - yBase);
+  r = Math.min(r, h, w / 2);
+  if (h < 0.5) return '';
+  if (yEnd <= yBase) return `M${x},${yBase}V${yEnd + r}Q${x},${yEnd} ${x + r},${yEnd}H${x + w - r}Q${x + w},${yEnd} ${x + w},${yEnd + r}V${yBase}Z`;
+  return `M${x},${yBase}V${yEnd - r}Q${x},${yEnd} ${x + r},${yEnd}H${x + w - r}Q${x + w},${yEnd} ${x + w},${yEnd - r}V${yBase}Z`;
+}
+
+// ---------- One shared tooltip ----------
+const TIP = (() => {
+  const t = document.createElement('div');
+  t.className = 'tip'; t.hidden = true; t.setAttribute('role', 'status');
+  document.addEventListener('DOMContentLoaded', () => document.body.appendChild(t));
+  return t;
+})();
+function showTip(cx, cy, title, rows) {
+  if (!TIP.isConnected) document.body.appendChild(TIP);
+  TIP.replaceChildren();
+  const h = document.createElement('div'); h.className = 'tip-h'; h.textContent = title; TIP.appendChild(h);
+  for (const r of rows) {
+    const row = document.createElement('div'); row.className = 'tip-r';
+    const k = document.createElement('span'); k.className = 'tip-k'; k.style.background = r.color || 'transparent'; row.appendChild(k);
+    const v = document.createElement('strong'); v.textContent = r.value; row.appendChild(v);
+    const l = document.createElement('span'); l.className = 'tip-l'; l.textContent = r.label; row.appendChild(l);
+    TIP.appendChild(row);
+  }
+  TIP.hidden = false;
+  const b = TIP.getBoundingClientRect();
+  let x = cx + 14, y = cy + 14;
+  if (x + b.width > window.innerWidth - 8) x = Math.max(8, cx - b.width - 14);
+  if (y + b.height > window.innerHeight - 8) y = Math.max(8, cy - b.height - 14);
+  TIP.style.left = (x + window.scrollX) + 'px';
+  TIP.style.top = (y + window.scrollY) + 'px';
+}
+function hideTip() { TIP.hidden = true; }
+
+// Re-render a chart whenever its container changes width.
+function responsive(host, draw) {
+  let last = 0;
+  const ro = new ResizeObserver(() => { const w = host.clientWidth; if (Math.abs(w - last) > 4) { last = w; draw(); } });
+  ro.observe(host);
+  draw();
+}
+
+// ---------- Line chart with crosshair ----------
+// o = { x:[], series:[{name,color,values,width}], xFmt, yFmt, yTip, xTitle, yTitle, vlines:[{x,label}], dot:{x,y,label}, label }
+function lineChart(host, o) {
+  const W = Math.max(280, host.clientWidth || 600);
+  const H = o.height || Math.round(Math.min(360, Math.max(250, W * 0.52)));
+  const m = { l: 58, r: 18, t: 30, b: 46 };
+  const svg = sv('svg', { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': o.label || '', tabindex: 0 });
+  const xs = o.x, x0 = xs[0], x1 = xs[xs.length - 1];
+  const all = o.series.flatMap(s => s.values).filter(v => isFinite(v));
+  const yt = niceTicks(Math.min(0, ...all), Math.max(...all), H > 300 ? 5 : 4);
+  const X = v => m.l + (v - x0) / (x1 - x0) * (W - m.l - m.r);
+  const Y = v => H - m.b - (v - yt.lo) / (yt.hi - yt.lo) * (H - m.t - m.b);
+  for (const t of yt.ticks) {
+    sv('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), class: t === 0 ? 'axis' : 'grid' }, svg);
+    svText(svg, m.l - 8, Y(t) + 4, o.yFmt(t), 'tick', 'end');
+  }
+  const xt = niceTicks(x0, x1, Math.max(4, Math.floor((W - m.l - m.r) / 90)));
+  for (const t of xt.ticks) if (t >= x0 && t <= x1) svText(svg, X(t), H - m.b + 18, o.xFmt(t), 'tick', 'middle');
+  if (o.xTitle) svText(svg, m.l + (W - m.l - m.r) / 2, H - 8, o.xTitle, 'ttl', 'middle');
+  if (o.yTitle) svText(svg, m.l - 50, 14, o.yTitle, 'ttl', 'start');
+  for (const v of o.vlines || []) {
+    if (v.x < x0 || v.x > x1) continue;
+    sv('line', { x1: X(v.x), x2: X(v.x), y1: m.t - 6, y2: H - m.b, stroke: 'var(--accent)', 'stroke-width': 1.5 }, svg);
+    const right = X(v.x) > W * 0.7;
+    svText(svg, X(v.x) + (right ? -6 : 6), m.t + 2, v.label, 'lbl2', right ? 'end' : 'start');
+  }
+  for (const s of o.series) {
+    const d = s.values.map((v, i) => (i ? 'L' : 'M') + X(xs[i]).toFixed(1) + ',' + Y(v).toFixed(1)).join('');
+    sv('path', { d, fill: 'none', stroke: s.color, 'stroke-width': s.width || 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, svg);
+  }
+  if (o.dot && o.dot.x >= x0 && o.dot.x <= x1) {
+    const cx = X(o.dot.x), cy = Y(o.dot.y);
+    sv('circle', { cx, cy, r: 5.5, fill: 'var(--ink)', class: 'ring' }, svg);
+    if (W < 560) svText(svg, cx, cy + 22, o.dot.label, 'lbl', 'middle');   // narrow: below the dot, clear of the rising line
+    else { const right = cx > W * 0.65; svText(svg, cx + (right ? -10 : 10), cy - 10, o.dot.label, 'lbl', right ? 'end' : 'start'); }
+  }
+  const cross = sv('line', { y1: m.t, y2: H - m.b, class: 'cross', visibility: 'hidden' }, svg);
+  const hit = sv('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: 'transparent' }, svg);
+  let idx = Math.floor(xs.length / 2);
+  const show = (i, cx, cy) => {
+    idx = Math.max(0, Math.min(xs.length - 1, i));
+    cross.setAttribute('x1', X(xs[idx])); cross.setAttribute('x2', X(xs[idx])); cross.setAttribute('visibility', 'visible');
+    showTip(cx, cy, o.xFmt(xs[idx], true), o.series.map(s => ({ color: s.color, label: s.name, value: (o.yTip || o.yFmt)(s.values[idx]) })));
+  };
+  const nearest = px => { const v = x0 + (px - m.l) / (W - m.l - m.r) * (x1 - x0); let best = 0; for (let i = 1; i < xs.length; i++) if (Math.abs(xs[i] - v) < Math.abs(xs[best] - v)) best = i; return best; };
+  hit.addEventListener('pointermove', e => { const r = svg.getBoundingClientRect(); show(nearest((e.clientX - r.left) * (W / r.width)), e.clientX, e.clientY); });
+  hit.addEventListener('pointerleave', () => { cross.setAttribute('visibility', 'hidden'); hideTip(); });
+  svg.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const step = Math.max(1, Math.round(xs.length / 40));
+    const r = svg.getBoundingClientRect();
+    const i = idx + (e.key === 'ArrowRight' ? step : -step);
+    show(i, r.left + X(xs[Math.max(0, Math.min(xs.length - 1, i))]) * (r.width / W), r.top + 20);
+  });
+  svg.addEventListener('blur', () => { cross.setAttribute('visibility', 'hidden'); hideTip(); });
+  host.replaceChildren(svg);
+}
+
+// ---------- Columns (yearly cash) + cumulative line ----------
+// o = { labels:[], bars:[], line:[], barName, lineName, yFmt, yTip, label }
+function cashChart(host, o) {
+  const W = Math.max(280, host.clientWidth || 600);
+  const H = o.height || Math.round(Math.min(340, Math.max(240, W * 0.48)));
+  const m = { l: 58, r: 14, t: 18, b: 34 };
+  const svg = sv('svg', { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': o.label || '' });
+  const vals = [...o.bars, ...(o.line || [])].filter(isFinite);
+  const yt = niceTicks(Math.min(0, ...vals), Math.max(0, ...vals), 5);
+  const n = o.labels.length, band = (W - m.l - m.r) / n;
+  const bw = Math.min(24, band * 0.6);
+  const X = i => m.l + band * i + band / 2;
+  const Y = v => H - m.b - (v - yt.lo) / (yt.hi - yt.lo) * (H - m.t - m.b);
+  for (const t of yt.ticks) {
+    sv('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), class: t === 0 ? 'axis' : 'grid' }, svg);
+    svText(svg, m.l - 8, Y(t) + 4, o.yFmt(t), 'tick', 'end');
+  }
+  const every = band < 26 ? 2 : 1;
+  o.labels.forEach((lb, i) => { if (i % every === 0) svText(svg, X(i), H - m.b + 18, lb, 'tick', 'middle'); });
+  o.bars.forEach((v, i) => {
+    const d = barPath(X(i) - bw / 2, bw, Y(0), Y(v));
+    if (d) sv('path', { d, fill: v >= 0 ? 'var(--pos)' : 'var(--neg)' }, svg);
+  });
+  if (o.line) {
+    const d = o.line.map((v, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ',' + Y(v).toFixed(1)).join('');
+    sv('path', { d, fill: 'none', stroke: 'var(--ink)', 'stroke-width': 2, 'stroke-linejoin': 'round' }, svg);
+    o.line.forEach((v, i) => sv('circle', { cx: X(i), cy: Y(v), r: 4, fill: 'var(--ink)', class: 'ring' }, svg));
+  }
+  o.labels.forEach((lb, i) => {
+    const r = sv('rect', { x: X(i) - band / 2, y: m.t, width: band, height: H - m.t - m.b, fill: 'transparent', tabindex: 0, 'aria-label': `${lb}: ${o.barName} ${o.yTip(o.bars[i])}` }, svg);
+    const rows = () => [{ color: o.bars[i] >= 0 ? 'var(--pos)' : 'var(--neg)', label: o.barName, value: o.yTip(o.bars[i]) }]
+      .concat(o.line ? [{ color: 'var(--ink)', label: o.lineName, value: o.yTip(o.line[i]) }] : []);
+    r.addEventListener('pointermove', e => showTip(e.clientX, e.clientY, lb, rows()));
+    r.addEventListener('pointerleave', hideTip);
+    r.addEventListener('focus', () => { const b = r.getBoundingClientRect(); showTip(b.left + b.width / 2, b.top + 10, lb, rows()); });
+    r.addEventListener('blur', hideTip);
+  });
+  host.replaceChildren(svg);
+}
+
+// ---------- Scatter (log y) with a fitted curve ----------
+// o = { points:[{x,y,label,sub}], curve:(x)=>y, xMax, yTicks:[], xTitle, yTitle, label }
+function scatterChart(host, o) {
+  const W = Math.max(280, host.clientWidth || 600);
+  const H = o.height || Math.round(Math.min(380, Math.max(260, W * 0.55)));
+  const m = { l: 58, r: 16, t: 26, b: 46 };
+  const svg = sv('svg', { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': o.label || '' });
+  const yTicks = o.yTicks, yLo = Math.log(yTicks[0]), yHi = Math.log(yTicks[yTicks.length - 1]);
+  const X = v => m.l + v / o.xMax * (W - m.l - m.r);
+  const Y = v => H - m.b - (Math.log(Math.max(v, yTicks[0])) - yLo) / (yHi - yLo) * (H - m.t - m.b);
+  for (const t of yTicks) {
+    sv('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), class: t === yTicks[0] ? 'axis' : 'grid' }, svg);
+    svText(svg, m.l - 8, Y(t) + 4, o.yFmt(t), 'tick', 'end');
+  }
+  const xt = niceTicks(0, o.xMax, Math.max(3, Math.floor((W - m.l - m.r) / 90)));
+  for (const t of xt.ticks) if (t <= o.xMax) svText(svg, X(t), H - m.b + 18, String(t), 'tick', 'middle');
+  if (o.xTitle) svText(svg, m.l + (W - m.l - m.r) / 2, H - 8, o.xTitle, 'ttl', 'middle');
+  if (o.yTitle) svText(svg, m.l - 50, 14, o.yTitle, 'ttl', 'start');
+  if (o.curve) {
+    let d = '';
+    for (let x = 5; x <= o.xMax; x += 2) d += (d ? 'L' : 'M') + X(x).toFixed(1) + ',' + Y(o.curve(x)).toFixed(1);
+    sv('path', { d, fill: 'none', stroke: 'var(--ink)', 'stroke-width': 2, 'stroke-linecap': 'round' }, svg);
+  }
+  for (const p of o.points) {
+    const g = sv('g', { tabindex: 0, 'aria-label': `${p.label}: ${p.sub}` }, svg);
+    sv('circle', { cx: X(p.x), cy: Y(p.y), r: 12, fill: 'transparent' }, g);
+    sv('circle', { cx: X(p.x), cy: Y(p.y), r: 4.5, fill: p.color || 'var(--s1)', class: 'ring' }, g);
+    const rows = () => [{ color: p.color || 'var(--s1)', label: p.sub, value: o.yTip(p.y) }];
+    g.addEventListener('pointermove', e => showTip(e.clientX, e.clientY, p.label, rows()));
+    g.addEventListener('pointerleave', hideTip);
+    g.addEventListener('focus', () => { const b = g.getBoundingClientRect(); showTip(b.left + b.width / 2, b.top, p.label, rows()); });
+    g.addEventListener('blur', hideTip);
+  }
+  host.replaceChildren(svg);
+}
+
+// ---------- Horizontal bars in HTML (ranked, one color) ----------
+function hbars(host, items, valueFmt) {
+  const max = Math.max(...items.map(i => i.value), 1);
+  const wrap = document.createElement('div'); wrap.className = 'hbars';
+  for (const it of items) {
+    const row = document.createElement('div'); row.className = 'hb-row';
+    const l = document.createElement('span'); l.className = 'hb-l'; l.textContent = it.label;
+    const tr = document.createElement('span'); tr.className = 'hb-track';
+    const b = document.createElement('span'); b.className = 'hb-bar'; b.style.width = Math.max(0.5, it.value / max * 100) + '%';
+    if (it.color) b.style.background = it.color;
+    tr.appendChild(b);
+    const v = document.createElement('span'); v.className = 'hb-v'; v.textContent = valueFmt(it.value, it);
+    row.append(l, tr, v); wrap.appendChild(row);
+  }
+  host.replaceChildren(wrap);
+}
+
+// Build a simple table (header row + rows of strings) into a container.
+function fillTable(host, head, rows, rightCols = []) {
+  const t = document.createElement('table'); t.className = 'tbl';
+  const th = t.createTHead().insertRow();
+  head.forEach((h, i) => { const c = document.createElement('th'); c.textContent = h; if (rightCols.includes(i)) c.className = 'r'; th.appendChild(c); });
+  const tb = t.createTBody();
+  for (const r of rows) {
+    const tr = tb.insertRow();
+    if (r.cls) tr.className = r.cls;
+    (r.cells || r).forEach((v, i) => {
+      const td = tr.insertCell();
+      if (v && typeof v === 'object' && v.href) { const a = document.createElement('a'); a.href = v.href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = v.text; td.appendChild(a); }
+      else td.textContent = v;
+      if (rightCols.includes(i)) td.className = 'r';
+    });
+  }
+  host.replaceChildren(t);
+}
+
+</script>
+<script>
+// Pure calculation engine for the exotic-plant farm calculator.
+// Money in rupees unless a name says lakh. Distances are road km from Hyderabad.
+// Dependency-free, so the same code runs in the browser and in Node tests.
+
+const LAKH = 1e5;
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+
+// Asking price of farmland (₹ lakh per acre) at road distance d:
+// P(d) = m × [ Pf + (P0 − Pf) × e^(−d/λ) ], m = direction multiplier.
+function landPriceLakh(d, s) {
+  return s.dirMult * (s.curvePf + (s.curveP0 - s.curvePf) * Math.exp(-d / s.curveLambda));
+}
+
+// All-in rupees to buy the land at distance d (deal discount, duties, broker, legal checks).
+function landBuyCost(d, s, lakhPerAcre) {
+  const p = (lakhPerAcre != null ? lakhPerAcre : landPriceLakh(d, s)) * (1 - s.askGap / 100);
+  return p * LAKH * s.landAcres * (1 + s.regPct / 100) + s.legalCost;
+}
+
+// Daily wage at distance d: straight line from the near-city wage (30 km) to the far wage (150 km).
+function wageAt(d, s) {
+  const t = clamp((d - 30) / 120, 0, 1);
+  return s.wageNear + (s.wageFar - s.wageNear) * t;
+}
+
+// MIDH cost norm (₹/m²) for the structure; polyhouse norms fall with area slab.
+function costNorm(s) {
+  if (s.model === 'polyhouse') {
+    const a = s.growArea;
+    return a <= 500 ? 1060 : a <= 1008 ? 935 : a <= 2080 ? 890 : 844;
+  }
+  return s.model === 'nursery' ? 710 : 0;
+}
+
+// Output at full production. Everything saleable leaves the farm: a share at the
+// full wholesale price, the rest cleared at a discount.
+function production(s) {
+  let produced, inputCost;
+  if (s.model === 'nursery') {
+    produced = s.growArea * s.density * (12 / s.cycleMonths);   // plants started per year
+    inputCost = produced * s.varCost;
+  } else if (s.model === 'polyhouse') {
+    produced = s.growArea * s.yieldPerM2;                        // kg per year
+    inputCost = s.growArea * s.varCostPerM2;
+  } else {
+    produced = s.cropAcres * s.yieldTPerAcre * 1000;             // kg per year at full yield
+    inputCost = s.cropAcres * s.varCostPerAcre;
+  }
+  const sold = produced * (1 - s.lossPct / 100);
+  const share = s.fullPriceShare / 100;
+  const avgPrice = s.price * (share + (1 - share) * s.discountPct / 100);
+  const revenue = sold * avgPrice;
+  const trips = sold > 0 ? Math.max(Math.ceil(sold / s.unitsPerTrip), s.minTrips) : 0;
+  return { produced, sold, inputCost, revenue, trips, avgPrice };
+}
+
+const tripCost = (d, s) => Math.max(s.minFare, s.ratePerKm * d) + s.toll + s.helper;
+
+// Yearly costs that depend on distance. withTime adds the value of the owner's
+// travel time (an economic cost, not cash) — used only by the distance optimiser.
+function locationCosts(d, s, prod, withTime = true) {
+  let land;
+  if (s.landMode === 'buy') land = landBuyCost(d, s) * Math.max(0, (s.costOfMoney - s.landGrowth) / 100);
+  else land = s.landAcres * s.leaseRent;
+  const damagePct = s.damageBase + s.damagePer100 * d / 100;
+  const transport = prod.trips * tripCost(d, s) + prod.revenue * damagePct / 100;
+  const visits = s.visitsPerMonth * 12;
+  const ownerCash = visits * 2 * d * s.carPerKm;
+  const ownerTime = withTime ? visits * (2 * d / s.avgSpeed) * s.ownerHourValue : 0;
+  const labour = s.workers * s.workDays * wageAt(d, s);
+  const owner = ownerCash + ownerTime;
+  return { land, transport, owner, ownerCash, ownerTime, labour, total: land + transport + owner + labour };
+}
+
+function optimiseDistance(s, prod, dMin = 15, dMax = 250) {
+  const curve = [];
+  let best = null;
+  for (let d = dMin; d <= dMax; d += 1) {
+    const c = locationCosts(d, s, prod, true);
+    curve.push({ d, ...c });
+    if (!best || c.total < best.total) best = { d, ...c };
+  }
+  return { best, curve };
+}
+
+// Closed form for the "buy" case (beyond the minimum-fare zone, ignoring wage band limits):
+// d* = λ × ln( K / (λ × M) ), K = land carrying cost that distance can remove, M = extra ₹/yr per extra km.
+function closedForm(s, prod) {
+  const visits = s.visitsPerMonth * 12;
+  const wageSlope = (s.wageFar - s.wageNear) / 120;
+  const M = prod.trips * s.ratePerKm
+          + prod.revenue * (s.damagePer100 / 100) / 100
+          + 2 * visits * (s.carPerKm + s.ownerHourValue / s.avgSpeed)
+          + s.workers * s.workDays * wageSlope;
+  const K = s.landAcres * s.dirMult * (s.curveP0 - s.curvePf) * LAKH * (1 - s.askGap / 100) * (1 + s.regPct / 100)
+          * Math.max(0, (s.costOfMoney - s.landGrowth) / 100);
+  let dStar = null;
+  if (s.landMode === 'buy') {
+    if (M <= 0) dStar = Infinity;
+    else { const arg = K / (s.curveLambda * M); dStar = arg <= 1 ? 0 : s.curveLambda * Math.log(arg); }
+  }
+  return { M, K, dStar };
+}
+
+// One-time setup items. life > 0 means part of the item (replaceShare) is bought again every `life` years.
+function capexItems(s) {
+  const items = [];
+  const perimeterFt = 4 * Math.sqrt(s.landAcres * 43560);
+  const add = (label, amount, extra = {}) => items.push({ label, amount: Math.max(0, amount), life: 0, replaceShare: 0, sub: null, ...extra });
+  if (s.model === 'nursery') {
+    add('Shade-net house', s.growArea * s.structRate, { life: s.coverLife, replaceShare: s.coverShare / 100, sub: 'structure' });
+    add('Misting + irrigation', s.growArea * s.irrigRate, { sub: 'micro' });
+    add('Weed mat, trays, benches', s.growArea * s.benchRate);
+  } else if (s.model === 'polyhouse') {
+    add('Polyhouse', s.growArea * s.structRate, { life: s.coverLife, replaceShare: s.coverShare / 100, sub: 'structure' });
+    add('Drip + fertigation', s.growArea * s.irrigRate, { sub: 'micro' });
+    add('Beds, mulch, trellis', s.growArea * s.benchRate);
+  } else {
+    add('Poles + ring frames', s.cropAcres * s.polesPerAcre * s.poleRate);
+    add('Planting cuttings', s.cropAcres * s.polesPerAcre * s.plantsPerPole * s.cuttingRate);
+    add('Drip irrigation', s.cropAcres * s.dripPerAcre, { sub: 'micro' });
+    add('Land preparation + manure', s.cropAcres * s.prepPerAcre);
+  }
+  add('Borewell + pump', s.borewell);
+  add('Water sump / tank', s.tank);
+  add('Fencing', s.fenceRate * perimeterFt);
+  add('Shed, store, worker room', s.shedSqft * s.shedRate);
+  add('Power connection', s.power);
+  add('Tools, crates, sprayers', s.tools);
+  if (s.vehicle > 0) add('Own vehicle', s.vehicle);
+  return items;
+}
+
+// Ten-year cash flow (cash only: the owner's time is not counted here).
+function cashflow(s) {
+  const prod = production(s);
+  const d = s.distance;
+  const items = capexItems(s);
+  const setup = items.reduce((a, b) => a + b.amount, 0);
+  const contingency = setup * s.contingencyPct / 100;
+  const landLakh = s.landQuote > 0 ? s.landQuote : landPriceLakh(d, s);
+  const landBuy = s.landMode === 'buy' ? landBuyCost(d, s, s.landQuote > 0 ? s.landQuote / (1 - s.askGap / 100) : null) : 0;
+
+  // Working money: inputs for the first cycle/season (at year-1 output) + 3 months of wages and fixed costs.
+  // It is tied up in growing stock, so it comes back at the end of year 10.
+  const firstInputs = s.model === 'nursery' ? prod.inputCost * (s.cycleMonths / 12) * s.ramp[0]
+                    : s.model === 'polyhouse' ? prod.inputCost * 0.5 * s.ramp[0] : prod.inputCost;
+  const wagesYear = s.workers * s.workDays * wageAt(d, s) + s.supervisor * 12;
+  const workingCapital = firstInputs + (wagesYear + s.otherFixed + s.vehicleFixed) / 4;
+  const upfront = landBuy + setup + contingency + workingCapital;
+
+  // Back-ended subsidy, paid in year 1 if sanctioned.
+  let subsidy = 0;
+  if (s.subsidyOn) {
+    for (const it of items) {
+      if (it.sub === 'structure') subsidy += Math.min(s.structRate, costNorm(s)) * Math.min(s.growArea, 4000) * s.structSubsidyPct / 100;
+      else if (it.sub === 'micro') subsidy += it.amount * s.microSubsidyPct / 100;
+    }
+  }
+
+  const loan = Math.max(0, s.loanAmount);
+  const r = s.loanRate / 100 / 12, n = Math.max(1, Math.round(s.loanYears * 12));
+  const emi = loan <= 0 ? 0 : (r === 0 ? loan / n : loan * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1));
+
+  const rows = [];
+  let cumProject = -upfront, cumYou = -(upfront - loan);
+  rows.push({ y: 0, revenue: 0, opex: 0, op: 0, replace: 0, subsidy: 0, debt: 0, project: -upfront, you: -(upfront - loan), cumProject, cumYou });
+  for (let y = 1; y <= 10; y++) {
+    const ramp = s.ramp[Math.min(y - 1, s.ramp.length - 1)];
+    const p = { ...prod, produced: prod.produced * ramp, sold: prod.sold * ramp, revenue: prod.revenue * ramp,
+                inputCost: s.model === 'dragon' ? prod.inputCost : prod.inputCost * ramp };
+    p.trips = p.sold > 0 ? Math.max(Math.ceil(p.sold / s.unitsPerTrip), s.minTrips) : 0;
+    const lc = locationCosts(d, s, p, false);
+    const marketing = p.revenue * s.marketingPct / 100;
+    const maint = setup * s.maintPct / 100;
+    const supervisor = s.supervisor * 12;
+    const lease = s.landMode === 'lease' ? lc.land : 0;
+    const opex = p.inputCost + lc.transport + lc.ownerCash + lc.labour + supervisor + s.otherFixed + s.vehicleFixed + maint + marketing + lease;
+    const support = s.landMode === 'buy' && s.rbOn ? s.rbPerAcre * s.landAcres : 0;
+    const op = p.revenue + support - opex;
+    let replace = 0;
+    for (const it of items) if (it.life > 0 && y % it.life === 0) replace += it.amount * it.replaceShare;
+    const sub = y === 1 ? subsidy : 0;
+    const debt = Math.min(12, Math.max(0, n - (y - 1) * 12)) * emi;
+    const release = y === 10 ? workingCapital : 0;
+    const project = op - replace + sub + release;
+    const you = project - debt;
+    cumProject += project; cumYou += you;
+    rows.push({ y, ramp, revenue: p.revenue, inputCost: p.inputCost, transport: lc.transport, owner: lc.ownerCash,
+                labour: lc.labour + supervisor, marketing, maint, lease, opex, support, op, replace, subsidy: sub,
+                debt, project, you, cumProject, cumYou, trips: p.trips, sold: p.sold });
+  }
+
+  let payback = null;
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i].cumProject >= 0 && rows[i - 1].cumProject < 0) { payback = (i - 1) + (-rows[i - 1].cumProject) / rows[i].project; break; }
+  }
+
+  const mature = rows[5];
+  const share = s.fullPriceShare / 100, priceFactor = share + (1 - share) * s.discountPct / 100;
+  const dmg = (s.damageBase + s.damagePer100 * d / 100) / 100;
+  const keep = 1 - s.marketingPct / 100 - dmg;
+  const nonRevenueCosts = mature.opex - mature.revenue * (s.marketingPct / 100 + dmg);
+  const breakEvenPrice = mature.sold > 0 && keep > 0 ? (nonRevenueCosts - mature.support) / (mature.sold * priceFactor * keep) : null;
+
+  // 10-year IRR, counting the land's value at the end (rural farmland has no capital-gains tax).
+  const landEnd = s.landMode === 'buy' ? landLakh * (1 - s.askGap / 100) * LAKH * s.landAcres * Math.pow(1 + s.landGrowth / 100, 10) : 0;
+  const flows = rows.map(x => x.project);
+  flows[10] += landEnd;
+  const irr = irrOf(flows);
+  const totalInterest = emi * n - loan;
+  return { prod, items, setup, contingency, workingCapital, landLakh, landBuy, upfront, subsidy, loan, emi, totalInterest, rows, payback, mature, breakEvenPrice, irr, landEnd };
+}
+
+function irrOf(flows) {
+  const npv = r => flows.reduce((a, f, t) => a + f / Math.pow(1 + r, t), 0);
+  let lo = -0.99, hi = 2;
+  if (npv(lo) * npv(hi) > 0) return null;
+  for (let i = 0; i < 200; i++) { const mid = (lo + hi) / 2; if (npv(lo) * npv(mid) <= 0) hi = mid; else lo = mid; }
+  return (lo + hi) / 2;
+}
+
+// How much you can borrow against your salary.
+function loanCapacity(s, emi) {
+  const surplus = s.salary - s.expenses;
+  const r = s.loanRate / 100 / 12, n = Math.max(1, Math.round(s.loanYears * 12));
+  const factor = r === 0 ? n : (1 - Math.pow(1 + r, -n)) / r;
+  const maxEmi = s.salary * s.foirPct / 100;
+  const safeEmi = Math.min(maxEmi, Math.max(0, surplus));
+  return { surplus, maxEmi, maxLoan: maxEmi * factor, safeEmi, safeLoan: safeEmi * factor, emiPct: s.salary > 0 ? emi / s.salary * 100 : 0, leftAfterEmi: surplus - emi };
+}
+
+if (typeof module !== 'undefined') module.exports = { landPriceLakh, landBuyCost, wageAt, costNorm, production, tripCost, locationCosts, optimiseDistance, closedForm, capexItems, cashflow, irrOf, loanCapacity };
+
+</script>
+<script>
+const LAND_POINTS = [{"place": "Shamshabad","district": "Rangareddy","corridor": "South (NH44)","km": 25,"lo": 200,"hi": 700,"typ": 350,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1-acre-land-in-sultanpalle-shamshabad-ranga-reddy-telangana-6510"},{"place": "Kothur","district": "Rangareddy","corridor": "South (NH44)","km": 45,"lo": 80,"hi": 420,"typ": 150,"kind": "Asking price","url": "https://1acre.in/hi/lands-for-sale/kothur-ranga-reddy-telangana"},{"place": "Farooqnagar (Shadnagar)","district": "Rangareddy","corridor": "South (NH44)","km": 55,"lo": 60,"hi": 130,"typ": 100,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1-acre-land-in-kishannagar-farooqnagar-ranga-reddy-telangana-4560"},{"place": "Balanagar","district": "Mahabubnagar","corridor": "South (NH44)","km": 70,"lo": 35,"hi": 60,"typ": 46,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1.4-acre-land-in-udithyal-balanagar-mahabubnagar-telangana-11888"},{"place": "Jadcherla","district": "Mahabubnagar","corridor": "South (NH44)","km": 85,"lo": 57,"hi": 80,"typ": 65,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1-acre-land-in-earlapalle-jadcherla-mahabubnagar-telangana-6886"},{"place": "Konded (Jadcherla)","district": "Mahabubnagar","corridor": "South (NH44)","km": 90,"lo": 70,"hi": 70,"typ": 70,"kind": "Asking price","url": "https://www.1acre.in/verified-lands-for-sale/telangana/mahabubnagar/jadcherla/konded/3076"},{"place": "Bhoothpur","district": "Mahabubnagar","corridor": "South (NH44)","km": 97,"lo": 26,"hi": 60,"typ": 45,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/bhoothpur-mahabubnagar-telangana?tab=listings"},{"place": "Medchal","district": "Medchal-Malkajgiri","corridor": "North","km": 30,"lo": 140,"hi": 800,"typ": 300,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/medchal-medchal-malkajgiri-telangana"},{"place": "Toopran","district": "Medak","corridor": "North","km": 50,"lo": 60,"hi": 160,"typ": 95,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/toopran-medak-telangana"},{"place": "Ramayampet","district": "Medak","corridor": "North","km": 95,"lo": 33,"hi": 60,"typ": 44,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/ramayampet-medak-telangana"},{"place": "Kamareddy (town edge)","district": "Kamareddy","corridor": "North","km": 115,"lo": 80,"hi": 280,"typ": 80,"kind": "Asking price","url": "https://1acre.in/hi/lands-for-sale/kamareddy-kamareddy-telangana"},{"place": "Gandhari","district": "Kamareddy","corridor": "North","km": 130,"lo": 25,"hi": 45,"typ": 35,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/23-acre-land-in-gandhari-gandhari-kamareddy-telangana-6220"},{"place": "Shamirpet","district": "Medchal-Malkajgiri","corridor": "North","km": 30,"lo": 150,"hi": 1200,"typ": 300,"kind": "Asking price","url": "https://1acre.in/hi/lands-for-sale/shamirpet-medchal-malkajgiri-telangana"},{"place": "Mulug (Siddipet)","district": "Siddipet","corridor": "North","km": 45,"lo": 85,"hi": 250,"typ": 150,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/mulug-siddipet-telangana"},{"place": "Gajwel","district": "Siddipet","corridor": "North","km": 60,"lo": 58,"hi": 84,"typ": 68,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/gajwel-siddipet-telangana"},{"place": "Siddipet Rural","district": "Siddipet","corridor": "North","km": 100,"lo": 20,"hi": 100,"typ": 50,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/siddipet-rural-siddipet-telangana"},{"place": "Mirdoddi","district": "Siddipet","corridor": "North","km": 115,"lo": 32,"hi": 170,"typ": 40,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1-acre-land-in-almaspur-mirdoddi-siddipet-telangana-11694"},{"place": "Koheda","district": "Siddipet","corridor": "North","km": 125,"lo": 24,"hi": 62,"typ": 40,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/koheda-koheda-siddipet-telangana"},{"place": "Akkannapet","district": "Siddipet","corridor": "North","km": 130,"lo": 23,"hi": 40,"typ": 30,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/akkannapet-siddipet-telangana"},{"place": "Patancheru","district": "Sangareddy","corridor": "West","km": 30,"lo": 240,"hi": 550,"typ": 320,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1-acre-land-in-kyasaram-patancheru-sangareddy-telangana-5781"},{"place": "Kandi","district": "Sangareddy","corridor": "West","km": 55,"lo": 120,"hi": 360,"typ": 200,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/kandi-kandi-sangareddy-telangana"},{"place": "Kandi (farmer quote)","district": "Sangareddy","corridor": "West","km": 55,"lo": 100,"hi": 200,"typ": 130,"kind": "News report","url": "https://www.inkl.com/news/rrr-proposal-creates-tension-among-farmers"},{"place": "Sadasivpet","district": "Sangareddy","corridor": "West","km": 72,"lo": 40,"hi": 150,"typ": 50,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/sadasivpet-sangareddy-telangana"},{"place": "Peddapur (RRR award)","district": "Sangareddy","corridor": "West","km": 70,"lo": 101,"hi": 127,"typ": 110,"kind": "Govt compensation","url": "https://deccanchronicle.com/southern-states/telangana/rrr-oustee-gets-127cr-compensation-for-acre-1952990","fit": false},{"place": "Doultabad (RRR award)","district": "Sangareddy","corridor": "West","km": 75,"lo": 16,"hi": 16,"typ": 16,"kind": "Govt compensation","url": "https://hyderabadmail.com/rrr-sangareddy-land-compensation-1-27-crore-per-acre/","fit": false},{"place": "Kohir","district": "Sangareddy","corridor": "West","km": 95,"lo": 45,"hi": 130,"typ": 62,"kind": "Asking price","url": "https://1acre.in/hi/lands-for-sale/kohir-kohir-sangareddy-telangana"},{"place": "Zaheerabad (Huggelli)","district": "Sangareddy","corridor": "West","km": 110,"lo": 130,"hi": 130,"typ": 130,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/9-acre-land-in-huggelli-zahirabad-sangareddy-telangana-2691"},{"place": "NIMZ area (farmers' claim)","district": "Sangareddy","corridor": "West","km": 120,"lo": 30,"hi": 100,"typ": 50,"kind": "News report","url": "https://www.inkl.com/news/how-can-i-sell-my-land-for-so-cheap"},{"place": "Nyalkal","district": "Sangareddy","corridor": "West","km": 125,"lo": 38,"hi": 63,"typ": 50,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/nyalkal-sangareddy-telangana"},{"place": "Moinabad (Kethireddipalle)","district": "Rangareddy","corridor": "West","km": 25,"lo": 550,"hi": 550,"typ": 550,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/7-7-acre-land-in-kethireddipalle-moinabad-ranga-reddy-telangana-12793"},{"place": "Chevella","district": "Rangareddy","corridor": "West","km": 40,"lo": 140,"hi": 260,"typ": 250,"kind": "Asking price","url": "https://1acre.in/hi/lands-for-sale/chevella-chevella-ranga-reddy-telangana"},{"place": "Chevella highway belt","district": "Rangareddy","corridor": "West","km": 42,"lo": 250,"hi": 300,"typ": 275,"kind": "News report","url": "https://www.inkl.com/news/land-prices-spiral-on-hyderabad-chevella-highway"},{"place": "Shabad","district": "Rangareddy","corridor": "West","km": 50,"lo": 290,"hi": 290,"typ": 290,"kind": "Asking price","url": "https://www.realestateindia.com/rangareddy-property/farm-land-for-sale.htm"},{"place": "Pudur","district": "Vikarabad","corridor": "West","km": 60,"lo": 300,"hi": 300,"typ": 300,"kind": "Asking price","url": "https://1acre.in/verified-lands-for-sale/telangana/vikarabad/pudur/pudur/2875"},{"place": "Mominpet","district": "Vikarabad","corridor": "West","km": 75,"lo": 220,"hi": 220,"typ": 220,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1-acre-land-in-mominpet-mominpet-vikarabad-telangana-13460"},{"place": "Pargi (Rangapur)","district": "Vikarabad","corridor": "West","km": 75,"lo": 275,"hi": 275,"typ": 275,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/10-acre-land-in-rangapur-pargi-vikarabad-telangana-11045"},{"place": "Yelal","district": "Vikarabad","corridor": "West","km": 105,"lo": 60,"hi": 60,"typ": 60,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1-acre-land-in-yelal-yelal-vikarabad-telangana-6697"},{"place": "Tandur","district": "Vikarabad","corridor": "West","km": 110,"lo": 28,"hi": 80,"typ": 60,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/2.6-acre-land-in-tandur-tandur-vikarabad-telangana-10812"},{"place": "Abdullapurmet","district": "Rangareddy","corridor": "East","km": 25,"lo": 220,"hi": 680,"typ": 300,"kind": "Asking price","url": "https://1acre.in/hi/lands-for-sale/abdullapurmet-ranga-reddy-telangana"},{"place": "Choutuppal","district": "Yadadri-Bhuvanagiri","corridor": "East","km": 50,"lo": 55,"hi": 200,"typ": 120,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1.8-acre-land-in-tangad-palle-choutuppal-yadadri-bhuvanagiri-telangana-11373"},{"place": "RRR alignment (road-facing)","district": "Various","corridor": "East","km": 60,"lo": 150,"hi": 300,"typ": 200,"kind": "News report","url": "https://assets.thehansindia.com/telangana/real-estate-sees-high-demand-around-hyderabads-rrr-947584","fit": false},{"place": "Narketpally","district": "Nalgonda","corridor": "East","km": 75,"lo": 28,"hi": 60,"typ": 35,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/25.1-acre-land-in-ammanabole-narketpally-nalgonda-telangana-1704"},{"place": "Nalgonda (town edge)","district": "Nalgonda","corridor": "East","km": 100,"lo": 120,"hi": 120,"typ": 120,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/nalgonda-nalgonda-telangana"},{"place": "Suryapet","district": "Suryapet","corridor": "East","km": 135,"lo": 25,"hi": 62,"typ": 40,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1-acre-land-in-ailapur-chivemla-suryapet-telangana-8246"},{"place": "Bhongir","district": "Yadadri-Bhuvanagiri","corridor": "East","km": 50,"lo": 55,"hi": 120,"typ": 82,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1.9-acre-land-in-anajipur-bhongir-yadadri-bhuvanagiri-telangana-888"},{"place": "Yadagirigutta","district": "Yadadri-Bhuvanagiri","corridor": "East","km": 65,"lo": 45,"hi": 160,"typ": 75,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1.8-acre-land-in-jangampally-yadagirigutta-yadadri-bhuvanagiri-telangana-2233"},{"place": "Rajapet","district": "Yadadri-Bhuvanagiri","corridor": "East","km": 80,"lo": 48,"hi": 55,"typ": 52,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/2-9-acre-land-in-rajapet-rajapeta-yadadri-bhuvanagiri-telangana-14882"},{"place": "Jangaon (Peddapahad)","district": "Jangaon","corridor": "East","km": 88,"lo": 35,"hi": 35,"typ": 35,"kind": "Asking price","url": "https://www.1acre.in/verified-lands-for-sale/telangana/jangoan/jangaon/peddapahad/1620"},{"place": "Raghunathpalle","district": "Jangaon","corridor": "East","km": 100,"lo": 69,"hi": 69,"typ": 69,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/1-1-acre-land-in-raghunathpalle-ragunathpally-jangoan-telangana-2409"},{"place": "Bachannapet","district": "Jangaon","corridor": "East","km": 105,"lo": 30,"hi": 66,"typ": 45,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/bachannapet-jangoan-telangana"},{"place": "Maheshwaram","district": "Rangareddy","corridor": "South-east (Future City)","km": 30,"lo": 210,"hi": 500,"typ": 250,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/maheshwaram-ranga-reddy-telangana"},{"place": "Kandukur","district": "Rangareddy","corridor": "South-east (Future City)","km": 38,"lo": 280,"hi": 450,"typ": 350,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/kandukur-kandukur-ranga-reddy-telangana"},{"place": "Kandukur (news)","district": "Rangareddy","corridor": "South-east (Future City)","km": 38,"lo": 180,"hi": 400,"typ": 250,"kind": "News report","url": "https://regnews.in/bharat-future-city%E2%80%A6-where-to-buy-land-for-maximum-appreciation"},{"place": "Kadthal","district": "Rangareddy","corridor": "South-east (Future City)","km": 55,"lo": 110,"hi": 225,"typ": 140,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/kadthal-kadthal-ranga-reddy-telangana"},{"place": "Amangal","district": "Rangareddy","corridor": "South-east (Future City)","km": 70,"lo": 45,"hi": 200,"typ": 85,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/amangal-ranga-reddy-telangana"},{"place": "Kalwakurthy","district": "Nagarkurnool","corridor": "South-east (Future City)","km": 85,"lo": 45,"hi": 150,"typ": 60,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/kalwakurthy-nagarkurnool-telangana"},{"place": "Ibrahimpatnam","district": "Rangareddy","corridor": "Sagar road","km": 30,"lo": 85,"hi": 350,"typ": 200,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/ibrahimpatnam-ranga-reddy-telangana?tab=listings"},{"place": "Manchal","district": "Rangareddy","corridor": "Sagar road","km": 40,"lo": 35,"hi": 400,"typ": 135,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/9-acre-land-in-chittapur-manchal-rangareddy-telangana-3094"},{"place": "Yacharam","district": "Rangareddy","corridor": "Sagar road","km": 45,"lo": 40,"hi": 220,"typ": 165,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/yacharam-ranga-reddy-telangana"},{"place": "Nampally","district": "Nalgonda","corridor": "Sagar road","km": 95,"lo": 20,"hi": 40,"typ": 30,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/nampally-nalgonda-telangana"},{"place": "Devarakonda","district": "Nalgonda","corridor": "Sagar road","km": 100,"lo": 20,"hi": 70,"typ": 50,"kind": "Asking price","url": "https://1acre.in/lands-for-sale/devarakonda-nalgonda-telangana"},{"place": "Peddavoora","district": "Nalgonda","corridor": "Sagar road","km": 135,"lo": 24,"hi": 40,"typ": 30,"kind": "Asking price","url": "https://1acre.in/hi/lands-for-sale/peddavoora-nalgonda-telangana"}];
+
+// Research values, 8 Nov 2026. Every default links to its source in SRC.
+const DATA_VERSION = '2026-11-08a';
+const DATA_NOTE = 'Research values collected 8 Nov 2026 from listings, news, government documents and market quotes. Asking prices and quotes, not completed sales. Items marked "estimate" had no source.';
+
+const SRC = {
+  // Land, transport, wages
+  landData: { t: '59 land listings', u: '#p-landdata' },
+  distress: { t: 'Distress sales 2025', u: 'https://telanganatoday.com/wave-of-distress-sale-sweeps-through-telanganas-agricultural-lands' },
+  govtValue: { t: 'Govt land values Jun 2026', u: 'https://www.deccanchronicle.com/southern-states/telangana/revised-market-values-of-lands-plots-flats-from-today-1961371' },
+  lease: { t: 'Tenant survey: ₹14,936 avg', u: 'https://thesouthfirst.com/telangana/tenant-farmers-in-telangana-struggle-amid-soaring-lease-costs-policy-gaps-survey/' },
+  lease2: { t: 'Lease ₹25–35k with water', u: 'https://telanganatoday.com/tenant-farmers-face-tough-future-in-telangana' },
+  lease3: { t: 'Lease ₹15–20k dry land', u: 'https://telanganatoday.com/tenant-farmers-in-erstwhile-karimnagar-yet-to-receive-rythu-bharosa-assistance' },
+  stamp: { t: 'Stamp duty 7.5%', u: 'https://realtyhunting.com/stamp-duty-in-telangana' },
+  stampGov: { t: 'Govt R&S training deck 2026', u: 'https://mcrhrdi.gov.in/2026/group1/week4/Rajiv%20Gandhi%20Hanumanthu,%20IAS%20MCRHRDI%20-%20R&S%2012.02.2026.pdf' },
+  porter: { t: 'Porter Hyderabad', u: 'https://porter.in/rent-mini-trucks-in-hyderabad' },
+  transrentals: { t: 'TransRentals ₹1,499/day', u: 'https://transrentals.in/mini-truck-rental/hyderabad/lb-nagar' },
+  truckguru: { t: 'TruckGuru Ace & 14 ft', u: 'https://truckguru.co.in/bangalore-to-hyderabad-transport-company' },
+  mover: { t: 'Loader ₹300–400', u: 'https://mover.delivery/blog/tata-ace-on-rent' },
+  fuel: { t: 'Fuel prices 8 Nov 2026', u: 'https://kalingatv.com/business/petrol-diesel-prices-today-november-8-2026-check-rates-in-major-cities/' },
+  tollNH65: { t: 'NH65 LCV tolls', u: 'https://newsmeter.in/top-stories/travellers-between-hyderabad-and-vijayawada-to-pay-less-toll-fees-from-april-1-746112' },
+  aceDeck: { t: 'Tata Ace deck size', u: 'https://www.trucksbuses.com/compare-scv-pick-ups-mini-trucks-vans/tata-ace-gold-petrol-vs-tata-ace-gold-petrol-cx-clb' },
+  truck14: { t: '14 ft truck specs', u: 'https://www.motorbazee.com/eicher/pro-2049-plus/14-ft-overview' },
+  aceUsed: { t: 'Used Ace ₹2.85 L', u: 'https://trucks.tractorjunction.com/en/used-truck/tata/ace-gold-diesel-plus-18725' },
+  aceIns: { t: 'Ace insurance', u: 'https://policybazaar.com/motor-insurance/commercial-vehicle-insurance/tata-motors/ace' },
+  carCost: { t: 'Fuel cost per km', u: 'https://desiutility.com/petrol-diesel-cost-per-km-calculator' },
+  wageChevella: { t: 'Chevella nursery job ₹14–18k', u: 'https://www.jobhai.com/hi/peon-helper-job-in-gamlaa-bioscapes-private-limited-chevella-hyderabad-0-to-6-plus-years-1781603741-7818110-jid' },
+  wageNalgonda: { t: 'Nalgonda peak wages', u: 'https://www.deccanchronicle.com/southern-states/telangana/rising-labour-wages-push-nalgonda-paddy-farmers-to-direct-sowing-1927667' },
+  wageSeries: { t: 'Rural wage series', u: 'https://dataful.in/datasets/21427/' },
+  mali: { t: 'Mali ₹13–15k', u: 'https://helpersnearme.com/workers/mali-gardener-banjara-hills-hyderabad' },
+  farmManager: { t: 'Farm manager ₹20–30k', u: 'https://www.expertia.ai/suchirindia-in/job/hiring-farm-manager-6465fcb2b5ce93123d7749e7' },
+  driverPay: { t: 'Driver jobs ₹15–25k', u: 'https://in.indeed.com/explorer/driving-jobs-hyderabad,-ts' },
+  watchman: { t: 'Watchman ₹12k + room', u: 'https://www.jobhai.com/security-guard-house-watchman-job-in-e-abhyas-academy-mansoorabad-hyderabad-1-to-5-years-1785132927-8048481-jid' },
+  // Plant business
+  kadiyamListing: { t: 'Rajahmundry plants ₹25', u: 'https://www.tradeindia.com/manufacturers/decorative-plant.html' },
+  aglaonema: { t: 'Aglaonema ₹85–100', u: 'https://www.exportersindia.com/indian-suppliers/aglaonema-plant.htm' },
+  aglaRaj: { t: 'Rajahmundry Aglaonema ₹100', u: 'https://www.exportersindia.com/rajahmundry/aglaonema-plant.htm' },
+  areca: { t: 'Areca palm ₹100', u: 'https://m.indiamart.com/impcat/arecanut-plant.html' },
+  nurserylive: { t: 'Online retail ₹169–599', u: 'https://nurserylive.com/a/s/collections/sale-plants-under-299' },
+  mahindraNursery: { t: 'Kadiyam wholesale (quotes)', u: 'https://mahindranursery.com/pages/wholesale-orders' },
+  kadiyamScale: { t: 'Kadiyam: 600+ nurseries', u: 'https://mahindranursery.com/blogs/plant-guide/the-interesting-history-of-kadiyam-nursery-and-a-brief-introduction-to-the-plant-nurserys-processes' },
+  marketSize: { t: 'India indoor plants market', u: 'https://www.imarcgroup.com/india-indoor-plants-market' },
+  marketSize2: { t: 'Ken Research estimate', u: 'https://www.kenresearch.com/india-indoor-plants-market' },
+  exoticVeg: { t: 'Exotic veg market', u: 'https://www.imarcgroup.com/india-exotic-vegetables-market' },
+  kukatpally: { t: 'Kukatpally nursery hub', u: 'https://telanganatoday.com/kukatpally-turns-hub-for-nurseries' },
+  paes: { t: 'Pot spacing standard', u: 'https://amtec.uplb.edu.ph/wp-content/uploads/2019/07/415.pdf' },
+  agristarts: { t: 'Syngonium crop time', u: 'https://www.agristarts.com/index.cfm/fuseaction/plants.printDetail/plant_id/118/index.htm' },
+  gpn: { t: 'Aglaonema crop time', u: 'https://nxtbook.com/greatamericanmediaservices/GPN/march-2019/index.php?startid=26' },
+  kfri: { t: 'KFRI tissue-culture prices', u: 'https://www.kfri.res.in/downloads/Price%20list_TC_and_Convenionally_propagaed_plants.pdf' },
+  tcSyngonium: { t: 'TC Syngonium ₹20', u: 'https://m.indiamart.com/impcat/syngonium.html' },
+  pots: { t: '6-inch pot ₹9', u: 'https://m.indiamart.com/impcat/plant-pots.html' },
+  cocopeat: { t: 'Cocopeat prices', u: 'https://m.indiamart.com/impcat/cocopeat-block.html' },
+  nhbNorms: { t: 'NHB cost norms', u: 'https://nhb.gov.in/hindi/pdf/Cost%20Norms.pdf' },
+  netHouse: { t: 'Net house ₹480–710/m²', u: 'https://m.indiamart.com/impcat/net-house.html' },
+  mist: { t: 'Misting kits', u: 'https://m.indiamart.com/nencyplastech/mist-nozzle.html' },
+  drip: { t: 'Drip ₹35–60k/acre', u: 'https://www.tractorforeveryone.com/knowledge-center/best-drip-irrigation-system-for-indian-farmers-cost-setup-tips' },
+  borewell: { t: 'Drilling ₹100–150/ft', u: 'https://farmonaut.com/?p=123328' },
+  borewellTG: { t: 'TG borewells ₹1–2 L', u: 'https://telanganatoday.com/telanganas-water-crisis-forces-farmers-to-turn-to-open-wells' },
+  fence: { t: 'Fencing costs', u: 'https://www.agrifarming.in/1-acre-fence-cost-in-india-agriculture-types' },
+  shed: { t: 'Shed ₹250–350/sq ft', u: 'https://heavystructuralfabrication.blogspot.com/2026/03/warehouse-shed-construction-cost-chennai.html' },
+  oregon: { t: 'Nursery labour rule of thumb', u: 'https://horticulture.oregonstate.edu/department-horticulture/nursery/labor' },
+  icarCapsicum: { t: 'ICAR capsicum case 2025', u: 'https://icar.org.in/en/protective-cultivation-polyhouse-success-story-coloured-capsicum-production' },
+  iariYield: { t: 'IARI capsicum yields', u: 'https://epubs.icar.org.in/index.php/IJAgS/article/view/59814' },
+  polyQuote: { t: 'Polyhouse quotes 2025', u: 'https://m.indiamart.com/pune/polyhouse.html' },
+  wbNorms: { t: 'Polyhouse norms by size', u: 'https://wbfpih.wb.gov.in/assets/user_uploads/directorate_fpi/1334278438_1784265925.pdf' },
+  palakkad: { t: 'Polyhouse cost study', u: 'https://www.researchgate.net/publication/330618488_Economic_feasibility_of_vegetable_production_under_polyhouse_a_case_study_from_Palakkad_district_of_Kerala' },
+  bowenpally: { t: 'Bowenpally capsicum prices', u: 'https://www.napanta.com/agri-commodity-prices/telangana/capsicum/28-Oct-2025' },
+  dragonPrice: { t: 'Dragon fruit ₹40–70 (2026)', u: 'https://www.etvbharat.com/en/state/davanagere-farmers-seek-govt-intervention-as-dragon-fruit-prices-nosedive-enn26071404266' },
+  dragonTG: { t: 'TG farmer ₹130/kg (2025)', u: 'https://www.deccanchronicle.com/southern-states/telangana/tg-farmers-turn-to-exotic-fruits-to-cut-imports-1876720' },
+  dragonCrash: { t: 'TG price crash 2025', u: 'https://www.hyderabadnewshunt.com/telangana-dragon-fruit-farmers-hit-by-price-crash' },
+  dragonICAR: { t: 'ICAR spacing', u: 'https://epubs.icar.org.in/index.php/IndHort/article/download/107290/42259/277997' },
+  vikaspedia: { t: 'Yield ≈15 kg/pillar', u: 'https://en.vikaspedia.in/viewcontent/agriculture/crop-production/package-of-practices/fruits-1/dragon-fruit?lgn=en' },
+  dte: { t: 'Down To Earth: up to 5 t/acre', u: 'https://www.downtoearth.org.in/blog/dragon-fruit-is-it-the-next-big-thing-in-indian-horticulture-78017' },
+  dragonCost: { t: 'TG dragon fruit cost', u: 'https://telanganatoday.com/telangana-mba-graduate-becomes-torchbearer-for-dragon-fruit-farming' },
+  dragonCuttings: { t: 'Cuttings ₹15–100', u: 'https://m.indiamart.com/impcat/dragon-fruit-plant.html' },
+  dragonMaint: { t: 'Upkeep ₹50k–1 L/acre', u: 'https://30stades.com/farming/maharashtra-engineer-farmer-mahesh-asabe-rukmini-farms-earns-profit-of-rs-9-lakh-per-acre-from-dragon-fruit-farming-3587489' },
+  tgPolyLoss: { t: 'TG polyhouse farmers 2015', u: 'https://www.deccanchronicle.com/150928/nation-current-affairs/article/telangana-poly-house-farmers-feel-cheated-subsidy' },
+  himachal: { t: 'Polyhouses abandoned (HP)', u: 'https://www.tribuneindia.com/news/archive/himachal/lack-of-markets-forcing-farmers-to-abandon-polyhouses-58101' },
+  anantapur: { t: 'Anantapur polyhouse debts', u: 'https://www.thehansindia.com/andhra-pradesh/anantapur-polyhouse-farming-yet-to-gather-pace-779896' },
+  solan: { t: 'Small polyhouse NPV negative', u: 'https://krishikosh.egranth.ac.in/items/b7b1d3e6-08b0-4f64-beb2-86af10cf8422' },
+  // Rules, schemes, taxes
+  buyLand: { t: 'Who can buy farmland (TG)', u: 'https://1acre.in/guides/telangana/can-i-buy-land-in-telangana' },
+  ceiling: { t: 'Land Ceiling Act 1973', u: 'https://www.indiacode.nic.in/bitstream/123456789/8693/1/act_1_of_1973.pdf' },
+  scheduled: { t: 'Scheduled Areas (1/70)', u: 'https://mcrhrdi.gov.in/2026/group1_batch2/week5/1.%20Costitutional%20provisions%20for%20protection%20of%20STs.pdf' },
+  assigned: { t: 'Assigned land is void', u: 'https://www.latestlaws.com/judgements/telangana-high-court/2021/august/2021-latest-caselaw-2319-tel' },
+  sec22a: { t: 'Section 22-A list', u: 'https://www.lkslaw.com/insights/articles/section-22-a-and-prohibited-properties-in-telangana-evolution-of-the-legal-framework' },
+  sec22aMess: { t: '22-A errors (2025)', u: 'https://theprint.in/india/telanganas-section-22a-mess-how-thousands-of-acres-of-private-property-landed-up-in-prohibited-list/3018683/' },
+  bhuBharati: { t: 'Bhu Bharati Act', u: 'https://tshc.gov.in/documents/currentsection_2026_04_09T16_05_38.pdf' },
+  bhuGuide: { t: 'Bhu Bharati buyer steps', u: 'https://anantamias.com/bhu-bharati-telangana/' },
+  nala: { t: 'NALA conversion', u: 'https://unadhi.com/property/nala-agricultural-land-conversion-non-agricultural-hyderabad-telangana-bhu-bharati.html' },
+  ppvfr: { t: "Farmers' rights (PPV&FR)", u: 'https://vikaspedia.in/agriculture/policies-and-schemes/crops-related/protection-of-plant-varieties-and-rights-of-farmers/farmers2019-rights-in-the-ppv-fr-act-2001' },
+  rythuBharosa: { t: 'Rythu Bharosa ₹12,000/acre', u: 'https://deccanchronicle.com/southern-states/telangana/telangana-govt-issues-guidelines-for-rythu-bharosa-1853665' },
+  rbCropped: { t: 'Only for cropped land (2026)', u: 'https://telanganatoday.com/telangana-rythu-bharosa-only-for-land-holdings-where-crops-are-raised' },
+  pmkisan: { t: 'PM-KISAN rules', u: 'https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf' },
+  rythuBima: { t: 'Rythu Bima lapsed', u: 'https://telanganatoday.com/telangana-farmers-anxious-as-congress-govt-fails-to-pay-premium-under-rythu-bima' },
+  pmfby: { t: 'Crop insurance status', u: 'https://knnindia.co.in/news/newsdetails/sectors/agri-food/telangana-to-reintroduce-crop-insurance-after-five-year-gap' },
+  tariff: { t: 'Power tariff (TGSPDCL)', u: 'https://tgsouthernpower.org/resources/PDF/Tariffs/63tarifffile.pdf' },
+  nurseryAct: { t: 'TG Nursery Act 2010', u: 'https://www.indiacode.nic.in/bitstream/123456789/8086/1/act_13_of_2010.pdf' },
+  nurseryRules: { t: 'Nursery Rules 2017', u: 'https://horticulture.tg.nic.in/Downloads/ACT/Nursery%20act%202017.pdf' },
+  seeds: { t: 'Seeds Act 1966', u: 'https://www.indiacode.nic.in/bitstream/123456789/13686/1/the_seeds_act%2c_1966.pdf' },
+  pq: { t: 'Plant Quarantine Order', u: 'https://upload.indiacode.nic.in/showfile?actid=AC_CEN_23_31_00008_191402_1523342057238&filename=0-pq-order-1322%28e%29-2003.pdf&type=notification' },
+  wildlife: { t: 'Specified plants (WPA 2022)', u: 'https://www.drishtiias.com/daily-updates/daily-news-analysis/wildlife-protection-amendment-bill-2021' },
+  labourCodes: { t: 'Labour Codes from 21 Nov 2025', u: 'https://www.ey.com/content/dam/ey-unified-site/ey-com/en-in/alerts-hub/2025/11/new-labour-codes-implemented-across-the-country-effective-21-november-2025.pdf' },
+  minWage: { t: 'TG minimum wage Jun 2026', u: 'https://www.teamleaseregtech.com/updates/article/56455/telangana-govt-issued-the-revision-of-minimum-wages-across-all-employm/' },
+  minWagePdf: { t: 'G.O.Ms.No.6 (PDF)', u: 'https://unitedconsultancy.com/wp-content/uploads/2026/06/Telangana-New-Minimum-Wages-GO-No-6-Date-30-May-2026.pdf' },
+  minWageCourt: { t: 'High Court case', u: 'https://www.siasat.com/hc-gives-telangana-final-chance-to-explain-minimum-wage-delay-3518887/' },
+  wageAgri: { t: 'Older agri wage schedule', u: 'https://wageindicator.org/en-in/work-in-india/minimum-wage/21802-telangana/36292-agriculture' },
+  payTime: { t: 'Code on Wages s.17', u: 'https://www.advocatekhoj.com/library/bareacts/codeonwages/17.php' },
+  ecSchedule: { t: 'Injury cover from worker 1', u: 'https://bareactschedules.blogspot.com/2020/10/schedule-2-of-code-on-social-security.html' },
+  epf: { t: 'EPF 20+, ESIC 10+', u: 'https://www.mondaq.com/india/employee-benefits-compensation/1735668/part-1-of-indias-new-labour-codes-code-on-social-security-2020' },
+  migrant: { t: 'Migrant workers rules', u: 'https://ksandk.com/labour-employment/inter-state-migrant-workers-osh-code-2020/' },
+  incomeTax: { t: 'Income Tax Dept', u: 'https://incometaxindia.gov.in' },
+  gst: { t: 'CBIC GST rates', u: 'https://cbic-gst.gov.in' },
+  gstCouncil: { t: 'GST Council', u: 'https://gstcouncil.gov.in' },
+  midh: { t: 'MIDH guidelines', u: 'https://midh.gov.in/PDF/midh(English).pdf' },
+  pmksy: { t: 'Micro-irrigation (PMKSY)', u: 'https://pmksy.gov.in' },
+  tgHorti: { t: 'TG Horticulture Dept', u: 'https://horticulture.tg.nic.in' },
+  nhb: { t: 'NHB schemes', u: 'https://nhb.gov.in' },
+  aif: { t: 'Agri Infra Fund', u: 'https://agriinfra.dac.gov.in' },
+  kcc: { t: 'KCC / interest subvention', u: 'https://agriwelfare.gov.in' },
+  mudra: { t: 'Mudra', u: 'https://www.mudra.org.in' },
+  pmegp: { t: 'PMEGP rules', u: 'https://www.kviconline.gov.in/pmegp/' },
+  // Loans (orchestrator research)
+  repo: { t: 'RBI repo 5.50% (Oct 2026)', u: 'https://www.gktoday.in/rbi-hikes-repo-rate-by-25-basis-points-to-5-50/' },
+  plRates: { t: 'Personal loan rates', u: 'https://bb.bankbazaar.com/personal-loan-interest-rate.html' },
+  plRealistic: { t: 'Realistic rates 13–16%', u: 'https://www.loansjagat.com/news/from-icici-and-hdfc-to-sbi-heres-what-5-major-banks-are-charging-on-personal-loans' },
+  lap: { t: 'Loan against property rates', u: 'https://www.paisabazaar.com/loan-against-property/interest-rates/' },
+  foir: { t: 'FOIR explained', u: 'https://www.ltfinance.com/blog/foir-impact-personal-loan-approval' },
+  sbiLand: { t: 'SBI land loan (farmers)', u: 'https://sbi.co.in/portal/web/agriculture-banking/land-purchase' },
+  bobLand: { t: 'BoB land scheme', u: 'https://bankofbaroda.in/business-banking/rural-and-agri/loans-and-advances/scheme-for-purchase-of-agriculture-land' },
+  sbiPoly: { t: 'SBI Poly Loan', u: 'https://sbi.co.in/web/agri-rural/poly-loan' },
+  centPoly: { t: 'Central Bank poly/net house', u: 'https://www.centralbank.bank.in/en/cent-poly-house-green-house-shade-net' },
+  mclr: { t: 'MCLR 8.9% (Nov 2026)', u: 'https://www.psuconnect.in/bank-news/bank-of-india-hikes-mclr-from-november-1-2026' },
+  fd: { t: 'SBI FD rates', u: 'https://bankbazaar.com/fixed-deposit/sbi-fixed-deposit-rate.html' },
+  thunen: { t: 'von Thünen land-rent model', u: 'https://en.wikipedia.org/wiki/Von_Th%C3%BCnen_model' },
+  orchidGrower: { t: 'Orchid grower ₹225', u: 'https://m.indiamart.com/krishnanandanam-orchids' },
+  orchidRetail: { t: 'Orchid retail ₹565', u: 'https://www.paudhewale.com/product/phalaenopsis-west-cost-fireworks-medium-size-orchid-plant' },
+  cactus: { t: 'Mini cactus ₹15', u: 'https://m.indiamart.com/impcat/cactus-plants.html' },
+  ugaoo: { t: 'Ugaoo Hyderabad', u: 'https://ugaoo.com/live-plants/buy-plants-online-in-hyderabad.html' },
+  hotels2018: { t: 'Hotels buy exotic veg (2018)', u: 'https://www.pressreader.com/india/deccan-chronicle/20180125/281642485598047' },
+  kadiyamFreight: { t: 'Kadiyam ships to Hyderabad', u: 'https://mahindranursery.com/pages/nationwide-shipping' },
+  googleBlog: { t: 'Google Research blog', u: 'https://research.google/blog/towards-a-science-of-scaling-agent-systems-when-and-why-agent-systems-work/' },
+  arxiv: { t: 'Paper (arXiv 2512.08296)', u: 'https://arxiv.org/abs/2512.08296' },
+  mitPage: { t: 'MIT Media Lab summary', u: 'https://www.media.mit.edu/projects/towards-a-science-of-scaling-agent-systems-when-and-why-agent-systems-work/overview/' },
+};
+
+const GLOBAL = {
+  landMode: 'buy', distance: 75, dirMult: 1, landAcres: 1, landQuote: 0, askGap: 10, regPct: 9, legalCost: 30000,
+  costOfMoney: 9, landGrowth: 0, leaseRent: 20000,
+  curveP0: 931, curvePf: 39, curveLambda: 21,
+  vehicleMode: 'ace', ratePerKm: 30, minFare: 1500, toll: 200, helper: 350, damageBase: 2, damagePer100: 1,
+  visitsPerMonth: 4, carPerKm: 10, ownerHourValue: 400, avgSpeed: 40,
+  wageNear: 600, wageFar: 540, workDays: 300,
+  borewell: 250000, tank: 100000, fenceRate: 100, shedRate: 250, power: 50000, tools: 50000, vehicle: 0, vehicleFixed: 0,
+  contingencyPct: 10, maintPct: 3, marketingPct: 5,
+  subsidyOn: true, structSubsidyPct: 50, microSubsidyPct: 55, rbPerAcre: 12000,
+  salary: 70000, expenses: 30000, savings: 300000, loanAuto: true, loanAmount: 1500000, loanRate: 12.5, loanYears: 5, foirPct: 50,
+};
+const LEGAL_MIN_WAGE = 538;
+const KEEP_ON_SWITCH = ['landMode', 'distance', 'dirMult', 'curveP0', 'curvePf', 'curveLambda', 'askGap', 'regPct', 'legalCost', 'costOfMoney',
+  'landGrowth', 'leaseRent', 'landQuote', 'vehicleMode', 'ratePerKm', 'minFare', 'toll', 'helper', 'damageBase', 'damagePer100',
+  'visitsPerMonth', 'carPerKm', 'ownerHourValue', 'avgSpeed', 'wageNear', 'wageFar', 'workDays', 'vehicle', 'vehicleFixed',
+  'salary', 'expenses', 'savings', 'loanAuto', 'loanAmount', 'loanRate', 'loanYears', 'foirPct', 'subsidyOn'];
+
+const PRESETS = {
+  nursery: { unit: 'plant', units: 'plants', producedLabel: 'Plants started per year', values: {
+    growArea: 2000, density: 25, cycleMonths: 6, varCost: 42, lossPct: 10, price: 75, fullPriceShare: 85, discountPct: 40,
+    ramp1: 40, ramp2: 80, ramp3: 100, structRate: 600, irrigRate: 80, benchRate: 15, coverLife: 4, coverShare: 8,
+    unitsPerTrip: 320, minTrips: 24, workers: 2, supervisor: 15000, otherFixed: 70000, shedSqft: 400, rbOn: false } },
+  polyhouse: { unit: 'kg', units: 'kg', producedLabel: 'Harvest per year', values: {
+    growArea: 2000, yieldPerM2: 8, varCostPerM2: 140, lossPct: 10, price: 80, fullPriceShare: 80, discountPct: 40,
+    ramp1: 70, ramp2: 90, ramp3: 100, structRate: 1000, irrigRate: 75, benchRate: 30, coverLife: 3, coverShare: 8,
+    unitsPerTrip: 700, minTrips: 104, workers: 2, supervisor: 20000, otherFixed: 50000, shedSqft: 300, rbOn: true } },
+  dragon: { unit: 'kg', units: 'kg', producedLabel: 'Harvest per year (full yield)', values: {
+    cropAcres: 2, landAcres: 2, yieldTPerAcre: 6, varCostPerAcre: 30000, lossPct: 10, price: 70, fullPriceShare: 85, discountPct: 50,
+    ramp1: 8, ramp2: 40, ramp3: 75, polesPerAcre: 450, plantsPerPole: 4, poleRate: 700, cuttingRate: 40, dripPerAcre: 45000, prepPerAcre: 30000,
+    unitsPerTrip: 700, minTrips: 20, workers: 1, supervisor: 0, otherFixed: 30000, shedSqft: 200, rbOn: true,
+    growArea: 0, structRate: 0, irrigRate: 0, benchRate: 0, coverLife: 0, coverShare: 0 } },
+};
+
+// Vehicle choices set the transport numbers (you can still edit them after).
+const VEHICLES = {
+  ace: { label: 'Hire a Tata Ace', values: { ratePerKm: 30, minFare: 1500, helper: 350, vehicle: 0, vehicleFixed: 0 }, perTrip: { plant: 320, kg: 700 } },
+  truck14: { label: 'Hire a 14 ft truck', values: { ratePerKm: 38, minFare: 4000, helper: 350, vehicle: 0, vehicleFixed: 0 }, perTrip: { plant: 1250, kg: 2500 } },
+  own: { label: 'Buy a used Tata Ace', values: { ratePerKm: 14, minFare: 0, helper: 0, vehicle: 300000, vehicleFixed: 30000 }, perTrip: { plant: 320, kg: 700 } },
+};
+// Plans compared in the report. The calculator can start from any of them (calculator.html#plan-c).
+const LEASE40 = { landMode: 'lease', distance: 40 };
+const PLANS = {
+  a: { label: 'A · Research defaults: buy 1 acre at 75 km, bought plantlets', model: 'nursery', values: {} },
+  b: { label: 'B · Same nursery, lease 1 acre at 40 km', model: 'nursery', values: { ...LEASE40 } },
+  c: { label: 'C · B + root your own cuttings', model: 'nursery', values: { ...LEASE40, varCost: 30 } },
+  d: { label: 'D · C + hire a 14 ft truck', model: 'nursery', values: { ...LEASE40, varCost: 30, vehicleMode: 'truck14' } },
+  e: { label: 'E · D + premium mix at ₹90', model: 'nursery', values: { ...LEASE40, varCost: 30, vehicleMode: 'truck14', price: 90 } },
+  f: { label: 'F · Small start: 1,000 m², lease 0.5 acre', model: 'nursery', values: { ...LEASE40, landAcres: 0.5, growArea: 1000, varCost: 30, workers: 1 } },
+  g: { label: 'G · E, but buy 1 acre at 75 km', model: 'nursery', values: { varCost: 30, vehicleMode: 'truck14', price: 90 } },
+  h: { label: 'H · Polyhouse capsicum, lease', model: 'polyhouse', values: { ...LEASE40 } },
+  i: { label: 'I · Polyhouse capsicum, buy 1 acre at 75 km', model: 'polyhouse', values: {} },
+  j: { label: 'J · Dragon fruit 2 acres, lease', model: 'dragon', values: { landMode: 'lease', distance: 75 } },
+  k: { label: 'K · Dragon fruit 2 acres, buy at 75 km', model: 'dragon', values: {} },
+};
+// Full input set for a plan: model preset, then the plan's changes, with the chosen truck's rates filled in.
+function planState(id) {
+  const p = PLANS[id];
+  const s = { ...GLOBAL, ...PRESETS[p.model].values, model: p.model, ...p.values };
+  const v = VEHICLES[s.vehicleMode];
+  return Object.assign(s, v.values, { unitsPerTrip: v.perTrip[p.model === 'nursery' ? 'plant' : 'kg'] }, p.values);
+}
+const DIRECTIONS = [
+  { v: 1, t: 'South, North or East (Shadnagar, Toopran, Gajwel, Bhongir, Nalgonda) ×1.0' },
+  { v: 1.7, t: 'West (Chevella–Vikarabad, Sangareddy–Zaheerabad) ×1.7' },
+  { v: 1.25, t: 'South-east Future City belt (Kandukur–Kadthal–Amangal) ×1.25' },
+  { v: 0.85, t: 'Sagar road (Ibrahimpatnam–Devarakonda) ×0.85' },
+];
+
+const isN = s => s.model === 'nursery', isP = s => s.model === 'polyhouse', isD = s => s.model === 'dragon';
+const perUnit = s => s.model === 'nursery' ? 'plant' : 'kg';
+
+const FIELDS = [
+  // ---- 1 Where
+  { sec: 'where', group: 'Distance and land', k: 'distance', label: 'Farm distance from Hyderabad', unit: 'km by road', min: 10, max: 250, step: 1, slider: true, hint: 'Road distance to where you sell, central Hyderabad.' },
+  { sec: 'where', k: 'dirMult', type: 'select', label: 'Direction from Hyderabad', options: DIRECTIONS, hint: 'Price multipliers fitted from the land data below. The west is pricier because of the IT corridor and highway widening.', src: 'landData', mode: 'buy' },
+  { sec: 'where', k: 'landAcres', label: 'Land area', unit: 'acres', min: 0.25, max: 20, step: 0.25 },
+  { sec: 'where', k: 'landQuote', label: 'Your own land quote', unit: '₹ lakh per acre, 0 = use the curve', min: 0, max: 3000, step: 1, mode: 'buy', hint: 'Got a real quote? Enter it to override the curve in the cash plan.' },
+  { sec: 'where', k: 'askGap', label: 'Discount you negotiate off the asking price', unit: '%', min: 0, max: 40, step: 1, mode: 'buy', hint: 'Listings are asking prices; 2025 saw distress sales. 10% is an estimate.', src: 'distress' },
+  { sec: 'where', k: 'regPct', label: 'Stamp duty, registration and broker', unit: '% of price', min: 0, max: 15, step: 0.5, mode: 'buy', hint: '7.5% in duties (5.5% stamp + 1.5% transfer + 0.5% registration) + about 1.5% broker (estimate).', src: ['stamp', 'stampGov'] },
+  { sec: 'where', k: 'legalCost', label: 'Title check, survey and lawyer', unit: '₹', min: 0, max: 300000, step: 5000, mode: 'buy', hint: 'Estimate; no published rate found.' },
+  { sec: 'where', k: 'costOfMoney', label: 'Yearly cost of the money tied up in land', unit: '% per year', min: 0, max: 20, step: 0.5, mode: 'buy', hint: 'Between what an FD pays (about 6–6.5%) and a personal loan (12–16%).', src: ['fd', 'plRealistic'] },
+  { sec: 'where', k: 'landGrowth', label: 'Expected land price rise', unit: '% per year', min: 0, max: 15, step: 0.5, mode: 'buy', hint: 'Keep 0 to test whether farming pays on its own. Farmland values fell in 2025.', src: 'distress' },
+  { sec: 'where', k: 'leaseRent', label: 'Lease rent', unit: '₹ per acre per year', min: 0, max: 150000, step: 1000, mode: 'lease', hint: 'Telangana average ₹14,936; ₹25,000–35,000 with assured water. Rent follows water, not distance.', src: ['lease', 'lease2', 'lease3'] },
+  { sec: 'where', group: 'Land price curve', k: 'curveP0', label: 'P0: price the curve starts from', unit: '₹ lakh per acre at 0 km', min: 50, max: 3000, step: 1, mode: 'buy', hint: 'Fitted to 59 listings and news reports: P(d) = Pf + (P0 − Pf) × e^(−d/λ).', src: 'landData' },
+  { sec: 'where', k: 'curvePf', label: 'Pf: price far away', unit: '₹ lakh per acre', min: 1, max: 200, step: 1, mode: 'buy' },
+  { sec: 'where', k: 'curveLambda', label: 'λ: how fast prices fall', unit: 'km', min: 5, max: 100, step: 1, mode: 'buy', hint: 'Price gap to the far price halves every 0.69 × λ km.' },
+  { sec: 'where', group: 'Transport', k: 'vehicleMode', type: 'select', label: 'Truck you use', options: Object.entries(VEHICLES).map(([v, o]) => ({ v, t: o.label })), hint: 'Changing this fills in the numbers below. A 14 ft truck carries about 4× more pots per trip.' },
+  { sec: 'where', k: 'ratePerKm', label: 'Charge per km of distance', unit: '₹ per km, return trip included', min: 0, max: 100, step: 1, hint: 'Hired Tata Ace about ₹30, 14 ft truck about ₹38. Own Ace: ₹7/km running cost × 2 ways.', src: ['porter', 'transrentals', 'truckguru'] },
+  { sec: 'where', k: 'minFare', label: 'Minimum charge per trip', unit: '₹', min: 0, max: 10000, step: 100, src: 'transrentals' },
+  { sec: 'where', k: 'toll', label: 'Tolls per trip', unit: '₹', min: 0, max: 1000, step: 10, hint: 'NH65 east ₹190 return; some roads have no plaza.', src: 'tollNH65' },
+  { sec: 'where', k: 'helper', label: 'Loader per trip', unit: '₹', min: 0, max: 1000, step: 50, src: 'mover' },
+  { sec: 'where', k: 'unitsPerTrip', label: s => isN(s) ? 'Pots per truck load' : 'Load per trip', unit: s => isN(s) ? '6-inch pots, racked' : 'kg', min: 50, max: 5000, step: 10, hint: s => isN(s) ? 'Tata Ace: about 320 racked or 125 in one layer. 14 ft truck: about 1,250.' : 'Tata Ace carries about 750 kg; a 14 ft truck 2.5–4 tonnes.', src: ['aceDeck', 'truck14'] },
+  { sec: 'where', k: 'minTrips', label: 'Fewest trips per year', unit: 'trips', min: 0, max: 400, step: 1, hint: s => isP(s) ? 'Fresh vegetables must go at least twice a week.' : 'Even small loads need regular deliveries.' },
+  { sec: 'where', k: 'damageBase', label: 'Damage on every trip', unit: '% of value', min: 0, max: 15, step: 0.5, hint: 'Estimate: 1–8% depending on covering, racks and heat. No Indian source found.' },
+  { sec: 'where', k: 'damagePer100', label: 'Extra damage per 100 km', unit: '% of value', min: 0, max: 10, step: 0.5, hint: 'Estimate. Longer hot rides stress plants and vegetables.' },
+  { sec: 'where', group: 'Your visits', k: 'visitsPerMonth', label: 'Your farm visits', unit: 'per month', min: 0, max: 30, step: 1, hint: 'You work full-time, so weekend visits are the realistic default.' },
+  { sec: 'where', k: 'carPerKm', label: 'Car cost', unit: '₹ per km', min: 0, max: 30, step: 0.5, hint: 'Petrol ₹116.15/L (8 Nov 2026) at 15–18 km/l plus wear.', src: ['fuel', 'carCost'] },
+  { sec: 'where', k: 'ownerHourValue', label: 'Value of your time', unit: '₹ per hour', min: 0, max: 2000, step: 50, hint: '₹70,000 ÷ 176 working hours ≈ ₹400. Used only in the distance chart, not in cash profit.' },
+  { sec: 'where', k: 'avgSpeed', label: 'Average speed, door to door', unit: 'km/h', min: 15, max: 80, step: 1 },
+  { sec: 'where', group: 'Wages', k: 'wageNear', label: 'Daily wage near the city (30 km)', unit: '₹ per day', min: 200, max: 1500, step: 10, hint: 'Market rate ₹500–650 near Hyderabad.', src: ['wageChevella'] },
+  { sec: 'where', k: 'wageFar', label: 'Daily wage far away (150 km+)', unit: '₹ per day', min: 200, max: 1500, step: 10, hint: 'Market rates can be ₹325–475 far away, but the June 2026 Telangana minimum is ₹538/day for rural unskilled work.', src: ['minWage', 'wageSeries', 'wageNalgonda'] },
+
+  // ---- 2 Setup
+  { sec: 'setup', group: 'Growing area', k: 'growArea', label: s => isN(s) ? 'Shade-net area' : 'Polyhouse area', unit: 'm² (1 acre = 4,047 m²)', min: 100, max: 4000, step: 50, slider: true, only: ['nursery', 'polyhouse'], hint: 'MIDH subsidy covers up to 4,000 m².' },
+  { sec: 'setup', k: 'cropAcres', label: 'Area planted', unit: 'acres', min: 0.25, max: 20, step: 0.25, only: ['dragon'] },
+  { sec: 'setup', group: 'Structure', k: 'structRate', label: s => isN(s) ? 'Shade-net house (GI pipe)' : 'Polyhouse (naturally ventilated)', unit: '₹ per m²', min: 100, max: 3000, step: 10, only: ['nursery', 'polyhouse'], hint: s => isN(s) ? 'Quotes ₹400–800; govt cost norm ₹710.' : 'Quotes ₹675–1,200; govt norm ₹844–1,060 by size.', src: s => isN(s) ? ['netHouse', 'nhbNorms'] : ['polyQuote', 'wbNorms', 'icarCapsicum'] },
+  { sec: 'setup', k: 'irrigRate', label: s => isN(s) ? 'Misting + irrigation' : 'Drip + fertigation', unit: '₹ per m²', min: 0, max: 500, step: 5, only: ['nursery', 'polyhouse'], src: s => isN(s) ? ['mist', 'drip'] : ['nhbNorms', 'drip'] },
+  { sec: 'setup', k: 'benchRate', label: s => isN(s) ? 'Weed mat, trays, benches' : 'Beds, mulch, trellis', unit: '₹ per m²', min: 0, max: 500, step: 5, only: ['nursery', 'polyhouse'], hint: 'Estimate; no source found.' },
+  { sec: 'setup', k: 'coverLife', label: s => isN(s) ? 'Replace the shade net every' : 'Replace the plastic film every', unit: 'years', min: 1, max: 10, step: 1, only: ['nursery', 'polyhouse'], hint: 'Estimate: net 3–5 years, film 2–4 years.' },
+  { sec: 'setup', k: 'coverShare', label: 'Replacement cost', unit: '% of structure cost', min: 0, max: 50, step: 1, only: ['nursery', 'polyhouse'], hint: 'Estimate: film ₹60–100 per m².' },
+  { sec: 'setup', group: 'Plantation', k: 'polesPerAcre', label: 'Poles per acre', unit: 'poles', min: 100, max: 1000, step: 10, only: ['dragon'], src: 'dragonICAR' },
+  { sec: 'setup', k: 'plantsPerPole', label: 'Plants per pole', unit: 'plants', min: 1, max: 6, step: 1, only: ['dragon'], src: 'vikaspedia' },
+  { sec: 'setup', k: 'poleRate', label: 'Concrete pole + ring', unit: '₹ each', min: 100, max: 3000, step: 50, only: ['dragon'], hint: 'Estimate ₹500–1,000; no source found.' },
+  { sec: 'setup', k: 'cuttingRate', label: 'Planting cutting', unit: '₹ each', min: 5, max: 200, step: 5, only: ['dragon'], src: 'dragonCuttings' },
+  { sec: 'setup', k: 'dripPerAcre', label: 'Drip irrigation', unit: '₹ per acre', min: 0, max: 200000, step: 5000, only: ['dragon'], src: 'drip' },
+  { sec: 'setup', k: 'prepPerAcre', label: 'Land preparation + manure', unit: '₹ per acre', min: 0, max: 200000, step: 5000, only: ['dragon'], hint: 'Estimate. Total set-up ₹4–5 lakh per acre matches growers’ reports.', src: 'dragonCost' },
+  { sec: 'setup', group: 'Site', k: 'borewell', label: 'Borewell + pump', unit: '₹', min: 0, max: 800000, step: 10000, hint: '400–600 ft with casing and a 5 HP pump.', src: ['borewell', 'borewellTG'] },
+  { sec: 'setup', k: 'tank', label: 'Water sump / tank', unit: '₹', min: 0, max: 500000, step: 10000, hint: 'Estimate; no source found.' },
+  { sec: 'setup', k: 'fenceRate', label: 'Fencing', unit: '₹ per running ft', min: 0, max: 400, step: 5, hint: 'Chain-link ₹60–200, barbed wire ₹50–75. One square acre ≈ 835 ft around.', src: 'fence' },
+  { sec: 'setup', k: 'shedSqft', label: 'Shed, store and worker room', unit: 'sq ft', min: 0, max: 3000, step: 50 },
+  { sec: 'setup', k: 'shedRate', label: 'Shed cost', unit: '₹ per sq ft', min: 0, max: 1500, step: 10, src: 'shed' },
+  { sec: 'setup', k: 'power', label: 'Power connection', unit: '₹', min: 0, max: 500000, step: 5000, hint: 'Estimate; depends on distance to the nearest transformer.' },
+  { sec: 'setup', k: 'tools', label: 'Tools, crates, sprayers', unit: '₹', min: 0, max: 500000, step: 5000, hint: 'Estimate.' },
+  { sec: 'setup', k: 'vehicle', label: 'Own vehicle', unit: '₹', min: 0, max: 1500000, step: 10000, when: s => s.vehicleMode === 'own', hint: 'Used 2018 Tata Ace ₹2.85 lakh.', src: 'aceUsed' },
+  { sec: 'setup', k: 'contingencyPct', label: 'Contingency', unit: '% of setup', min: 0, max: 50, step: 1, hint: 'For overruns. Telangana polyhouse buyers lost money to stalled contractors in 2015.', src: 'tgPolyLoss' },
+
+  // ---- 3 Running
+  { sec: 'running', group: 'What you grow', k: 'density', label: 'Plants per m² of shade net', unit: '6-inch pots, paths included', min: 5, max: 80, step: 1, only: ['nursery'], hint: '43 pots touching, about 25 with spacing and paths. 4-inch pots: about 60.', src: 'paes' },
+  { sec: 'running', k: 'cycleMonths', label: 'Months to saleable size', unit: 'months', min: 2, max: 24, step: 0.5, only: ['nursery'], hint: '6-inch Syngonium 3–4 months; Aglaonema 5–6+ months.', src: ['agristarts', 'gpn'] },
+  { sec: 'running', k: 'varCost', label: 'Cost per plant started', unit: '₹ (liner, pot, mix, feed, sleeve)', min: 5, max: 500, step: 1, only: ['nursery'], hint: 'Bought liner ₹20, 6-inch pot ₹9, potting mix ₹5–10, feed and sprays ₹2–5, sleeve ₹2–5. Rooting your own cuttings brings this to about ₹30.', src: ['tcSyngonium', 'kfri', 'pots', 'cocopeat'] },
+  { sec: 'running', k: 'yieldPerM2', label: 'Yield (coloured capsicum)', unit: 'kg per m² per year', min: 1, max: 40, step: 0.5, only: ['polyhouse'], hint: 'IARI trial 10.4; a 2025 farmer 6.7. English cucumber can reach 25.', src: ['iariYield', 'icarCapsicum'] },
+  { sec: 'running', k: 'varCostPerM2', label: 'Seedlings, fertiliser, sprays', unit: '₹ per m² per year', min: 20, max: 600, step: 5, only: ['polyhouse'], src: ['nhbNorms', 'palakkad'] },
+  { sec: 'running', k: 'yieldTPerAcre', label: 'Full yield (from year 4)', unit: 'tonnes per acre per year', min: 0.5, max: 15, step: 0.5, only: ['dragon'], hint: 'About 15 kg per pole; studies range from 1.3 to 12 t/acre.', src: ['vikaspedia', 'dte'] },
+  { sec: 'running', k: 'varCostPerAcre', label: 'Fertiliser, manure, sprays', unit: '₹ per acre per year', min: 0, max: 200000, step: 1000, only: ['dragon'], hint: 'Growers report ₹50,000–1 lakh including labour; wages are counted separately here.', src: 'dragonMaint' },
+  { sec: 'running', k: 'lossPct', label: s => isN(s) ? 'Plants that die or are thrown away' : 'Harvest lost or graded out', unit: '%', min: 0, max: 60, step: 1, hint: 'Estimate; no source found.' },
+  { sec: 'running', k: 'ramp1', label: 'Output in year 1', unit: '% of full', min: 0, max: 100, step: 5 },
+  { sec: 'running', k: 'ramp2', label: 'Output in year 2', unit: '% of full', min: 0, max: 100, step: 5 },
+  { sec: 'running', k: 'ramp3', label: 'Output in year 3', unit: '% of full (100% after)', min: 0, max: 100, step: 5 },
+  { sec: 'running', group: 'Selling', k: 'price', label: s => isN(s) ? 'Wholesale price per 6-inch plant' : isP(s) ? 'Wholesale price, coloured capsicum' : 'Farm-gate price', unit: s => '₹ per ' + perUnit(s), min: 1, max: 2000, step: 1,
+    hint: s => isN(s) ? 'Wholesale ₹40–150 (Aglaonema, areca); online retail is 2–4× more. Kadiyam sells small plants at ₹25–100.' : isP(s) ? '₹40–300 per kg, averaging about ₹100 in a 2025 case. Green capsicum at Bowenpally: ₹25–35.' : 'Fell from ₹130–200 to ₹40–70 per kg in 2025–26 as plantings boomed.',
+    src: s => isN(s) ? ['aglaonema', 'aglaRaj', 'areca', 'kadiyamListing'] : isP(s) ? ['icarCapsicum', 'bowenpally'] : ['dragonPrice', 'dragonTG', 'dragonCrash'] },
+  { sec: 'running', k: 'fullPriceShare', label: 'Sold at the full price', unit: '% of what survives', min: 0, max: 100, step: 1, hint: 'Selling volume is the main risk: 2,000 m² of pots means about 200 plants a day.' },
+  { sec: 'running', k: 'discountPct', label: 'The rest sells at', unit: '% of full price', min: 0, max: 100, step: 5, hint: 'Clearance to traders and landscapers, or B-grade produce.' },
+  { sec: 'running', k: 'marketingPct', label: 'Selling costs', unit: '% of sales', min: 0, max: 40, step: 1, hint: 'Commission, packing, listings. Estimate.' },
+  { sec: 'running', group: 'People and running costs', k: 'workers', label: 'Farm workers', unit: 'people', min: 0, max: 30, step: 1, hint: 'About 1.5 per 1,000 m² of nursery or polyhouse; about 150 days per acre for dragon fruit.', src: 'oregon' },
+  { sec: 'running', k: 'workDays', label: 'Working days per year', unit: 'days', min: 100, max: 365, step: 1, hint: 'One rest day a week is required by law.', src: 'labourCodes' },
+  { sec: 'running', k: 'supervisor', label: 'Supervisor / head gardener', unit: '₹ per month', min: 0, max: 100000, step: 1000, hint: 'Mali ₹13,000–18,000; farm supervisor ₹20,000–30,000. You work full-time, so someone must run the farm daily.', src: ['mali', 'farmManager'] },
+  { sec: 'running', k: 'otherFixed', label: 'Power, phone, insurance, licence', unit: '₹ per year', min: 0, max: 500000, step: 5000, hint: s => isN(s) ? 'Nursery power is billed at ₹4 per unit; farm pumps are free.' : 'Farm pumps get free power in Telangana.', src: 'tariff' },
+  { sec: 'running', k: 'vehicleFixed', label: 'Own vehicle insurance and upkeep', unit: '₹ per year', min: 0, max: 300000, step: 5000, when: s => s.vehicleMode === 'own', src: 'aceIns' },
+  { sec: 'running', k: 'maintPct', label: 'Maintenance', unit: '% of setup cost per year', min: 0, max: 15, step: 0.5, hint: 'Estimate.' },
+
+  // ---- 4 Loan
+  { sec: 'loan', k: 'salary', label: 'Your monthly take-home pay', unit: '₹', min: 0, max: 1000000, step: 1000 },
+  { sec: 'loan', k: 'expenses', label: 'Your monthly living costs', unit: '₹ (example: change it)', min: 0, max: 500000, step: 1000 },
+  { sec: 'loan', k: 'savings', label: 'Your own money for the farm', unit: '₹ (example: change it)', min: 0, max: 50000000, step: 10000 },
+  { sec: 'loan', k: 'loanAuto', type: 'check', label: 'Borrow whatever my savings do not cover' },
+  { sec: 'loan', k: 'loanAmount', label: 'Loan amount', unit: '₹', min: 0, max: 50000000, step: 10000, when: s => !s.loanAuto },
+  { sec: 'loan', k: 'loanRate', label: 'Loan interest', unit: '% per year', min: 0, max: 30, step: 0.25, hint: 'Personal loans 10–16% (13–16% is realistic for a first loan). Secured farm loans need land as security.', src: ['plRealistic', 'plRates', 'sbiPoly'] },
+  { sec: 'loan', k: 'loanYears', label: 'Loan period', unit: 'years', min: 1, max: 20, step: 1, hint: 'Personal loans run up to 5–6 years.' },
+  { sec: 'loan', k: 'foirPct', label: 'Bank limit on all EMIs', unit: '% of take-home', min: 10, max: 80, step: 1, hint: 'Usually 40–50% for salaried people.', src: 'foir' },
+
+  // ---- 5 Support
+  { sec: 'support', k: 'subsidyOn', type: 'check', label: 'Count the MIDH subsidy (only if sanctioned before you build)', src: 'midh' },
+  { sec: 'support', k: 'structSubsidyPct', label: 'Subsidy on the structure', unit: '% of govt cost norm', min: 0, max: 100, step: 5, only: ['nursery', 'polyhouse'], hint: 'Cost norm ₹710/m² for shade net; ₹844–1,060/m² for polyhouses by size; up to 4,000 m².', src: ['midh', 'nhbNorms'] },
+  { sec: 'support', k: 'microSubsidyPct', label: 'Subsidy on drip / misting', unit: '%', min: 0, max: 100, step: 5, hint: '55% for small and marginal farmers, 45% for others (central share). Telangana top-up unconfirmed.', src: 'pmksy' },
+  { sec: 'support', k: 'rbOn', type: 'check', label: 'Count Rythu Bharosa (needs your crop booked each season)', mode: 'buy', src: ['rythuBharosa', 'rbCropped'] },
+  { sec: 'support', k: 'rbPerAcre', label: 'Rythu Bharosa', unit: '₹ per acre per year', min: 0, max: 50000, step: 500, mode: 'buy' },
+];
+
+const LOAN_NOTES = [
+  ['Bank loans for buying farmland are meant for small and marginal farmers, tenants and sharecroppers. As a salaried buyer, expect to pay for land from savings or a personal loan ', { src: 'sbiLand' }, ' ', { src: 'bobLand' }, '.'],
+  ['Shade-net and polyhouse term loans exist, for example Central Bank (10% margin, up to 7 years with a 3–12 month break), but they need the land as security ', { src: 'centPoly' }, ' ', { src: 'sbiPoly' }, '.'],
+  ['RBI raised the repo rate to 5.50% on 7 Oct 2026, so loan rates are rising, not falling ', { src: 'repo' }, ' ', { src: 'mclr' }, '.'],
+  ['NHB subsidy (40–50%) is credit-linked: it needs a bank term loan and is paid into the loan account after inspection ', { src: 'nhb' }, '. The Agri Infra Fund gives 3% interest help on eligible projects ', { src: 'aif' }, '.'],
+];
+const SUPPORT_NOTES = [
+  ['Not available to you: PM-KISAN (land bought after 1 Feb 2019 does not count) ', { src: 'pmkisan' }, '; Rythu Bima (premium unpaid, cover lapsed in Aug 2026) ', { src: 'rythuBima' }, '; crop insurance (PMFBY is not running in Telangana) ', { src: 'pmfby' }, '.'],
+  ['Subsidies come after you build. You pay the full cost first, so the money needed at the start does not shrink. Apply to the District Horticulture Officer and get sanction before building ', { src: 'midh' }, ' ', { src: 'tgHorti' }, '.'],
+  ['Power: farm pumps are free, but a horticulture nursery connection is billed at ₹4 per unit ', { src: 'tariff' }, '.'],
+];
+
+</script>
+<script>
+// ===================== Calculator UI =====================
+const $ = (q, r = document) => r.querySelector(q);
+const STORE_KEY = 'exotic-plant-calc';
+
+function defaultsFor(model, keep) {
+  const base = { ...GLOBAL, ...PRESETS[model].values, model };
+  if (keep) for (const k of KEEP_ON_SWITCH) if (k in keep) base[k] = keep[k];
+  const v = VEHICLES[base.vehicleMode];
+  if (v) base.unitsPerTrip = v.perTrip[model === 'nursery' ? 'plant' : 'kg'];
+  return base;
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return null;
+    const o = JSON.parse(raw);
+    if (!o || o._v !== DATA_VERSION || !PRESETS[o.model]) return null;
+    return { ...defaultsFor(o.model), ...o };
+  } catch (e) { return null; }
+}
+function saveState() { try { localStorage.setItem(STORE_KEY, JSON.stringify({ ...S, _v: DATA_VERSION })); } catch (e) { /* storage blocked: fine */ } }
+
+let S = loadState() || defaultsFor('nursery');
+
+const val = (x) => typeof x === 'function' ? x(S) : x;
+const visible = f => (!f.only || f.only.includes(S.model)) && (!f.mode || f.mode === S.landMode) && (!f.when || f.when(S));
+
+function srcLink(key) {
+  const s = SRC[key];
+  const a = document.createElement('a');
+  a.className = 'src';
+  a.href = s ? s.u : '#';
+  a.textContent = s ? s.t : key;
+  if (s && !s.u.startsWith('#')) { a.target = '_blank'; a.rel = 'noopener'; }
+  return a;
+}
+
+function fieldRow(f) {
+  const row = document.createElement('div');
+  const id = 'f-' + f.k;
+  if (f.type === 'check') {
+    row.className = 'field check';
+    const input = document.createElement('input'); input.type = 'checkbox'; input.id = id; input.checked = !!S[f.k];
+    input.addEventListener('change', () => { S[f.k] = input.checked; if (f.k === 'loanAuto') renderFields(); afterChange(); });
+    const lab = document.createElement('label'); lab.htmlFor = id; lab.textContent = val(f.label);
+    row.append(input, lab);
+  } else if (f.type === 'select') {
+    row.className = 'field';
+    const lab = document.createElement('label'); lab.htmlFor = id; lab.textContent = val(f.label);
+    const sel = document.createElement('select'); sel.id = id;
+    for (const o of f.options) { const op = document.createElement('option'); op.value = String(o.v); op.textContent = o.t; sel.appendChild(op); }
+    sel.value = String(S[f.k]);
+    sel.addEventListener('change', () => {
+      const raw = sel.value; S[f.k] = isFinite(parseFloat(raw)) && String(parseFloat(raw)) === raw ? parseFloat(raw) : raw;
+      if (f.k === 'vehicleMode') { const v = VEHICLES[S.vehicleMode]; Object.assign(S, v.values); S.unitsPerTrip = v.perTrip[S.model === 'nursery' ? 'plant' : 'kg']; }
+      renderFields(); afterChange();
+    });
+    row.append(lab, sel);
+  } else {
+    row.className = 'field';
+    const lab = document.createElement('label'); lab.htmlFor = id; lab.textContent = val(f.label);
+    const u = val(f.unit);
+    if (u) { const span = document.createElement('span'); span.className = 'unit'; span.textContent = '(' + u + ')'; lab.append(' ', span); }
+    const ctl = document.createElement('div'); ctl.className = 'ctl';
+    const input = document.createElement('input');
+    Object.assign(input, { type: 'number', id, min: f.min, max: f.max, step: f.step, value: S[f.k] });
+    input.inputMode = 'decimal';
+    ctl.appendChild(input);
+    let range = null;
+    if (f.slider) {
+      range = document.createElement('input');
+      Object.assign(range, { type: 'range', id: id + '-r', min: f.min, max: f.max, step: f.step, value: S[f.k] });
+      range.setAttribute('aria-label', val(f.label) + ' slider');
+      ctl.appendChild(range);
+    }
+    input.addEventListener('input', () => {
+      const v = parseFloat(input.value);
+      if (!isFinite(v)) return;
+      if (range) range.value = v;
+      S[f.k] = v; afterChange();
+    });
+    if (range) range.addEventListener('input', () => { input.value = range.value; S[f.k] = parseFloat(range.value); afterChange(); });
+    row.append(lab, ctl);
+  }
+  const hint = val(f.hint), srcs = [].concat(val(f.src) || []);
+  if (hint || srcs.length) {
+    const p = document.createElement('p'); p.className = 'hint';
+    if (hint) p.append(hint + ' ');
+    for (const key of srcs) { p.appendChild(srcLink(key)); p.append(' '); }
+    row.appendChild(p);
+  }
+  return row;
+}
+
+function renderFields() {
+  for (const sec of ['where', 'setup', 'running', 'loan', 'support']) {
+    const host = $('#in-' + sec);
+    host.replaceChildren();
+    let group = null;
+    for (const f of FIELDS) {
+      if (f.sec !== sec || !visible(f)) continue;
+      if (f.group && f.group !== group) {
+        group = f.group;
+        const h = document.createElement('h3'); h.className = 'grp'; h.textContent = group; host.appendChild(h);
+      }
+      host.appendChild(fieldRow(f));
+    }
+  }
+  document.querySelectorAll('input[name=model]').forEach(r => { r.checked = r.value === S.model; });
+  document.querySelectorAll('input[name=landMode]').forEach(r => { r.checked = r.value === S.landMode; });
+}
+
+// ---------- output helpers ----------
+function kv(host, pairs) {
+  host.replaceChildren();
+  for (const [k, v, chip] of pairs) {
+    const d = document.createElement('div');
+    const s = document.createElement('span'); s.textContent = k;
+    const b = document.createElement('b'); b.textContent = v;
+    d.append(s, b);
+    if (chip) { const c = document.createElement('span'); c.className = 'chip ' + chip[0]; c.textContent = chip[1]; c.style.justifySelf = 'start'; d.appendChild(c); }
+    host.appendChild(d);
+  }
+}
+function setTile(id, value, sub, chip) {
+  $('#' + id).textContent = value;
+  const s = $('#' + id + '-s');
+  s.replaceChildren();
+  if (chip) { const c = document.createElement('span'); c.className = 'chip ' + chip[0]; c.textContent = chip[1]; s.append(c, ' '); }
+  if (sub) s.append(sub);
+}
+function para(host, parts) {
+  const p = document.createElement('p');
+  for (const part of parts) {
+    if (typeof part === 'string') p.append(part);
+    else if (part.src) p.appendChild(srcLink(part.src));
+    else if (part.b) { const b = document.createElement('strong'); b.textContent = part.b; p.appendChild(b); }
+    else if (part.chip) { const c = document.createElement('span'); c.className = 'chip ' + part.chip[0]; c.textContent = part.chip[1]; p.appendChild(c); }
+  }
+  host.appendChild(p);
+  return p;
+}
+const unitName = () => PRESETS[S.model].unit;
+const money = v => fmt.money(v);
+
+// ---------- compute ----------
+let charts = {};
+function compute() {
+  const W = { ...S, ramp: [S.ramp1 / 100, S.ramp2 / 100, S.ramp3 / 100, 1] };
+  const base = cashflow({ ...W, loanAmount: 0 });
+  const loanAmt = S.loanAuto ? Math.max(0, base.upfront - S.savings) : S.loanAmount;
+  const st = { ...W, loanAmount: loanAmt };
+  const cf = cashflow(st);
+  const prod = production(st);
+  const opt = optimiseDistance(st, prod, 15, 250);
+  const cfm = closedForm(st, prod);
+  const lc = loanCapacity(st, cf.emi);
+  return { st, cf, prod, opt, cfm, lc };
+}
+
+function update() {
+  const { st, cf, prod, opt, cfm, lc } = compute();
+  const U = unitName();
+  const m5 = cf.mature;
+
+  // ---- summary tiles
+  const parts = [];
+  if (cf.landBuy > 0) parts.push('land ' + money(cf.landBuy));
+  parts.push('setup ' + money(cf.setup + cf.contingency), 'working money ' + money(cf.workingCapital));
+  setTile('t-upfront', money(cf.upfront), parts.join(' · ') + (cf.subsidy > 0 ? `. Subsidy may return ${money(cf.subsidy)} later.` : '.'));
+  setTile('t-profit', money(m5.op), `Year 5, before loan payments. Sales ${money(m5.revenue)}.`, m5.op > 0 ? ['good', 'Profit'] : ['crit', 'Loss']);
+  const pb = cf.payback;
+  setTile('t-payback', pb == null ? 'Over 10 years' : pb.toFixed(1) + ' years', S.landMode === 'buy' ? 'Counts the land price as money spent.' : 'Lease rent is paid every year.',
+    pb == null ? ['crit', 'Too slow'] : pb <= 5 ? ['good', 'Good'] : pb <= 8 ? ['warn', 'Slow'] : ['crit', 'Too slow']);
+  const emiPct = lc.emiPct;
+  setTile('t-emi', money(cf.emi), cf.loan > 0 ? `${emiPct.toFixed(0)}% of your take-home, on a ${money(cf.loan)} loan.` : 'No loan needed.',
+    cf.loan <= 0 ? ['good', 'No loan'] : emiPct <= 30 && lc.leftAfterEmi >= 0 ? ['good', 'Comfortable'] : emiPct <= S.foirPct && lc.leftAfterEmi >= 0 ? ['warn', 'Tight'] : ['crit', 'Unsafe']);
+  setTile('t-best', opt.best.d + ' km', S.landMode === 'buy'
+    ? `Lowest yearly land + transport + travel + wages. You chose ${S.distance} km.`
+    : `Leased land costs the same anywhere, so closer is cheaper. You chose ${S.distance} km.`);
+
+  // ---- verdict
+  const v = $('#verdict'); v.replaceChildren();
+  if (m5.op <= 0) para(v, [{ b: 'At these numbers the farm loses money every year. ' }, `To break even you need a full price of about ${fmt.inr(cf.breakEvenPrice)} per ${U} (now ${fmt.inr(S.price)}), more sales at full price, or lower costs.`]);
+  else if (pb == null) para(v, [{ b: `The farm earns ${money(m5.op)} a year, but that does not repay ${money(cf.upfront)} within 10 years. ` }, S.landMode === 'buy' ? 'Most of the money sits in land. Try leasing, or start smaller.' : 'Try a smaller start or better prices.']);
+  else para(v, [{ b: `The farm pays back its starting money in about ${pb.toFixed(1)} years ` }, `and then earns about ${money(m5.op)} a year. Break-even full price: ${fmt.inr(cf.breakEvenPrice)} per ${U}.`]);
+  if (cf.loan > 0) para(v, [`Loan: ${money(cf.loan)} at ${S.loanRate}% for ${S.loanYears} years = ${money(cf.emi)} a month (${emiPct.toFixed(0)}% of take-home). `,
+    lc.leftAfterEmi >= 0 ? `After living costs and EMI you keep ${money(lc.leftAfterEmi)} a month even if the farm earns nothing.` : `If the farm earns nothing, your salary falls ${money(-lc.leftAfterEmi)} a month short of living costs plus EMI.`]);
+  const lowWage = Math.min(S.wageNear, S.wageFar) < LEGAL_MIN_WAGE;
+  if (lowWage) para(v, [{ chip: ['warn', 'Wage check'] }, ` A wage below ₹${LEGAL_MIN_WAGE}/day may break Telangana's June 2026 minimum wage for rural unskilled work `, { src: 'minWage' }, '.']);
+
+  // ---- 1 where
+  const xs = opt.curve.map(c => c.d);
+  const series = [
+    { name: 'Total', color: 'var(--ink)', values: opt.curve.map(c => c.total), width: 2.5 },
+    { name: 'Transport + damage', color: 'var(--s1)', values: opt.curve.map(c => c.transport) },
+    { name: S.landMode === 'buy' ? 'Land (yearly cost of the money)' : 'Land lease rent', color: 'var(--s2)', values: opt.curve.map(c => c.land) },
+    { name: 'Your visits (car + time)', color: 'var(--s3)', values: opt.curve.map(c => c.owner) },
+    { name: 'Wages', color: 'var(--s4)', values: opt.curve.map(c => c.labour) },
+  ];
+  const lg = $('#lg-loc'); lg.replaceChildren();
+  for (const s of series) { const sp = document.createElement('span'); const i = document.createElement('i'); i.style.background = s.color; if (s.width) i.style.height = '4px'; sp.append(i, s.name); lg.appendChild(sp); }
+  charts.loc = () => lineChart($('#c-loc'), {
+    x: xs, series, label: 'Yearly location costs by distance from Hyderabad',
+    xFmt: (v, tip) => tip ? v + ' km from Hyderabad' : v + ' km', yFmt: fmt.lakhAxis, yTip: v => money(v),
+    xTitle: 'Road distance from Hyderabad (km)', yTitle: 'Cost per year',
+    vlines: [{ x: S.distance, label: 'You: ' + S.distance + ' km' }],
+    dot: { x: opt.best.d, y: opt.best.total, label: 'Lowest: ' + opt.best.d + ' km' },
+  });
+  charts.loc();
+  fillTable($('#tv-loc'), ['Distance', 'Total', 'Transport + damage', 'Land', 'Your visits', 'Wages'],
+    opt.curve.filter(c => c.d % 10 === 0 || c.d === opt.best.d).map(c => [c.d + ' km', money(c.total), money(c.transport), money(c.land), money(c.owner), money(c.labour)]), [1, 2, 3, 4, 5]);
+
+  const here = locationCosts(S.distance, st, prod, true);
+  kv($('#o-where'), [
+    [S.landMode === 'buy' ? 'Asking price at ' + S.distance + ' km' : 'Lease rent', S.landMode === 'buy' ? money(landPriceLakh(S.distance, S) * 1e5) + ' per acre' : money(S.leaseRent) + ' per acre/yr'],
+    ['Yearly location cost at ' + S.distance + ' km', money(here.total)],
+    ['Lowest yearly cost (at ' + opt.best.d + ' km)', money(opt.best.total)],
+    ['Truck trips per year', fmt.int(prod.trips)],
+    ['Cost of one truck trip at ' + S.distance + ' km', money(tripCost(S.distance, S))],
+    ['Each extra km adds', money(cfm.M) + ' per year'],
+  ]);
+  const visits = S.visitsPerMonth * 12;
+  const lines = [
+    'C(d) = Land(d) + Transport(d) + Visits(d) + Wages(d)',
+    '',
+    'Land(d)      = A × m × P(d) × (1 − gap) × (1 + s) × (i − g)',
+    'P(d)         = Pf + (P0 − Pf) × e^(−d/λ)                  ₹ lakh/acre',
+    'Transport(d) = N × [max(Fmin, c × d) + toll + loader] + R × (δ0 + δ1 × d/100)',
+    'Visits(d)    = 12V × 2d × (c_car + τ / speed)',
+    'Wages(d)     = L × D × W(d)',
+    '',
+    'Set dC/dd = 0  →  d* = λ × ln( K / (λ × M) )',
+    'K = A × m × (P0 − Pf) × (1 − gap) × (1 + s) × (i − g)      land cost distance can remove',
+    'M = N×c + R×δ1/100 + 24V×(c_car + τ/speed) + L×D×W′        ₹ added per extra km per year',
+    '',
+    'Your numbers:',
+    `A=${S.landAcres} acre  m=×${S.dirMult}  P0=₹${S.curveP0}L  Pf=₹${S.curvePf}L  λ=${S.curveLambda} km  gap=${S.askGap}%  s=${S.regPct}%  i−g=${Math.max(0, S.costOfMoney - S.landGrowth)}%`,
+    `N=${fmt.int(prod.trips)} trips  c=₹${S.ratePerKm}/km  Fmin=₹${S.minFare}  R=${money(prod.revenue)}  δ1=${S.damagePer100}%`,
+    `V=${S.visitsPerMonth}/month  c_car=₹${S.carPerKm}/km  τ=₹${S.ownerHourValue}/h  speed=${S.avgSpeed} km/h  L=${S.workers}  D=${S.workDays}  W′=₹${((S.wageFar - S.wageNear) / 120).toFixed(2)}/day per km`,
+    `K = ${money(cfm.K)} per year      M = ${money(cfm.M)} per km per year`,
+  ];
+  if (S.landMode === 'buy') {
+    if (cfm.dStar === Infinity) lines.push('M ≤ 0, so moving farther always saves money (until wages stop falling).');
+    else lines.push(`d* = ${S.curveLambda} × ln(${money(cfm.K)} ÷ (${S.curveLambda} × ${money(cfm.M)})) = ${cfm.dStar.toFixed(0)} km`);
+  } else lines.push('Leasing: rent does not fall with distance, so every extra km only adds cost.');
+  $('#o-formula').textContent = lines.join('\n');
+  const fn = $('#o-formula-note'); fn.replaceChildren();
+  fn.append(`The formula ignores the minimum truck fare and the wage limits, so it can differ by a few km from the chart (${opt.best.d} km), which checks every distance. This is the classic land-rent trade-off `);
+  fn.appendChild(srcLink('thunen'));
+  fn.append('.');
+
+  const pts = LAND_POINTS;
+  charts.land = () => scatterChart($('#c-land'), {
+    points: pts.map(p => ({ x: p.km, y: p.typ, label: p.place, sub: `${p.corridor}, ${p.km} km · ${p.kind}` })),
+    curve: x => landPriceLakh(x, S), xMax: 160, yTicks: [10, 20, 50, 100, 200, 500, 1000],
+    yFmt: v => v >= 100 ? '₹' + (v / 100) + ' Cr' : '₹' + v + ' L', yTip: v => money(v * 1e5) + ' per acre',
+    xTitle: 'Road distance from Hyderabad (km)', yTitle: 'Price per acre (log scale)', label: 'Land price data points and fitted curve',
+  });
+  charts.land();
+  fillTable($('#tv-land'), ['Place', 'Direction', 'km', 'Typical', 'Range', 'Type', 'Source'],
+    pts.map(p => [p.place, p.corridor, String(p.km), money(p.typ * 1e5), p.lo === p.hi ? '–' : money(p.lo * 1e5) + ' – ' + money(p.hi * 1e5), p.kind + (p.fit === false ? ' (not fitted)' : ''), { href: p.url, text: 'open' }]), [2, 3]);
+
+  // ---- 2 setup
+  const capRows = cf.items.map(it => ({ label: it.label, value: it.amount }));
+  if (cf.landBuy > 0) capRows.unshift({ label: 'Land + duties + checks', value: cf.landBuy });
+  capRows.push({ label: 'Working money (first cycle)', value: cf.workingCapital });
+  capRows.push({ label: 'Contingency', value: cf.contingency });
+  hbars($('#c-capex'), [...capRows].sort((a, b) => b.value - a.value).filter(r => r.value > 0), money);
+  fillTable($('#o-capex'), ['Item', 'Amount'], [
+    ...capRows.map(r => [r.label, money(r.value)]),
+    { cls: 'total', cells: ['Money needed at the start', money(cf.upfront)] },
+    ...(cf.subsidy > 0 ? [['Subsidy that may come back in year 1', '−' + money(cf.subsidy)], { cls: 'total', cells: ['Net after subsidy', money(cf.upfront - cf.subsidy)] }] : []),
+  ], [1]);
+
+  // ---- 3 running
+  kv($('#o-running'), [
+    [PRESETS[S.model].producedLabel, fmt.int(prod.produced) + ' ' + PRESETS[S.model].units],
+    ['Sold per year', fmt.int(prod.sold) + ' ' + PRESETS[S.model].units],
+    ['Average price received', fmt.inr(prod.avgPrice) + ' per ' + U],
+    ['Break-even full price', cf.breakEvenPrice == null ? '–' : fmt.inr(cf.breakEvenPrice) + ' per ' + U],
+    ['Sales per year (full)', money(m5.revenue)],
+    ['Profit per year (full)', money(m5.op), m5.op > 0 ? ['good', 'Profit'] : ['crit', 'Loss']],
+    ['10-year return (IRR, land resold at the end)', cf.irr == null ? 'Below −99%' : (cf.irr * 100).toFixed(1) + '% a year', cf.irr != null && cf.irr * 100 >= S.loanRate ? ['good', 'Beats loan rate'] : ['crit', 'Below loan rate']],
+  ]);
+  const yrs = cf.rows.map(r => r.y === 0 ? 'Start' : 'Y' + r.y);
+  charts.cash = () => cashChart($('#c-cash'), { labels: yrs, bars: cf.rows.map(r => r.project), line: cf.rows.map(r => r.cumProject), barName: 'Cash this year', lineName: 'Running total', yFmt: fmt.lakhAxis, yTip: money, label: 'Yearly cash and running total' });
+  charts.cash();
+  fillTable($('#tv-cash'), ['Year', 'Sales', 'Running cost', 'Operating profit', 'Net/film renewal', 'Subsidy', 'Cash this year', 'Running total', 'Loan EMI paid', 'Cash to you'],
+    cf.rows.map(r => [r.y === 0 ? 'Start' : String(r.y), money(r.revenue), money(r.opex), money(r.op), money(r.replace), money(r.subsidy), money(r.project), money(r.cumProject), money(r.debt), money(r.you)]), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  fillTable($('#o-pl'), ['Year 5 (full production)', 'Per year'], [
+    ['Sales', money(m5.revenue)],
+    [S.model === 'nursery' ? 'Liners, pots, potting mix, feed, sprays' : 'Seedlings, fertiliser, sprays', '−' + money(m5.inputCost)],
+    ['Wages + supervisor', '−' + money(m5.labour)],
+    ['Transport + transit damage', '−' + money(m5.transport)],
+    ['Your car trips to the farm', '−' + money(m5.owner)],
+    ['Power, phone, insurance, licence' + (S.vehicleFixed > 0 ? ', vehicle' : ''), '−' + money(S.otherFixed + S.vehicleFixed)],
+    ['Maintenance', '−' + money(m5.maint)],
+    ['Selling costs', '−' + money(m5.marketing)],
+    ...(S.landMode === 'lease' ? [['Lease rent', '−' + money(m5.lease)]] : []),
+    ...(m5.support > 0 ? [['Rythu Bharosa', '+' + money(m5.support)]] : []),
+    { cls: 'total', cells: ['Operating profit', money(m5.op)] },
+  ], [1]);
+
+  // ---- 4 loan
+  const dscr = cf.emi > 0 ? m5.op / (cf.emi * 12) : null;
+  kv($('#o-loan'), [
+    ['Loan amount', money(cf.loan)],
+    ['EMI per month', money(cf.emi)],
+    ['EMI share of take-home', emiPct.toFixed(0) + '%', cf.loan <= 0 ? ['good', 'No loan'] : emiPct <= 30 ? ['good', 'Comfortable'] : emiPct <= S.foirPct ? ['warn', 'Tight'] : ['crit', 'Over the bank limit']],
+    ['Left each month after costs and EMI', money(lc.leftAfterEmi), lc.leftAfterEmi >= 0 ? ['good', 'Salary covers it'] : ['crit', 'Salary falls short']],
+    ['Most a bank may lend on your salary', money(lc.maxLoan)],
+    ['Loan your salary can carry safely', money(lc.safeLoan)],
+    ['Total interest over the loan', money(cf.totalInterest)],
+    ['Farm profit ÷ yearly EMI', dscr == null ? '–' : dscr.toFixed(2) + '×', dscr == null ? null : dscr >= 1.5 ? ['good', 'Farm can repay'] : dscr >= 1 ? ['warn', 'Thin cover'] : ['crit', 'Farm cannot repay']],
+  ]);
+  const ln = $('#o-loan-note'); ln.replaceChildren();
+  para(ln, [`Safe loan = the EMI your salary can pay after living costs (capped at ${S.foirPct}% of take-home), turned into a loan at ${S.loanRate}% for ${S.loanYears} years. Banks use a similar rule called FOIR `, { src: 'foir' }, '.']);
+  for (const n of LOAN_NOTES) para(ln, n);
+
+  // ---- 5 support
+  const rb = S.landMode === 'buy' && S.rbOn ? S.rbPerAcre * S.landAcres : 0;
+  kv($('#o-support'), [
+    ['Subsidy on structure + irrigation', money(cf.subsidy)],
+    ['Rythu Bharosa per year', money(rb)],
+    ['Money needed after subsidy returns', money(cf.upfront - cf.subsidy)],
+  ]);
+  const sn = $('#o-support-note'); sn.replaceChildren();
+  for (const n of SUPPORT_NOTES) para(sn, n);
+
+  $('#data-date').textContent = DATA_NOTE;
+}
+
+let raf = 0;
+function afterChange() { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { update(); saveState(); }); }
+
+document.querySelectorAll('input[name=model]').forEach(r => r.addEventListener('change', () => {
+  if (!r.checked) return;
+  S = defaultsFor(r.value, S);
+  renderFields(); afterChange();
+}));
+document.querySelectorAll('input[name=landMode]').forEach(r => r.addEventListener('change', () => {
+  if (!r.checked) return;
+  S.landMode = r.value; renderFields(); afterChange();
+}));
+$('#reset').addEventListener('click', () => { S = defaultsFor(S.model); $('#plan').value = ''; renderFields(); afterChange(); });
+
+// Start from one of the report's plans: the picker, or a link such as calculator.html#plan-f
+const planSel = $('#plan');
+for (const [id, p] of Object.entries(PLANS)) { const o = document.createElement('option'); o.value = id; o.textContent = p.label; planSel.appendChild(o); }
+function applyPlan(id) {
+  if (!PLANS[id]) return false;
+  S = planState(id); planSel.value = id;
+  renderFields(); afterChange();
+  return true;
+}
+planSel.addEventListener('change', () => applyPlan(planSel.value));
+function planFromHash() {
+  const m = /^#plan-([a-z])$/.exec(location.hash);
+  if (m && applyPlan(m[1])) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* keep the hash */ } }
+}
+window.addEventListener('hashchange', planFromHash);
+
+renderFields();
+update();
+planFromHash();
+for (const [id, key] of [['c-loc', 'loc'], ['c-land', 'land'], ['c-cash', 'cash']]) {
+  const host = document.getElementById(id);
+  let last = host.clientWidth;
+  new ResizeObserver(() => { const w = host.clientWidth; if (Math.abs(w - last) > 4) { last = w; charts[key] && charts[key](); } }).observe(host);
+}
+
+</script>
+</body>
+</html>

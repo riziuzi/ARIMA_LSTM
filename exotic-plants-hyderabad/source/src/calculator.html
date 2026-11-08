@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Exotic Plant Farm Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,600..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/*@@BASE_CSS@@*/
+
+/* ---------- Calculator ---------- */
+header.top { border-bottom: 1px solid var(--line); background: var(--surface); }
+header.top .wrap { padding-block: 28px 22px; display: grid; gap: 10px; }
+header.top .lede { color: var(--ink-2); max-width: 70ch; }
+header.top nav { display: flex; flex-wrap: wrap; gap: 8px 18px; font-weight: 700; font-size: var(--step--1); }
+main.wrap { padding-block: 22px 64px; display: grid; gap: 28px; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: end; }
+.seg { border: 0; margin: 0; padding: 0; display: grid; gap: 6px; min-width: 0; }
+.seg legend { font-weight: 700; font-size: var(--step--1); color: var(--ink-2); padding: 0; margin-bottom: 6px; }
+.seg .opts { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--axis); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.seg label { padding: 9px 14px; cursor: pointer; font-weight: 700; font-size: var(--step--1); color: var(--ink-2); border-right: 1px solid var(--axis); user-select: none; }
+.seg label:last-of-type { border-right: 0; }
+.seg input:checked + label { background: var(--accent); color: var(--accent-ink); }
+.seg input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: -4px; }
+button.ghost { font: 700 var(--step--1)/1 var(--font-body); color: var(--accent); background: transparent; border: 1px solid var(--axis); border-radius: 10px; padding: 10px 14px; cursor: pointer; }
+button.ghost:hover { background: var(--accent-soft); }
+
+/* Summary */
+.summary { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 16px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px 18px; }
+.tile { display: grid; gap: 4px; align-content: start; padding-right: 8px; min-width: 0; }
+.tile .k { font-size: var(--step--1); color: var(--ink-2); font-weight: 700; }
+.tile .v { font: 700 var(--step-3)/1.1 var(--font-body); letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.tile .s { font-size: 0.8rem; color: var(--muted); line-height: 1.35; }
+.verdict { border-top: 1px solid var(--line); padding-top: 14px; display: grid; gap: 6px; }
+.verdict p { max-width: 90ch; }
+
+/* Sections */
+section.block { display: grid; gap: 16px; }
+section.block > header { display: grid; gap: 6px; }
+section.block > header p { color: var(--ink-2); max-width: 75ch; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 880px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+.inputs { display: grid; gap: 14px; }
+.inputs h3.grp { font-size: var(--step-0); font-family: var(--font-body); font-stretch: 100%; font-weight: 700; color: var(--ink); padding-top: 6px; border-top: 1px solid var(--line); }
+.inputs h3.grp:first-child { border-top: 0; padding-top: 0; }
+.field { display: grid; gap: 5px; }
+.field label { font-weight: 700; font-size: var(--step--1); line-height: 1.3; }
+.field .unit { font-weight: 400; color: var(--muted); }
+.field .ctl { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 10px; align-items: center; }
+.field .ctl:has(> :only-child) { grid-template-columns: 9rem; }
+.field input[type=number] { width: 100%; font: 600 var(--step-0)/1.2 var(--font-body); font-variant-numeric: tabular-nums; color: var(--ink); background: var(--bg); border: 1px solid var(--axis); border-radius: 8px; padding: 7px 9px; }
+.field input[type=range] { width: 100%; accent-color: var(--accent); }
+.plan-pick { min-width: min(100%, 300px); }
+.field select { width: 100%; font: 600 var(--step--1)/1.3 var(--font-body); color: var(--ink); background: var(--bg); border: 1px solid var(--axis); border-radius: 8px; padding: 8px 9px; }
+.field.check { grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 10px; }
+.field.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.field.check .hint { grid-column: 1 / -1; }
+.hint { font-size: 0.8rem; color: var(--muted); line-height: 1.45; }
+.out { display: grid; gap: 16px; min-width: 0; }
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 18px; }
+.kv div { display: grid; gap: 2px; min-width: 0; }
+.kv span { font-size: 0.8rem; color: var(--ink-2); font-weight: 700; }
+.kv b { font-size: var(--step-1); overflow-wrap: anywhere; }
+.formula { font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.7; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; overflow-x: auto; white-space: pre; }
+.note { font-size: var(--step--1); color: var(--ink-2); max-width: 80ch; }
+.foot { color: var(--muted); font-size: var(--step--1); border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 6px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Hyderabad · research values as of Nov 2026</p>
+    <h1>Exotic Plant Farm Calculator</h1>
+    <p class="lede">Every box holds a number from the research. Change any of them and the whole page updates. Small green tags open the source behind a default.</p>
+    <nav><a href="index.html">Read the full report</a><a href="#where">1 · Where to farm</a><a href="#setup">2 · Setup cost</a><a href="#running">3 · Running the farm</a><a href="#loan">4 · Loan and salary</a><a href="#support">5 · Government support</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="controls">
+    <fieldset class="seg" id="pick-model">
+      <legend>What will you grow?</legend>
+      <div class="opts">
+        <input type="radio" name="model" id="m-nursery" value="nursery"><label for="m-nursery">Indoor plant nursery</label>
+        <input type="radio" name="model" id="m-polyhouse" value="polyhouse"><label for="m-polyhouse">Polyhouse exotic vegetables</label>
+        <input type="radio" name="model" id="m-dragon" value="dragon"><label for="m-dragon">Dragon fruit</label>
+      </div>
+    </fieldset>
+    <fieldset class="seg" id="pick-land">
+      <legend>Land</legend>
+      <div class="opts">
+        <input type="radio" name="landMode" id="l-buy" value="buy"><label for="l-buy">Buy</label>
+        <input type="radio" name="landMode" id="l-lease" value="lease"><label for="l-lease">Lease</label>
+      </div>
+    </fieldset>
+    <div class="field plan-pick"><label for="plan">Start from a plan in the report</label><select id="plan"><option value="">Choose a plan…</option></select></div>
+    <button class="ghost" id="reset" type="button">Reset to research values</button>
+  </div>
+
+  <section class="summary" aria-live="polite">
+    <div class="tiles">
+      <div class="tile"><span class="k">Money needed at the start</span><span class="v" id="t-upfront">–</span><span class="s" id="t-upfront-s"></span></div>
+      <div class="tile"><span class="k">Profit per year at full production</span><span class="v" id="t-profit">–</span><span class="s" id="t-profit-s"></span></div>
+      <div class="tile"><span class="k">Money back in</span><span class="v" id="t-payback">–</span><span class="s" id="t-payback-s"></span></div>
+      <div class="tile"><span class="k">Loan EMI per month</span><span class="v" id="t-emi">–</span><span class="s" id="t-emi-s"></span></div>
+      <div class="tile"><span class="k">Cheapest distance</span><span class="v" id="t-best">–</span><span class="s" id="t-best-s"></span></div>
+    </div>
+    <div class="verdict" id="verdict"></div>
+  </section>
+
+  <section class="block" id="where">
+    <header><h2>1 · Where to farm: land vs transport</h2>
+      <p>Land gets cheaper as you move away from Hyderabad, but every extra kilometre adds truck trips, your own visits and plant damage. The chart adds these yearly costs at each distance and finds the lowest point.</p></header>
+    <div class="grid2">
+      <div class="panel inputs" id="in-where"></div>
+      <div class="out">
+        <div class="panel">
+          <div class="legend" id="lg-loc"></div>
+          <div class="chart" id="c-loc"></div>
+          <details class="tableview"><summary>Show as table</summary><div class="scroll-x" id="tv-loc"></div></details>
+        </div>
+        <div class="panel kv" id="o-where"></div>
+        <div class="panel"><h3>The equation, with your numbers</h3><div class="formula" id="o-formula"></div><p class="note" id="o-formula-note"></p></div>
+        <div class="panel" id="p-landdata">
+          <h3>Land price data vs the curve</h3>
+          <p class="note">Dots are real asking prices and news reports collected for this study (log scale). The line is the curve used above; change its settings on the left.</p>
+          <div class="chart" id="c-land"></div>
+          <details class="tableview"><summary>Show all land data points with sources</summary><div class="scroll-x" id="tv-land"></div></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="setup">
+    <header><h2>2 · Setup cost</h2><p>One-time spending before the first sale. Rates come from government cost norms and market quotes.</p></header>
+    <div class="grid2">
+      <div class="panel inputs" id="in-setup"></div>
+      <div class="out">
+        <div class="panel"><div class="chart" id="c-capex"></div></div>
+        <div class="panel"><div class="scroll-x" id="o-capex"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="running">
+    <header><h2>3 · Running the farm</h2><p>What you grow, what it sells for, and what it costs every year. Output builds up over the first years.</p></header>
+    <div class="grid2">
+      <div class="panel inputs" id="in-running"></div>
+      <div class="out">
+        <div class="panel kv" id="o-running"></div>
+        <div class="panel">
+          <h3>Cash by year</h3>
+          <div class="legend"><span><i class="rect" style="background:var(--pos)"></i>Cash in (year)</span><span><i class="rect" style="background:var(--neg)"></i>Cash out (year)</span><span><i style="background:var(--ink)"></i>Running total</span></div>
+          <div class="chart" id="c-cash"></div>
+          <details class="tableview" open><summary>Year-by-year table</summary><div class="scroll-x" id="tv-cash"></div></details>
+        </div>
+        <div class="panel"><h3>One full-production year</h3><div class="scroll-x" id="o-pl"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="loan">
+    <header><h2>4 · Your loan and salary</h2><p>Banks usually allow all your EMIs together to take 40–50% of your take-home pay. The safest plan is an EMI you can pay from salary alone, even if the farm earns nothing for two years.</p></header>
+    <div class="grid2">
+      <div class="panel inputs" id="in-loan"></div>
+      <div class="out"><div class="panel kv" id="o-loan"></div><div class="panel" id="o-loan-note"></div></div>
+    </div>
+  </section>
+
+  <section class="block" id="support">
+    <header><h2>5 · Government support</h2><p>Subsidies arrive after you build, and only if your application is sanctioned. Switch them off to see the farm without help.</p></header>
+    <div class="grid2">
+      <div class="panel inputs" id="in-support"></div>
+      <div class="out"><div class="panel kv" id="o-support"></div><div class="panel note" id="o-support-note"></div></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>Built for planning, not as financial advice. Prices change; confirm land quotes, wages and subsidy terms locally before you commit money.</p>
+    <p id="data-date"></p>
+  </footer>
+</main>
+
+<script>
+/*@@CHARTS_JS@@*/
+</script>
+<script>
+/*@@MODEL_JS@@*/
+</script>
+<script>
+/*@@DATA_JS@@*/
+</script>
+<script>
+/*@@APP_JS@@*/
+</script>
+</body>
+</html>

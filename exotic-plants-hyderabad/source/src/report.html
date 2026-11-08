@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exotic Plants Near Hyderabad</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,600..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/*@@BASE_CSS@@*/
+
+/* ---------- Report: a 1120px frame; running text held near 68ch; tables and charts use the full frame ---------- */
+header.hero { background: var(--surface); border-bottom: 1px solid var(--line); }
+header.hero .wrap { padding-block: 40px 30px; display: grid; gap: 16px; }
+header.hero h1 { max-width: 19ch; }
+.lede { font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); max-width: 62ch; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px; }
+.btn { display: inline-flex; align-items: center; font: 700 var(--step-0)/1.1 var(--font-body); padding: 12px 18px; border-radius: 10px; text-decoration: none; border: 1px solid var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.secondary { background: transparent; color: var(--accent); border-color: var(--axis); }
+.btn.secondary:hover { background: var(--accent-soft); }
+.meta { font-size: var(--step--1); color: var(--muted); max-width: 75ch; }
+nav.toc { border-bottom: 1px solid var(--line); }
+nav.toc .wrap { display: flex; flex-wrap: wrap; gap: 6px 18px; padding-block: 12px; font-size: var(--step--1); font-weight: 700; }
+nav.toc a { text-decoration: none; }
+nav.toc a:hover { text-decoration: underline; }
+main.wrap { padding-block: 36px 80px; display: grid; gap: 64px; }
+section.rs { display: grid; gap: 20px; min-width: 0; scroll-margin-top: 16px; }
+section.rs > header { display: grid; gap: 8px; }
+section.rs > header p { color: var(--ink-2); max-width: 70ch; }
+.prose { display: grid; gap: 12px; max-width: 72ch; }
+.prose ul, .prose ol, ol.steps { margin: 0; padding-left: 1.3em; display: grid; gap: 10px; }
+.prose li::marker, ol.steps li::marker { color: var(--muted); font-weight: 700; }
+.answer { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 20px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 18px 24px; }
+.tile { display: grid; gap: 4px; align-content: start; min-width: 0; }
+.tile .k { font-size: var(--step--1); color: var(--ink-2); font-weight: 700; }
+.tile .v { font: 700 var(--step-3)/1.1 var(--font-body); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.tile .s { font-size: 0.82rem; color: var(--muted); line-height: 1.4; }
+.answer .prose { border-top: 1px solid var(--line); padding-top: 18px; max-width: 90ch; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; display: grid; gap: 12px; align-content: start; }
+.panel h3 { font-size: var(--step-1); }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 20px; align-items: start; }
+.eq { font-family: var(--font-mono); font-size: 0.84rem; line-height: 1.75; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; overflow-x: auto; white-space: pre; margin: 0; }
+.eq b { color: var(--accent); font-weight: 600; }
+dl.terms { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; margin: 0; font-size: var(--step--1); }
+dl.terms dt { font-family: var(--font-mono); font-weight: 600; color: var(--ink); }
+dl.terms dd { margin: 0; color: var(--ink-2); }
+.note { font-size: var(--step--1); color: var(--ink-2); max-width: 80ch; }
+.tbl td .src { margin: 2px 3px 2px 0; }
+.tbl td.neg, .neg { color: var(--crit-text); font-weight: 700; }
+.tbl td.pos { color: var(--good-text); font-weight: 700; }
+.tbl tr.hl td { background: var(--accent-soft); }
+a.plan { display: inline-grid; place-items: center; min-width: 1.6em; height: 1.6em; margin-right: 4px; border-radius: 6px; background: var(--accent); color: var(--accent-ink); font-weight: 700; text-decoration: none; font-size: 0.85em; }
+a.plan:hover { filter: brightness(1.1); }
+.tbl td small { color: var(--muted); font-size: 0.78rem; }
+.tbl.wide { min-width: 640px; }
+.srcgroup { display: grid; gap: 6px; }
+.srcgroup h3 { font-size: var(--step-0); font-family: var(--font-body); font-stretch: 100%; }
+.srcgroup ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; font-size: var(--step--1); }
+.srcgroup .url { color: var(--muted); font-family: var(--font-mono); font-size: 0.72rem; overflow-wrap: anywhere; }
+.srcgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 22px 28px; }
+.foot { color: var(--muted); font-size: var(--step--1); border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 6px; }
+@media (max-width: 520px) { header.hero .wrap { padding-block: 28px 22px; } .answer { padding: 16px; } .tile .v { font-size: var(--step-2); } }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Feasibility study · Hyderabad, Telangana · 8 Nov 2026</p>
+    <h1>Does growing exotic plants for Hyderabad pay?</h1>
+    <p class="lede">Yes, as a well-run plant nursery on leased land where you root your own cuttings. Buying land does not pay back from farming yet. Every number links to its source, and the calculator lets you change any of them.</p>
+    <div class="actions"><a class="btn primary" href="calculator.html">Open the calculator</a><a class="btn secondary" href="#where">See the land vs transport equation</a></div>
+    <p class="meta">Written for a 24-year-old earning ₹70,000 a month in Hyderabad. Values collected on 8 Nov 2026. For planning, not financial advice.</p>
+  </div>
+</header>
+<nav class="toc" aria-label="Sections">
+  <div class="wrap"><a href="#answer">Short answer</a><a href="#plants">What to grow</a><a href="#where">Where to farm</a><a href="#money">Money needed</a><a href="#year">A year of running</a><a href="#labour">Labour</a><a href="#loan">Loan</a><a href="#rules">Government rules</a><a href="#risks">Risks</a><a href="#plan">First plan</a><a href="#sources">Sources</a></div>
+</nav>
+
+<main class="wrap">
+
+<section class="rs" id="answer">
+  <header><h2>The short answer</h2></header>
+  <div class="answer">
+    <div class="tiles">
+      <div class="tile"><span class="k">Money to start small</span><span class="v">₹18.4 lakh</span><span class="s">1,000 m² shade-net nursery on 0.5 acre of leased land (plan F)</span></div>
+      <div class="tile"><span class="k">Loan your salary can carry</span><span class="v">₹10–15 lakh</span><span class="s">Bank limit ₹15.6 lakh at an EMI of ₹35,000. Safer: ₹10.6 lakh at ₹24,000</span></div>
+      <div class="tile"><span class="k">Profit a year, 2,000 m² nursery</span><span class="v">₹13.8 lakh</span><span class="s">Leased land, own cuttings (plan C). With bought plantlets: ₹1.8 lakh</span></div>
+      <div class="tile"><span class="k">Best distance if you buy land</span><span class="v">≈ 75 km</span><span class="s">Nursery with a hired Tata Ace. 90–105 km with a 14 ft truck; dragon fruit ≈ 120 km</span></div>
+      <div class="tile"><span class="k">One acre at 75 km, all-in</span><span class="v">₹63 lakh</span><span class="s">That money would cost or earn about ₹5.7 lakh a year at 9%</span></div>
+    </div>
+    <div class="prose">
+      <ul>
+        <li><strong>A nursery can pay if you control two things:</strong> the cost of each young plant and how many plants you sell. Rooting your own cuttings (about ₹30 a plant instead of ₹42) turns ₹1.8 lakh a year into ₹13.8 lakh. A 2,000 m² nursery has to sell about 250 plants every day of the year.</li>
+        <li><strong>Don’t buy land yet.</strong> Lease 0.5–1 acre with water for ₹15,000–35,000 per acre a year [[lease]] [[lease2]]. One acre at 75 km costs about ₹63 lakh all-in. Buying it stretches the payback of the best plan from 1.8 to 4.2 years.</li>
+        <li><strong>Borrow only what your salary alone can repay:</strong> about ₹10–15 lakh. That pays for the 1,000 m² start, not for land. Bank farmland loans are for farmers and tenants, not salaried buyers [[sbiLand]] [[bobLand]].</li>
+        <li><strong>Polyhouse vegetables and dragon fruit don’t pay at today’s prices</strong> for an owner who must pay a supervisor. In this model capsicum needs about ₹110/kg all year to break even, against ₹40–300/kg in a 2025 case [[icarCapsicum]]. Dragon fruit has fallen to ₹40–70/kg [[dragonPrice]].</li>
+        <li><strong>The rules are manageable:</strong> a nursery licence (₹1,000) [[nurseryRules]], at least ₹538 a day for workers [[minWage]], nil GST on live plants [[gst]], and likely no extra income tax at your salary (confirm with a CA).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="rs" id="plants">
+  <header><h2>What to grow</h2><p>“Exotic plants” can mean three different businesses. This study compares all three on the same land, labour and transport numbers.</p></header>
+  <div class="scroll-x"><table class="tbl wide">
+    <thead><tr><th></th><th>Indoor plant nursery</th><th>Polyhouse exotic vegetables</th><th>Dragon fruit</th></tr></thead>
+    <tbody>
+      <tr><td><strong>What you sell</strong></td><td>Potted foliage plants (Syngonium, Aglaonema, areca palm) to nurseries, landscapers and online sellers</td><td>Coloured capsicum, English cucumber, lettuce to hotels, supermarkets and traders</td><td>Fruit to traders and retailers</td></tr>
+      <tr><td><strong>Size used here</strong></td><td>2,000 m² of shade net on 1 acre</td><td>2,000 m² polyhouse on 1 acre</td><td>2 acres of poles</td></tr>
+      <tr><td><strong>Wholesale price</strong></td><td>₹40–150 per 6-inch plant; ₹75 used [[aglaonema]] [[areca]]</td><td>₹40–300/kg, about ₹100 on average; ₹80 used [[icarCapsicum]]</td><td>₹40–70/kg in 2026, down from ₹130–200 [[dragonPrice]] [[dragonTG]]</td></tr>
+      <tr><td><strong>Profit a year</strong></td><td class="pos">₹13.8 lakh (lease, own cuttings)</td><td class="neg">−₹3.4 lakh (lease)</td><td>₹1.7 lakh (lease)</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="cols">
+    <div class="panel">
+      <h3>Prices buyers pay</h3>
+      <div class="scroll-x"><table class="tbl">
+        <thead><tr><th>Item</th><th class="r">Price</th><th>Sources</th></tr></thead>
+        <tbody>
+          <tr><td>Small plants, Kadiyam wholesale</td><td class="r">₹25–100</td><td>[[kadiyamListing]] [[mahindraNursery]]</td></tr>
+          <tr><td>Aglaonema, wholesale</td><td class="r">₹85–100</td><td>[[aglaonema]] [[aglaRaj]]</td></tr>
+          <tr><td>Areca palm, wholesale</td><td class="r">₹100</td><td>[[areca]]</td></tr>
+          <tr><td>Mini cactus, wholesale</td><td class="r">₹15</td><td>[[cactus]]</td></tr>
+          <tr><td>6-inch plant, online retail</td><td class="r">₹169–599</td><td>[[nurserylive]] [[ugaoo]]</td></tr>
+          <tr><td>Orchid, from the grower</td><td class="r">₹225+</td><td>[[orchidGrower]]</td></tr>
+          <tr><td>Orchid, retail</td><td class="r">₹565+</td><td>[[orchidRetail]]</td></tr>
+          <tr><td>Coloured capsicum, per kg</td><td class="r">₹40–300</td><td>[[icarCapsicum]]</td></tr>
+          <tr><td>Green capsicum, Bowenpally, per kg</td><td class="r">₹25–35</td><td>[[bowenpally]]</td></tr>
+          <tr><td>Dragon fruit, farm gate, per kg</td><td class="r">₹40–70</td><td>[[dragonPrice]] [[dragonCrash]]</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Online retail is 2–4 times the wholesale price, but selling retail means packing, delivery and returns.</p>
+    </div>
+    <div class="panel">
+      <h3>Market and competition</h3>
+      <div class="prose">
+        <p>India’s indoor-plant market is about US$610–660 million and grows about 7–8% a year [[marketSize]] [[marketSize2]]. Exotic vegetables are about US$2.7 billion, growing about 11% a year [[exoticVeg]].</p>
+        <p>In Hyderabad, Kukatpally has a cluster of nurseries [[kukatpally]], online sellers deliver plants across the city [[ugaoo]], and hotels and function halls were already buying exotic vegetables from local polyhouses in 2018 [[hotels2018]].</p>
+        <p>The main competitor is Kadiyam near Rajahmundry, over 400 km away by road. It has 600+ nurseries [[kadiyamScale]], sells small and medium plants at ₹25–100 [[kadiyamListing]], and ships to Hyderabad [[kadiyamFreight]]. To beat it, sell fresher stock, supply reliably and deliver fast inside the city.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="rs" id="where">
+  <header><h2>Where to farm: land vs transport</h2><p>Land gets cheaper as you move away from Hyderabad, but every extra kilometre adds truck trips, plant damage and your own travel. The equation finds the distance where the total yearly cost is lowest.</p></header>
+
+  <div class="panel">
+    <h3>Farmland asking prices around Hyderabad</h3>
+    <div class="legend"><span><i class="dot" style="background:var(--s1)"></i>Listing or news report (59)</span><span><i class="dot" style="background:var(--s2)"></i>Not used for the curve: govt award or road-facing plot (3)</span><span><i style="background:var(--ink)"></i>Fitted curve P(d)</span></div>
+    <div class="chart" id="r-land"></div>
+    <p class="note">Prices fall fast over the first 50 km, then level off near ₹40 lakh an acre. Fitted curve: P(d) = 39 + 892 × e<sup>−d/21</sup> ₹ lakh per acre. West-side land (Chevella, Sangareddy) runs about 1.7× the curve and Sagar road about 0.85× [[landData]]. Government land values were revised in June 2026 [[govtValue]], and 2025 saw distress sales [[distress]].</p>
+    <details class="tableview"><summary>Show all 62 data points with links</summary><div class="scroll-x" id="rt-land"></div></details>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <h3>The equation</h3>
+      <p class="note">Yearly cost of farming at a road distance of <var>d</var> km:</p>
+<pre class="eq"><b>C(d)</b> = Land(d) + Transport(d) + Visits(d) + Wages(d)
+
+Land(d)      = (i − g) × A × P(d) × (1 − gap) × (1 + s)
+P(d)         = Pf + (P0 − Pf) × e^(−d/λ)
+Transport(d) = N × (c × d + toll + loader)
+             + R × (δ0 + δ1 × d/100)
+Visits(d)    = 24V × d × (car + τ ÷ speed)
+Wages(d)     = L × D × W(d)</pre>
+      <p class="note">Setting the slope dC/dd to zero gives the best distance:</p>
+<pre class="eq"><b>d* = λ × ln( K ÷ (λ × M) )</b>
+
+K = (i − g) × A × (P0 − Pf) × (1 − gap) × (1 + s)
+M = N × c + R × δ1/100
+  + 24V × (car + τ ÷ speed) + L × D × W′</pre>
+      <p class="note"><strong>K</strong> is the most land cost per year that moving away can save. <strong>M</strong> is what each extra km adds per year. Land cost falls fast near the city and slowly far out; transport rises steadily. The best point is where one more km saves as much land cost as it adds in transport. This is the classic land-rent trade-off [[thunen]].</p>
+    </div>
+    <div class="panel">
+      <h3>With the research numbers</h3>
+      <p class="note">Nursery, 1 acre, hired Tata Ace, 282 trips a year:</p>
+<pre class="eq">K  = 9% × 1 × ₹892 L × 0.90 × 1.09
+   = <b>₹78.8 lakh a year</b>
+
+M  = 282 × ₹30            truck
+   + ₹61.4 L × 0.01/100   damage
+   + 96 × (₹10 + ₹400÷40) your visits
+   − 600 × ₹0.50          wages
+   = <b>₹10,694 per km a year</b>
+
+d* = 21 × ln( ₹78.8 L ÷ (21 × ₹10,694) )
+   = 21 × ln(35.1) = <b>75 km</b></pre>
+      <dl class="terms">
+        <dt>d</dt><dd>road km from Hyderabad</dd>
+        <dt>A</dt><dd>acres bought (1)</dd>
+        <dt>P0, Pf, λ</dt><dd>land curve: ₹931 L at 0 km, ₹39 L far out, λ = 21 km</dd>
+        <dt>i − g</dt><dd>yearly cost of money minus land price rise (9% − 0%)</dd>
+        <dt>gap, s</dt><dd>discount off asking price (10%); duties and broker (9%)</dd>
+        <dt>N, c</dt><dd>truck trips a year (282); ₹ per km of distance (₹30)</dd>
+        <dt>R, δ0, δ1</dt><dd>sales a year (₹61.4 L); plant damage per trip (2%) and per 100 km (1%)</dd>
+        <dt>V, car, τ</dt><dd>your visits a month (4); car ₹10/km; your time ₹400/hour at 40 km/h</dd>
+        <dt>L, D, W</dt><dd>workers (2); days a year (300); daily wage, ₹600 at 30 km falling to ₹540 at 150 km</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Yearly cost by distance: nursery, buying 1 acre</h3>
+    <div class="legend" id="lg-loc"></div>
+    <div class="chart" id="r-loc"></div>
+    <p class="note">The chart checks every km, including the ₹1,500 minimum truck fare that the equation ignores, and agrees: 75 km. The bottom is flat. Anywhere from 60 to 95 km costs within ₹1 lakh a year of the best. Near the city, land dominates (₹22 lakh a year at 30 km); far away, transport does (₹16 lakh a year at 150 km).</p>
+    <details class="tableview"><summary>Show as table</summary><div class="scroll-x" id="rt-loc"></div></details>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <h3>Best distance by plan</h3>
+      <div class="scroll-x"><table class="tbl">
+        <thead><tr><th>If you buy land for…</th><th class="r">Trips a year</th><th class="r">M (₹/km)</th><th class="r">Best</th></tr></thead>
+        <tbody>
+          <tr class="hl"><td>Nursery, hired Tata Ace</td><td class="r">282</td><td class="r">10,694</td><td class="r">75 km</td></tr>
+          <tr><td>Nursery, hired 14 ft truck</td><td class="r">72</td><td class="r">4,970</td><td class="r">90–105 km</td></tr>
+          <tr><td>Polyhouse capsicum</td><td class="r">104</td><td class="r">4,841</td><td class="r">91 km</td></tr>
+          <tr><td>Dragon fruit, 2 acres</td><td class="r">20</td><td class="r">2,440</td><td class="r">120 km</td></tr>
+          <tr><td>Nursery, west side (×1.7 land)</td><td class="r">282</td><td class="r">10,694</td><td class="r">86 km</td></tr>
+          <tr><td>Nursery, Sagar road (×0.85 land)</td><td class="r">282</td><td class="r">10,694</td><td class="r">71 km</td></tr>
+          <tr><td>Nursery, if land rises 5% a year</td><td class="r">282</td><td class="r">10,694</td><td class="r">58 km</td></tr>
+          <tr><td>Any plan on leased land</td><td class="r">–</td><td class="r">–</td><td class="r">closest with water</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Fewer trips (a bigger truck, or a crop with fewer harvests) push the best point farther out. Expected land price growth pulls it closer, because land then costs less to hold. Lease rent hardly changes with distance, so a leased farm should be as close as you can find water.</p>
+    </div>
+    <div class="panel">
+      <h3>Numbers behind the equation</h3>
+      <div class="scroll-x"><table class="tbl">
+        <thead><tr><th>Input</th><th>Value and sources</th></tr></thead>
+        <tbody>
+          <tr><td>Land price curve</td><td>59 asking prices and news reports in 6 directions [[landData]]</td></tr>
+          <tr><td>Stamp duty, transfer, registration</td><td>7.5%, plus about 1.5% broker (estimate) [[stamp]] [[stampGov]]</td></tr>
+          <tr><td>Lease rent</td><td>₹15,000–35,000 per acre a year (state average ₹14,936) [[lease]] [[lease2]] [[lease3]]</td></tr>
+          <tr><td>Hired Tata Ace</td><td>≈ ₹30 per km of distance; ₹1,500 minimum per day [[transrentals]] [[porter]] [[truckguru]]</td></tr>
+          <tr><td>Hired 14 ft truck</td><td>≈ ₹37–40 per km of distance [[truckguru]]</td></tr>
+          <tr><td>Loader; tolls</td><td>₹300–400; ≈ ₹190–200 a return trip [[mover]] [[tollNH65]]</td></tr>
+          <tr><td>Pots per load</td><td>≈ 320 racked 6-inch pots (Ace); ≈ 1,250 (14 ft) [[aceDeck]] [[truck14]]</td></tr>
+          <tr><td>Fuel, 8 Nov 2026</td><td>Petrol ₹116.15/L; diesel ₹104.23/L [[fuel]] [[carCost]]</td></tr>
+          <tr><td>Daily wage</td><td>₹600 near the city; ₹540 at 150 km+ (legal floor ₹538) [[wageChevella]] [[wageSeries]] [[minWage]]</td></tr>
+          <tr><td>Plant damage in transit</td><td>2% a trip + 1% per 100 km (estimate) <small>(no source found)</small></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<section class="rs" id="money">
+  <header><h2>Money needed</h2><p>One-time costs for a 2,000 m² shade-net nursery, the research default. Rates come from government cost norms and market quotes.</p></header>
+  <div class="cols">
+    <div class="panel">
+      <h3>Setup, 2,000 m² nursery</h3>
+      <div class="scroll-x"><table class="tbl">
+        <thead><tr><th>Item</th><th class="r">Amount</th><th>Basis</th></tr></thead>
+        <tbody>
+          <tr><td>Shade-net house, GI pipe (₹600/m²)</td><td class="r">₹12.0 L</td><td>quotes ₹480–710; govt norm ₹710 [[netHouse]] [[nhbNorms]]</td></tr>
+          <tr><td>Misting + irrigation (₹80/m²)</td><td class="r">₹1.6 L</td><td>[[mist]] [[drip]]</td></tr>
+          <tr><td>Weed mat, trays, benches</td><td class="r">₹0.3 L</td><td>estimate</td></tr>
+          <tr><td>Borewell + pump</td><td class="r">₹2.5 L</td><td>[[borewell]] [[borewellTG]]</td></tr>
+          <tr><td>Water sump / tank</td><td class="r">₹1.0 L</td><td>estimate</td></tr>
+          <tr><td>Fencing, 835 ft at ₹100</td><td class="r">₹0.8 L</td><td>[[fence]]</td></tr>
+          <tr><td>Shed, store, worker room (400 sq ft)</td><td class="r">₹1.0 L</td><td>[[shed]]</td></tr>
+          <tr><td>Power connection; tools and crates</td><td class="r">₹1.0 L</td><td>estimates</td></tr>
+          <tr><td>Contingency, 10%</td><td class="r">₹2.0 L</td><td>overruns happen [[tgPolyLoss]]</td></tr>
+          <tr class="total"><td>Setup</td><td class="r">₹22.3 L</td><td></td></tr>
+          <tr><td>Working money: first batch of plants + 3 months of wages</td><td class="r">₹7.5 L</td><td>₹9.9 L with bought plantlets</td></tr>
+          <tr class="total"><td>Total if you lease</td><td class="r">₹29.8 L</td><td>₹32.2 L with bought plantlets</td></tr>
+          <tr><td>Land: 1 acre at 75 km (₹64 L asking − 10% + 9% duties + ₹30,000 checks)</td><td class="r">₹63.2 L</td><td>[[landData]] [[stamp]]</td></tr>
+          <tr class="total"><td>Total if you buy</td><td class="r">₹92.9 L</td><td>₹95.3 L with bought plantlets</td></tr>
+          <tr><td>Subsidy that may come back after you build</td><td class="r">up to ₹6.9 L</td><td>[[midh]] [[pmksy]]</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Subsidies are paid after you build, so they don’t reduce the money needed at the start. Most schemes need the land in your name (a pattadar passbook) [[pmksy]] [[tgHorti]]. Ask the Horticulture Officer whether a registered lease qualifies before you count on it.</p>
+    </div>
+    <div class="panel">
+      <h3>Eleven plans compared</h3>
+      <div class="scroll-x"><table class="tbl">
+        <thead><tr><th>Plan</th><th class="r">Money at start</th><th class="r">Profit a year</th><th class="r">Money back in</th></tr></thead>
+        <tbody>
+          <tr><td><a class="plan" href="calculator.html#plan-a" title="Open plan A in the calculator">A</a> Nursery, research defaults: buy 1 acre at 75 km, bought plantlets, Tata Ace</td><td class="r">₹95.3 L</td><td class="r neg">−₹0.5 L</td><td class="r">never</td></tr>
+          <tr><td><a class="plan" href="calculator.html#plan-b" title="Open plan B in the calculator">B</a> Same, but lease 1 acre at 40 km</td><td class="r">₹32.2 L</td><td class="r">₹1.8 L</td><td class="r">10+ yrs</td></tr>
+          <tr class="hl"><td><a class="plan" href="calculator.html#plan-c" title="Open plan C in the calculator">C</a> B + root your own cuttings (₹30 a plant)</td><td class="r">₹29.8 L</td><td class="r">₹13.8 L</td><td class="r">2.9 yrs</td></tr>
+          <tr><td><a class="plan" href="calculator.html#plan-d" title="Open plan D in the calculator">D</a> C + hire a 14 ft truck</td><td class="r">₹29.8 L</td><td class="r">₹16.3 L</td><td class="r">2.6 yrs</td></tr>
+          <tr><td><a class="plan" href="calculator.html#plan-e" title="Open plan E in the calculator">E</a> D + a premium mix sold at ₹90 (upside case)</td><td class="r">₹29.8 L</td><td class="r">₹27.7 L</td><td class="r">1.8 yrs</td></tr>
+          <tr class="hl"><td><a class="plan" href="calculator.html#plan-f" title="Open plan F in the calculator">F</a> Small start: 1,000 m², lease 0.5 acre, own cuttings, 1 worker</td><td class="r">₹18.4 L</td><td class="r">₹5.4 L</td><td class="r">4.4 yrs</td></tr>
+          <tr><td><a class="plan" href="calculator.html#plan-g" title="Open plan G in the calculator">G</a> E, but buy 1 acre at 75 km</td><td class="r">₹92.9 L</td><td class="r">₹27.4 L</td><td class="r">4.2 yrs</td></tr>
+          <tr><td><a class="plan" href="calculator.html#plan-h" title="Open plan H in the calculator">H</a> Polyhouse capsicum 2,000 m², lease</td><td class="r">₹33.6 L</td><td class="r neg">−₹3.4 L</td><td class="r">never</td></tr>
+          <tr><td><a class="plan" href="calculator.html#plan-i" title="Open plan I in the calculator">I</a> Polyhouse capsicum, buy 1 acre at 75 km</td><td class="r">₹96.7 L</td><td class="r neg">−₹4.2 L</td><td class="r">never</td></tr>
+          <tr><td><a class="plan" href="calculator.html#plan-j" title="Open plan J in the calculator">J</a> Dragon fruit 2 acres, lease</td><td class="r">₹18.1 L</td><td class="r">₹1.7 L</td><td class="r">10+ yrs</td></tr>
+          <tr><td><a class="plan" href="calculator.html#plan-k" title="Open plan K in the calculator">K</a> Dragon fruit 2 acres, buy at 75 km</td><td class="r">₹144.1 L</td><td class="r">₹2.3 L</td><td class="r">10+ yrs</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Profit is for a year at full output, before loan interest and before paying yourself. “Money back in” counts the subsidy and the land’s resale value is left out. Tap a plan letter to open that plan in the calculator and change any number.</p>
+    </div>
+  </div>
+</section>
+
+<section class="rs" id="year">
+  <header><h2>A year of running</h2><p>Plan C (2,000 m², leased land, own cuttings) at full output. It starts 100,000 plants a year, loses 10%, and sells 85% of the rest at ₹75 and the remainder at ₹45.</p></header>
+  <div class="cols">
+    <div class="panel">
+      <h3>Plan C, one full year</h3>
+      <div class="scroll-x"><table class="tbl">
+        <thead><tr><th>Item</th><th class="r">Per year</th></tr></thead>
+        <tbody>
+          <tr><td>Sales: 90,000 plants at an average of ₹68</td><td class="r">₹61.4 L</td></tr>
+          <tr><td>Cuttings, pots, potting mix, feed (₹30 × 100,000) [[pots]] [[cocopeat]]</td><td class="r">−₹30.0 L</td></tr>
+          <tr><td>Wages: 2 workers × 300 days × ₹595, head gardener ₹15,000 a month</td><td class="r">−₹5.4 L</td></tr>
+          <tr><td>Transport: 282 Tata Ace trips × ₹2,050, plus 2.4% damage</td><td class="r">−₹7.3 L</td></tr>
+          <tr><td>Your car trips, 4 a month</td><td class="r">−₹0.4 L</td></tr>
+          <tr><td>Power (₹4/unit for nurseries), phone, insurance, licence [[tariff]]</td><td class="r">−₹0.7 L</td></tr>
+          <tr><td>Maintenance, 3% of setup</td><td class="r">−₹0.6 L</td></tr>
+          <tr><td>Selling costs, 5% of sales</td><td class="r">−₹3.1 L</td></tr>
+          <tr><td>Lease rent, 1 acre</td><td class="r">−₹0.2 L</td></tr>
+          <tr class="total"><td>Operating profit</td><td class="r">₹13.8 L</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Break-even price: ₹57 a plant. Below that, plan C loses money. Wholesale 6-inch plants sell for ₹40–150 [[aglaonema]] [[areca]], and Kadiyam sells small plants for ₹25–100 [[kadiyamListing]].</p>
+    </div>
+    <div class="panel">
+      <h3>What moves the profit</h3>
+      <p class="note">Change in plan C’s yearly profit when one number changes. <span style="color:var(--pos);font-weight:700">Blue</span> adds, <span class="neg">red</span> takes away.</p>
+      <div id="r-sens"></div>
+      <p class="note">Selling price, sales volume and plant cost matter far more than wages or distance. Crop times: Syngonium 3–4 months, Aglaonema 5–6+ months [[agristarts]] [[gpn]]. Tissue-culture plantlets cost ₹20 or more [[tcSyngonium]] [[kfri]].</p>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Cash by year: small start (plan F)</h3>
+    <div class="legend"><span><i class="rect" style="background:var(--pos)"></i>Cash in that year</span><span><i class="rect" style="background:var(--neg)"></i>Cash out that year</span><span><i style="background:var(--ink)"></i>Running total</span></div>
+    <div class="chart" id="r-cash"></div>
+    <p class="note">₹18.4 lakh goes in at the start. Output builds up to 40%, 80% and 100% over three years. Year 1 includes ₹3.4 lakh of subsidy if it is sanctioned; without it the money comes back in 5.1 years instead of 4.4. Year 10 counts the growing stock back as cash.</p>
+    <details class="tableview"><summary>Show as table</summary><div class="scroll-x" id="rt-cash"></div></details>
+  </div>
+</section>
+
+<section class="rs" id="labour">
+  <header><h2>Labour</h2><p>You keep your job, so someone reliable has to run the farm every day.</p></header>
+  <div class="cols">
+    <div class="panel">
+      <h3>Daily wages</h3>
+      <div class="prose">
+        <p>Near Hyderabad, farm and nursery workers earn ₹500–650 a day [[wageChevella]]. Farther out, routine work pays ₹325–475 [[wageSeries]]. Peak seasons push this up: Nalgonda paid ₹800 a day to women and ₹1,100 to men at transplanting in 2026 [[wageNalgonda]].</p>
+        <p>The legal minimum from 1 June 2026 is ₹538 a day (₹14,000 a month) for rural unskilled work [[minWage]] [[minWagePdf]]. The order is being challenged in the High Court [[minWageCourt]]; the older agriculture schedule was ₹396–468 [[wageAgri]]. The model pays ₹600 near the city and ₹540 far out, never below the floor.</p>
+        <p>A nursery needs about 1–1.5 workers per 1,000 m² [[oregon]]. The model uses 2 workers and a head gardener for 2,000 m², and 1 worker and a head gardener for 1,000 m².</p>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Monthly staff</h3>
+      <div class="scroll-x"><table class="tbl">
+        <thead><tr><th>Role</th><th class="r">Per month</th><th>Sources</th></tr></thead>
+        <tbody>
+          <tr><td>Mali / gardener</td><td class="r">₹13,000–18,000</td><td>[[mali]] [[wageChevella]]</td></tr>
+          <tr><td>Farm supervisor or manager</td><td class="r">₹20,000–30,000</td><td>[[farmManager]]</td></tr>
+          <tr><td>Goods-vehicle driver</td><td class="r">₹15,000–25,000</td><td>[[driverPay]]</td></tr>
+          <tr><td>Watchman, living on site</td><td class="r">₹10,000–15,000 + room</td><td>[[watchman]]</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Your duties as an employer are in the rules table below: minimum wage, pay on time, a weekly off, and injury cover from the first worker.</p>
+    </div>
+  </div>
+</section>
+
+<section class="rs" id="loan">
+  <header><h2>Loan and your salary</h2><p>Your take-home pay is ₹70,000 a month. Living costs of ₹30,000 are an example; set your own in the calculator. That leaves ₹40,000 a month.</p></header>
+  <div class="cols">
+    <div class="panel">
+      <h3>How much an EMI can borrow</h3>
+      <div class="scroll-x"><table class="tbl">
+        <thead><tr><th>EMI a month</th><th class="r">12.5%, 5 years</th><th class="r">10.5%, 7 years</th></tr></thead>
+        <tbody>
+          <tr><td>₹25,000</td><td class="r">₹11.1 L</td><td class="r">₹14.8 L</td></tr>
+          <tr><td>₹28,000</td><td class="r">₹12.5 L</td><td class="r">₹16.6 L</td></tr>
+          <tr><td>₹35,000 (bank limit: 50% of pay)</td><td class="r">₹15.6 L</td><td class="r">₹20.8 L</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Banks usually cap all EMIs at 40–50% of take-home pay [[foir]]. Unsecured personal loans run 10–16% for up to 5–6 years; 13–16% is realistic for a first loan [[plRealistic]] [[plRates]]. Rates are rising: RBI raised the repo rate to 5.50% on 7 Oct 2026 [[repo]] and banks lifted MCLR to about 8.9% [[mclr]].</p>
+    </div>
+    <div class="panel">
+      <h3>What each loan type needs</h3>
+      <div class="prose"><ul>
+        <li><strong>Personal loan:</strong> no security. Fits the small start.</li>
+        <li><strong>Loan against property:</strong> 9–11.5%, but you need property to pledge [[lap]].</li>
+        <li><strong>Farmland purchase loan:</strong> for small and marginal farmers, tenants and sharecroppers [[sbiLand]] [[bobLand]].</li>
+        <li><strong>Shade-net or polyhouse loan:</strong> up to 7 years with a 3–12 month break and a 10% margin, but the land is the security [[centPoly]] [[sbiPoly]].</li>
+        <li><strong>Scheme-linked:</strong> NHB subsidy needs a bank term loan [[nhb]]; the Agri Infra Fund pays 3% of the interest [[aif]]; a Kisan Credit Card gives crop loans at 7% (4% if repaid on time) once land is in your name [[kcc]].</li>
+      </ul></div>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Recommended: save for a year, then borrow ₹10–11 lakh</h3>
+    <div class="prose">
+      <p>With ₹3 lakh saved, plan F needs a ₹15.4 lakh loan. The EMI is ₹34,700 at 12.5% over 5 years, leaving you ₹5,300 a month for anything that goes wrong.</p>
+      <p>Save ₹40,000 a month for 12 months instead (₹7.8 lakh in total). The loan drops to ₹10.6 lakh, the EMI to ₹23,900, and ₹16,100 a month stays free. Your salary can then carry the EMI through a weak first year, and from year 2 the farm’s cash covers the EMI.</p>
+      <p>Don’t borrow for land. ₹63 lakh is four times the loan your salary supports.</p>
+      <p><a class="btn secondary" href="calculator.html#plan-f">Try plan F with your own savings and costs</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="rs" id="rules">
+  <header><h2>Government rules</h2><p>Telangana and central rules that apply to you. <span class="chip good">Verified</span> means checked against an official, court or news page. <span class="chip warn">Check</span> means from a secondary source or the researcher’s knowledge as of mid-2026; confirm it before you rely on it.</p></header>
+  <div class="scroll-x"><table class="tbl wide">
+    <thead><tr><th>Topic</th><th>What it means for you</th><th>Status</th><th>Sources</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Buying farmland</strong></td><td>A salaried non-farmer can buy farmland in Telangana. Avoid assigned land, land on the Section 22-A list, ceiling-surplus land and Scheduled (Agency) Areas. Register and mutate through Bhu Bharati and get a pattadar passbook.</td><td><span class="chip good">Verified</span></td><td>[[buyLand]] [[ceiling]] [[assigned]] [[sec22a]] [[scheduled]] [[bhuBharati]] [[bhuGuide]]</td></tr>
+      <tr><td><strong>Land use</strong></td><td>Shade net, polyhouse and drip count as farming. A farmhouse, worker quarters or shop needs NALA conversion and building permission.</td><td><span class="chip warn">Check</span></td><td>[[nala]]</td></tr>
+      <tr><td><strong>Farmers’ rights</strong></td><td>You may save, use, exchange and sell your own farm seed and plant material, but not as branded seed of a protected variety. Don’t propagate protected varieties for sale without a licence.</td><td><span class="chip good">Verified</span></td><td>[[ppvfr]]</td></tr>
+      <tr><td><strong>Rythu Bharosa</strong></td><td>₹12,000 per acre a year, only on land in your name where a crop is booked each season.</td><td><span class="chip good">Verified</span></td><td>[[rythuBharosa]] [[rbCropped]]</td></tr>
+      <tr><td><strong>Not available to you</strong></td><td>PM-KISAN (land bought after 1 Feb 2019 doesn’t count); Rythu Bima (cover lapsed in Aug 2026); PMFBY crop insurance (not running in Telangana).</td><td><span class="chip good">Verified</span></td><td>[[pmkisan]] [[rythuBima]] [[pmfby]]</td></tr>
+      <tr><td><strong>Power</strong></td><td>Farm pumps get free power. A horticulture nursery connection pays ₹4 per unit.</td><td><span class="chip good">Verified</span></td><td>[[tariff]]</td></tr>
+      <tr><td><strong>Nursery licence</strong></td><td>Required. Apply to the Horticulture Officer. ₹1,000 for up to 4 lakh plants, valid 3 years. Keep records and use approved mother plants.</td><td><span class="chip good">Verified</span></td><td>[[nurseryAct]] [[nurseryRules]]</td></tr>
+      <tr><td><strong>Seedlings and imports</strong></td><td>Selling vegetable seedlings likely needs a seed-dealer licence; ornamental plants don’t. Imported plants need a permit and a phytosanitary certificate, so buy from Indian labs or importers.</td><td><span class="chip warn">Check</span></td><td>[[seeds]] [[pq]]</td></tr>
+      <tr><td><strong>Protected plants</strong></td><td>Blue and Red Vanda, slipper orchids and <i>Nepenthes khasiana</i> need a Chief Wildlife Warden licence to grow or sell. Avoid them.</td><td><span class="chip warn">Check</span></td><td>[[wildlife]]</td></tr>
+      <tr><td><strong>Minimum wage</strong></td><td>₹538 a day (₹14,000 a month) for rural unskilled work from 1 Jun 2026; more for skilled work. Under High Court challenge, no stay reported.</td><td><span class="chip warn">Check</span></td><td>[[minWage]] [[minWagePdf]] [[minWageCourt]]</td></tr>
+      <tr><td><strong>Labour codes</strong></td><td>In force from 21 Nov 2025. Pay on time (daily workers at the end of the shift, monthly staff by the 7th), equal pay, a weekly off, overtime at twice the rate. Injury cover from the first worker in horticulture. ESIC at 10 workers, EPF at 20. Extra duties at 10+ migrant workers.</td><td><span class="chip good">Verified</span></td><td>[[labourCodes]] [[payTime]] [[ecSchedule]] [[epf]] [[migrant]]</td></tr>
+      <tr><td><strong>Income tax</strong></td><td>Plants you grow yourself, nursery plants included, are agricultural income: exempt, but added to your salary to set the tax rate. At ₹70,000 a month the extra tax works out to ₹0 under the new regime. Reselling bought-in plants is business income. Keep separate records.</td><td><span class="chip warn">Check</span></td><td>[[incomeTax]]</td></tr>
+      <tr><td><strong>GST</strong></td><td>Nil on live plants, fresh fruit and vegetables. No registration needed for your own produce. GST on pots, film and pesticides is a cost you can’t claim back.</td><td><span class="chip warn">Check</span></td><td>[[gst]] [[gstCouncil]]</td></tr>
+      <tr><td><strong>Selling land later</strong></td><td>No capital-gains tax on rural farmland. Land inside or near a town is taxed.</td><td><span class="chip warn">Check</span></td><td>[[incomeTax]]</td></tr>
+      <tr><td><strong>Subsidies</strong></td><td>MIDH pays 50% of the government cost norm for shade-net houses (₹710/m²) and polyhouses, up to 4,000 m². Drip and misting: 55% for small farmers, 45% for others. Apply and get sanction before you build; a passbook is usually needed.</td><td><span class="chip warn">Check</span></td><td>[[midh]] [[nhbNorms]] [[pmksy]] [[tgHorti]]</td></tr>
+      <tr><td><strong>Other schemes</strong></td><td>NHB 40–50% for larger bank-financed projects; Mudra loans up to ₹20 lakh suit a plant shop; PMEGP excludes horticulture.</td><td><span class="chip warn">Check</span></td><td>[[nhb]] [[mudra]] [[pmegp]]</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="rs" id="risks">
+  <header><h2>Risks</h2><p>The biggest risk is selling, not growing.</p></header>
+  <div class="scroll-x"><table class="tbl wide">
+    <thead><tr><th>Risk</th><th>Why it matters</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Selling 250 plants a day</strong></td><td>If only 60% sell at full price instead of 85%, plan C loses ₹9.4 lakh of its ₹13.8 lakh profit. Line up buyers before you build.</td><td>this model</td></tr>
+      <tr><td><strong>Kadiyam competition</strong></td><td>600+ nurseries sell common plants at ₹25–100 and ship to Hyderabad.</td><td>[[kadiyamScale]] [[kadiyamListing]] [[kadiyamFreight]]</td></tr>
+      <tr><td><strong>Contractors and late subsidy</strong></td><td>Telangana polyhouse farmers lost money to stalled contractors and delayed subsidy.</td><td>[[tgPolyLoss]]</td></tr>
+      <tr><td><strong>Polyhouse failures</strong></td><td>Polyhouses abandoned in Himachal for lack of markets; Anantapur growers in debt; small polyhouses lost money in a Solan study.</td><td>[[himachal]] [[anantapur]] [[solan]]</td></tr>
+      <tr><td><strong>Price crashes</strong></td><td>Dragon fruit fell from ₹130–200 to ₹40–70 a kg as planting boomed.</td><td>[[dragonPrice]] [[dragonTG]] [[dragonCrash]]</td></tr>
+      <tr><td><strong>Running it from a distance</strong></td><td>With a full-time job you depend on your head gardener. Each extra km also lengthens your weekend trips.</td><td>[[mali]] [[farmManager]]</td></tr>
+      <tr><td><strong>Water</strong></td><td>Borewells fail in dry years; farmers have turned to open wells.</td><td>[[borewellTG]]</td></tr>
+      <tr><td><strong>Land title</strong></td><td>Thousands of acres of private land were wrongly put on the 22-A prohibited list.</td><td>[[sec22aMess]]</td></tr>
+      <tr><td><strong>Fuel and interest</strong></td><td>Diesel is ₹104.23 a litre and interest rates are rising.</td><td>[[fuel]] [[repo]]</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="rs" id="plan">
+  <header><h2>A sensible first plan</h2><p>In this order:</p></header>
+  <ol class="steps prose">
+    <li><strong>Keep your job.</strong> Save ₹40,000 a month for 12 months.</li>
+    <li><strong>Learn the trade meanwhile.</strong> Spend weekends at a Hyderabad nursery [[kukatpally]], root cuttings at home, and line up 5–10 buyers: retail nurseries, landscapers, offices and online sellers.</li>
+    <li><strong>Lease 0.5–1 acre with a working borewell</strong>, 30–60 km out, on a registered lease of 5+ years [[lease]] [[lease2]].</li>
+    <li><strong>Before building,</strong> get the nursery licence and ask the Horticulture Officer whether your lease qualifies for the shade-net and drip subsidy. Wait for the sanction [[nurseryRules]] [[midh]].</li>
+    <li><strong>Build 1,000 m² of shade net</strong> (about ₹18 lakh with working money). Root your own cuttings and buy only mother plants.</li>
+    <li><strong>Borrow at most ₹10–11 lakh</strong> (EMI about ₹24,000).</li>
+    <li><strong>Grow to 2,000 m²</strong> only after six months of selling about 120 plants a day.</li>
+    <li><strong>Buy land after 2–3 profitable years</strong>, from farm profits, using real quotes in the calculator’s distance chart.</li>
+  </ol>
+</section>
+
+<section class="rs" id="method">
+  <header><h2>How this was researched</h2></header>
+  <div class="prose">
+    <p>Three research agents worked in parallel on separate topics that didn’t overlap: land, transport and wages; plant prices and growing costs; and rules, taxes and support. A coordinator handled loans, built the model and checked the numbers. This follows Google Research’s 2025 study of agent teams: with a coordinator, errors grew 4.4× instead of 17.2× for agents working alone, and parallel finance research improved by 80.9% [[googleBlog]] [[arxiv]] [[mitPage]].</p>
+    <p><strong>Limits.</strong> Web pages couldn’t be opened directly, so figures come from search results and the documents they quote. The search budget ran out near the end; items marked <span class="chip warn">Check</span> rest on the researcher’s knowledge as of mid-2026. Land prices are asking prices, not completed sales. Distances are approximate road km (±10%).</p>
+  </div>
+</section>
+
+<section class="rs" id="sources">
+  <header><h2>Sources</h2><p><!--@@NSRC@@--> links in total, including the 62 land data points in the table under the land price chart.</p></header>
+  <div class="srcgrid">
+<!--@@SOURCES@@-->
+  </div>
+</section>
+
+<footer class="foot">
+  <p>Built for planning, not as financial advice. Prices change; confirm land quotes, wages and subsidy terms locally before you commit money.</p>
+  <p><a href="calculator.html">Open the calculator</a> to change any number in this report.</p>
+</footer>
+</main>
+
+<script>
+/*@@CHARTS_JS@@*/
+</script>
+<script>
+/*@@MODEL_JS@@*/
+</script>
+<script>
+/*@@DATA_JS@@*/
+</script>
+<script>
+/*@@REPORT_JS@@*/
+</script>
+</body>
+</html>
