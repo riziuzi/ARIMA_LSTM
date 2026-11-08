@@ -1,0 +1,1490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exotic Plant Farm Course</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,600..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/*@@BASE_CSS@@*/
+
+/* ---------- Course: one lesson column (max 760px) beside a sticky course-map rail; under 960px the rail folds into a drawer. Lesson numbers are drawn as road milestones (green cap), the way distance is measured in this study. ---------- */
+[hidden] { display: none !important; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--surface); border-bottom: 1px solid var(--line); }
+.topbar .in { max-width: 1180px; margin-inline: auto; display: flex; align-items: center; gap: 10px 16px; padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.brand { display: grid; gap: 1px; color: var(--ink); text-decoration: none; min-width: 0; }
+.brand b { font: 750 var(--step-0)/1.2 var(--font-display); font-stretch: 112%; }
+.brand small { font-size: 0.78rem; color: var(--muted); line-height: 1.3; }
+.prog { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: var(--step--1); color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pbar { width: clamp(56px, 12vw, 140px); height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.pbar i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 99px; transition: width .3s ease; }
+.menu-btn { display: none; align-items: center; font: 700 var(--step--1)/1 var(--font-body); color: var(--accent); background: transparent; border: 1px solid var(--axis); border-radius: 8px; padding: 9px 12px; cursor: pointer; white-space: nowrap; }
+
+.shell { max-width: 1180px; margin-inline: auto; display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+aside.map { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 60px); align-self: start; max-height: calc(100vh - 60px - env(safe-area-inset-top, 0px)); overflow-y: auto; padding-block: 26px 32px; display: grid; gap: 18px; }
+#map-nav { display: grid; gap: 16px; }
+.part { display: grid; gap: 4px; }
+.part-t { font: 600 0.72rem/1.3 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding-left: 8px; }
+#map-nav ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+#map-nav a { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 5px 8px; border-radius: 8px; color: var(--ink); text-decoration: none; font-size: var(--step--1); line-height: 1.3; }
+#map-nav a:hover { background: var(--accent-soft); }
+#map-nav a[aria-current="page"] { background: var(--accent-soft); font-weight: 700; }
+#map-nav .mm { color: var(--muted); font-size: 0.74rem; font-weight: 400; font-variant-numeric: tabular-nums; white-space: nowrap; }
+#map-nav a.done .mm { color: var(--good-text); font-weight: 700; }
+.ms { width: 22px; height: 27px; display: grid; grid-template-rows: 8px 1fr; border: 1.5px solid var(--axis); border-radius: 11px 11px 3px 3px; overflow: hidden; background: var(--surface); }
+.ms::before { content: ""; background: var(--line); }
+.ms b { display: grid; place-items: center; font: 600 0.68rem/1 var(--font-mono); color: var(--ink-2); }
+#map-nav a.done .ms, #map-nav a[aria-current="page"] .ms { border-color: var(--accent); }
+#map-nav a.done .ms::before, #map-nav a[aria-current="page"] .ms::before { background: var(--accent); }
+.map-foot { font-size: 0.78rem; color: var(--muted); display: grid; gap: 6px; padding-left: 8px; }
+.linkbtn { font: 700 0.78rem/1.3 var(--font-body); color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline; text-underline-offset: 2px; }
+
+main.lessons { min-width: 0; }
+article.lesson { display: grid; gap: 28px; max-width: 760px; padding-block: 30px 64px; min-width: 0; }
+.lhead { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: start; }
+.stone { width: 60px; display: grid; border: 2px solid var(--accent); border-radius: 30px 30px 6px 6px; overflow: hidden; background: var(--surface); text-align: center; }
+.stone .cap { background: var(--accent); color: var(--accent-ink); font: 600 0.58rem/1 var(--font-mono); letter-spacing: 0.08em; padding: 14px 0 5px; }
+.stone .n { font: 800 1.7rem/1 var(--font-display); font-stretch: 110%; padding: 8px 0 10px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.lhead .eyebrow { margin-bottom: 6px; }
+.lhead h1 { font-size: var(--step-3); }
+.lhead h1:focus-visible { outline: none; }
+.asks { margin-top: 10px; font-size: var(--step-1); line-height: 1.45; color: var(--ink-2); max-width: 58ch; }
+
+.blk-wrap { display: grid; gap: 12px; min-width: 0; }
+h2.blk { font: 600 0.75rem/1.3 var(--font-mono); letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-2); font-stretch: 100%; }
+.idea { display: grid; gap: 12px; max-width: 66ch; }
+.idea ul, .idea ol { margin: 0; padding-left: 1.25em; display: grid; gap: 8px; }
+.idea li::marker { color: var(--muted); font-weight: 700; }
+.idea h3 { font-size: var(--step-1); margin-top: 6px; }
+.small { font-size: var(--step--1); color: var(--ink-2); }
+
+.ledger { display: grid; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; font-size: var(--step--1); overflow: hidden; min-width: 0; }
+.ledger .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; padding: 9px 14px; border-top: 1px solid var(--line); align-items: baseline; }
+.ledger .row:first-child { border-top: 0; }
+.ledger .row > span:first-child { color: var(--ink-2); }
+.ledger .amt { font: 500 0.9rem/1.4 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--ink); text-align: right; white-space: nowrap; }
+.ledger .row.sum { border-top: 1.5px solid var(--axis); background: var(--bg); }
+.ledger .row.sum > span:first-child { color: var(--ink); font-weight: 700; }
+.ledger .row.sum .amt { font-weight: 600; }
+.ledger .row.head > span:first-child { color: var(--ink); font-weight: 700; }
+.ledger .row.note > span:first-child { color: var(--muted); }
+.ledger .row .sub { display: block; color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+.ledger .row.indent > span:first-child { padding-left: 14px; }
+
+.eq { font-family: var(--font-mono); font-size: 0.84rem; line-height: 1.75; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; overflow-x: auto; white-space: pre; margin: 0; }
+.eq b { color: var(--accent); font-weight: 600; }
+.eq-in { font-family: var(--font-mono); font-size: 0.92em; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
+dl.terms { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; margin: 0; font-size: var(--step--1); }
+dl.terms dt { font-family: var(--font-mono); font-weight: 600; color: var(--ink); }
+dl.terms dd { margin: 0; color: var(--ink-2); }
+details.more { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 10px 14px; font-size: var(--step--1); }
+details.more summary { cursor: pointer; font-weight: 700; color: var(--accent); }
+details.more[open] summary { margin-bottom: 10px; }
+details.more .eq { background: var(--bg); }
+
+.try { display: grid; gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; min-width: 0; }
+.try-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.try-head p { font-size: var(--step--1); color: var(--muted); flex: 1 1 260px; }
+.reset { font: 700 var(--step--1)/1 var(--font-body); color: var(--accent); background: none; border: 0; padding: 4px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.ctls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px 24px; }
+.ctl { display: grid; gap: 6px; min-width: 0; align-content: start; }
+.ctl label { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: var(--step--1); font-weight: 700; color: var(--ink-2); line-height: 1.3; }
+.ctl output { font: 600 0.92rem/1.2 var(--font-mono); color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ctl input[type=range] { width: 100%; accent-color: var(--accent); margin: 0; height: 26px; }
+.ctl select { width: 100%; font: 400 var(--step--1)/1.3 var(--font-body); color: var(--ink); background: var(--bg); border: 1px solid var(--axis); border-radius: 8px; padding: 8px 10px; }
+.ctl .hint { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+.result { display: grid; gap: 14px; border-top: 1px solid var(--line); padding-top: 16px; min-width: 0; }
+.result .ledger { background: var(--bg); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 14px 20px; }
+.stat { display: grid; gap: 2px; min-width: 0; align-content: start; }
+.stat .k { font-size: 0.8rem; color: var(--ink-2); font-weight: 700; line-height: 1.3; }
+.stat .v { font: 700 var(--step-2)/1.15 var(--font-body); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.stat .s { font-size: 0.78rem; color: var(--muted); line-height: 1.35; }
+.verdict { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: var(--step--1); color: var(--ink-2); }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr)); gap: 16px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.tile { display: grid; gap: 3px; align-content: start; min-width: 0; }
+.tile .k { font-size: var(--step--1); color: var(--ink-2); font-weight: 700; }
+.tile .v { font: 700 var(--step-3)/1.1 var(--font-body); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.tile .s { font-size: 0.8rem; color: var(--muted); line-height: 1.4; }
+
+.model { display: grid; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.model a { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) auto; gap: 4px 14px; align-items: baseline; padding: 10px 14px; border-top: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.model a:first-child { border-top: 0; }
+.model a:hover { background: var(--accent-soft); }
+.model .f { font: 500 0.84rem/1.45 var(--font-mono); color: var(--ink-2); }
+.model .r { font-weight: 700; font-size: var(--step--1); }
+.model .l { font-size: 0.78rem; color: var(--accent); white-space: nowrap; font-weight: 700; }
+.blocks { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.blocks li { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 4px 14px; font-size: var(--step--1); color: var(--ink-2); }
+.blocks li b { font: 600 0.72rem/1.6 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
+
+.cards3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 14px; }
+.card { display: grid; gap: 6px; align-content: start; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-size: var(--step--1); color: var(--ink-2); min-width: 0; }
+.card h3 { font-size: var(--step-0); color: var(--ink); font-family: var(--font-body); font-stretch: 100%; }
+
+.rng { display: grid; gap: 14px; }
+.rng-row { display: grid; gap: 5px; border-radius: 8px; }
+.rng-h { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; }
+.rng-h b { font-size: var(--step-0); }
+.rng-h span { font-size: var(--step--1); color: var(--muted); }
+.rng-t { position: relative; height: 26px; }
+.rng-t .gl { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line); }
+.rng-t .gl.z { background: var(--axis); }
+.rng-t .band { position: absolute; top: 6px; height: 14px; border-radius: 4px; background: var(--s1); opacity: 0.32; }
+.rng-t .be { position: absolute; top: 0; height: 26px; width: 4px; margin-left: -2px; background: var(--neg); border-radius: 2px; box-shadow: 0 0 0 2px var(--surface); }
+.rng-t .used { position: absolute; top: 5px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 2px var(--surface); }
+.rng-n { font-size: var(--step--1); color: var(--ink-2); }
+.rng-axis { position: relative; height: 18px; font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rng-axis span { position: absolute; top: 0; transform: translateX(-50%); }
+.rng-axis span:first-child { transform: none; }
+.rng-axis span:last-child { transform: translateX(-100%); }
+.key { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--step--1); color: var(--ink-2); }
+.key span { display: inline-flex; align-items: center; gap: 6px; }
+.key i { display: inline-block; flex: none; }
+.key i.band { width: 18px; height: 10px; border-radius: 3px; background: var(--s1); opacity: .32; }
+.key i.be { width: 4px; height: 14px; border-radius: 2px; background: var(--neg); }
+.key i.dot { width: 11px; height: 11px; border-radius: 50%; }
+.key i.ring { width: 11px; height: 11px; border-radius: 50%; border: 1.5px dashed var(--axis); }
+.key i.line { width: 16px; height: 3px; border-radius: 2px; }
+.key i.rect { width: 11px; height: 11px; border-radius: 3px; }
+
+.pots { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 3px; max-width: 560px; }
+.pots i { aspect-ratio: 1; border-radius: 50%; background: var(--s1); }
+.pots i.clear { background: var(--s4); }
+.pots i.dead { background: transparent; border: 1.5px dashed var(--axis); }
+
+.wf { display: grid; gap: 6px; }
+.wf-row { display: grid; grid-template-columns: minmax(0, 12rem) minmax(0, 1fr) 6.2rem; gap: 10px; align-items: center; font-size: var(--step--1); border-radius: 6px; }
+.wf-l { color: var(--ink-2); line-height: 1.25; }
+.wf-t { position: relative; height: 16px; }
+.wf-t i { position: absolute; top: 0; bottom: 0; border-radius: 3px; min-width: 2px; }
+.wf-v { text-align: right; font: 500 0.86rem/1.2 var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wf-row.tot { border-top: 1px solid var(--axis); padding-top: 6px; }
+.wf-row.tot .wf-l, .wf-row.tot .wf-v { font-weight: 700; color: var(--ink); }
+
+.rules { display: grid; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.rule { display: grid; gap: 4px; padding: 12px 14px; border-top: 1px solid var(--line); }
+.rule:first-child { border-top: 0; }
+.rule-h { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 10px; }
+.rule-h b { font-size: var(--step-0); }
+.rule p { font-size: var(--step--1); color: var(--ink-2); max-width: 72ch; }
+
+.todo { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.todo label { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); cursor: pointer; }
+.todo input { width: 18px; height: 18px; margin: 3px 0 0; accent-color: var(--accent); }
+.todo .t { display: grid; gap: 2px; min-width: 0; }
+.todo .t small { color: var(--ink-2); font-size: var(--step--1); line-height: 1.45; }
+.todo input:checked + .t b { text-decoration: line-through; text-decoration-color: var(--muted); color: var(--ink-2); }
+.count { font-size: var(--step--1); color: var(--ink-2); font-weight: 700; }
+
+.why ul { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; max-width: 70ch; font-size: var(--step--1); color: var(--ink-2); }
+.why li::marker { color: var(--muted); }
+.est { display: inline-flex; align-items: center; gap: 4px; font: 600 0.68rem/1.2 var(--font-mono); letter-spacing: .03em; color: var(--warn-text); border: 1px solid currentColor; border-radius: 99px; padding: 1px 7px; vertical-align: 1px; white-space: nowrap; }
+.est::before { content: "\25B2"; font-size: 0.8em; }
+
+.checks { display: grid; gap: 22px; }
+.check { display: grid; gap: 10px; }
+.check .q { font-weight: 700; max-width: 66ch; }
+.opts { display: grid; gap: 8px; }
+.opt { text-align: left; font: 400 var(--step-0)/1.4 var(--font-body); color: var(--ink); background: var(--surface); border: 1px solid var(--axis); border-radius: 10px; padding: 10px 14px 10px 40px; cursor: pointer; position: relative; }
+.opt::before { content: attr(data-l); position: absolute; left: 13px; top: 10px; font: 600 0.82rem/1.45 var(--font-mono); color: var(--muted); }
+.opt:hover { border-color: var(--accent); }
+.check.answered .opt { cursor: default; }
+.check.answered .opt:hover { border-color: var(--axis); }
+.opt.right, .check.answered .opt.right:hover { border-color: var(--good-text); box-shadow: inset 0 0 0 1px var(--good-text); }
+.opt.right::before { content: "\2714"; color: var(--good-text); }
+.opt.wrong, .check.answered .opt.wrong:hover { border-color: var(--crit-text); }
+.opt.wrong::before { content: "\2716"; color: var(--crit-text); }
+.explain { font-size: var(--step--1); color: var(--ink-2); max-width: 70ch; }
+.explain b { color: var(--ink); }
+
+.remember { background: var(--accent-soft); border-radius: 12px; padding: 16px 18px; display: grid; gap: 8px; }
+.remember ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.remember h2.blk { color: var(--accent); }
+
+.btn { display: inline-flex; align-items: center; font: 700 var(--step-0)/1.25 var(--font-body); padding: 12px 18px; border-radius: 10px; text-decoration: none; border: 1px solid var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.secondary { background: transparent; color: var(--accent); border-color: var(--axis); }
+.btn.secondary:hover { background: var(--accent-soft); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.pager { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 20px; }
+.pager .btn { display: grid; gap: 2px; max-width: 100%; text-align: left; }
+.pager .btn.primary { margin-left: auto; text-align: right; }
+.pager .btn small { font-weight: 400; font-size: 0.8rem; opacity: .9; }
+
+.tbl.compact th, .tbl.compact td { padding: 7px 9px; }
+a.plan { display: inline-grid; place-items: center; min-width: 1.6em; height: 1.6em; margin-right: 4px; border-radius: 6px; background: var(--accent); color: var(--accent-ink); font-weight: 700; text-decoration: none; font-size: 0.85em; }
+.tbl tr.hl td { background: var(--accent-soft); }
+.tbl td.neg { color: var(--crit-text); font-weight: 700; }
+.chart-wrap { display: grid; gap: 8px; min-width: 0; }
+
+@media (max-width: 959px) {
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  aside.map { display: none; position: static; max-height: none; overflow: visible; padding-block: 14px 22px; border-bottom: 1px solid var(--line); }
+  body.map-open aside.map { display: grid; }
+  .menu-btn { display: inline-flex; }
+  article.lesson { padding-block: 24px 56px; }
+}
+@media (max-width: 560px) {
+  .brand small, .prog .pt-long { display: none; }
+  .lhead { gap: 14px; }
+  .stone { width: 50px; border-radius: 25px 25px 5px 5px; }
+  .stone .cap { padding-top: 11px; font-size: 0.5rem; }
+  .stone .n { font-size: 1.4rem; }
+  .lhead h1 { font-size: var(--step-2); }
+  .asks { font-size: var(--step-0); }
+  .try { padding: 14px; }
+  .model a { grid-template-columns: minmax(0, 1fr) auto; }
+  .model .f { grid-column: 1 / -1; }
+  .blocks li { grid-template-columns: minmax(0, 1fr); }
+  .wf-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .wf-t { grid-column: 1 / -1; grid-row: 2; }
+  .pots { gap: 2px; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="in">
+    <a class="brand" href="#start"><b>Exotic Plant Farm Course</b><small>Hyderabad · 14 lessons · about 75 minutes</small></a>
+    <div class="prog" aria-live="polite"><span class="pbar" aria-hidden="true"><i id="pfill"></i></span><span id="ptext">0 of 15 done</span></div>
+    <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="map">All lessons</button>
+  </div>
+</header>
+
+<div class="shell">
+<aside class="map" id="map" aria-label="Course map">
+  <nav id="map-nav" aria-label="Lessons"></nav>
+  <div class="map-foot">
+    <span>Your ticks and answers are saved in this browser only.</span>
+    <button type="button" class="linkbtn" id="reset-progress">Start over</button>
+  </div>
+</aside>
+
+<main class="lessons" id="main">
+
+<!-- ======================= START ======================= -->
+<article class="lesson" id="start" data-n="0" data-part="0" data-short="Start here" data-min="3">
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">START</span><span class="n">0</span></div>
+    <div>
+      <p class="eyebrow">Start here · 3 min</p>
+      <h1 tabindex="-1">Exotic plants for Hyderabad, step by step</h1>
+      <p class="asks">This course walks through every number in the study: what was calculated, what was assumed, and why. You don’t need to read the report.</p>
+    </div>
+  </header>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Your four questions</h2>
+    <div class="idea">
+      <ol>
+        <li><strong>Does growing exotic plants for Hyderabad make money?</strong> <a href="#three-businesses">Lessons 1–4</a></li>
+        <li><strong>Where should the farm be?</strong> Land is cheaper far away, but transport costs more. <a href="#land-curve">Lessons 5–8</a></li>
+        <li><strong>How much money is needed, and when does it come back?</strong> <a href="#startup-money">Lessons 9–11</a></li>
+        <li><strong>How much can my salary borrow, and which rules apply?</strong> <a href="#loan">Lessons 12–14</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">The answers you will work out</h2>
+    <div class="tiles">
+      <div class="tile"><span class="k">Profit a year</span><span class="v">₹13.8 lakh</span><span class="s">2,000 m² nursery on leased land, rooting your own cuttings</span></div>
+      <div class="tile"><span class="k">Money to start small</span><span class="v">₹18.4 lakh</span><span class="s">1,000 m² of shade net on half an acre of leased land</span></div>
+      <div class="tile"><span class="k">Best distance if you buy</span><span class="v">≈ 75 km</span><span class="s">For a nursery using a hired Tata Ace. Don’t buy yet.</span></div>
+      <div class="tile"><span class="k">Safe loan</span><span class="v">₹10.6 lakh</span><span class="s">On ₹70,000 a month, after a year of saving. EMI about ₹23,900.</span></div>
+    </div>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">The whole model on one card</h2>
+    <p class="small">Each line is one lesson. Tap a line to jump to it.</p>
+    <div class="model">
+      <a href="#one-plant"><span class="f">plants sold × average price</span><span class="r">Sales a year</span><span class="l">Lessons 2–3</span></a>
+      <a href="#year-costs"><span class="f">sales − running costs</span><span class="r">Profit a year</span><span class="l">Lesson 4</span></a>
+      <a href="#land-curve"><span class="f">P(d) = 39 + 892 × e^(−d/21)</span><span class="r">Land price at d km</span><span class="l">Lesson 5</span></a>
+      <a href="#owning-land"><span class="f">price × (cost of money − price rise)</span><span class="r">Yearly cost of owning land</span><span class="l">Lesson 6</span></a>
+      <a href="#distance-costs"><span class="f">trips × ₹/km + damage + visits + wages</span><span class="r">M: cost of one more km</span><span class="l">Lesson 7</span></a>
+      <a href="#equation"><span class="f">d* = λ × ln(K ÷ (λ × M))</span><span class="r">Best distance</span><span class="l">Lesson 8</span></a>
+      <a href="#startup-money"><span class="f">setup + working money (+ land)</span><span class="r">Money at start</span><span class="l">Lesson 9</span></a>
+      <a href="#ten-years"><span class="f">running total of cash crosses 0</span><span class="r">Payback</span><span class="l">Lesson 10</span></a>
+      <a href="#risks"><span class="f">change one input at a time</span><span class="r">What matters most</span><span class="l">Lesson 11</span></a>
+      <a href="#loan"><span class="f">EMI ≤ 50% of pay; loan = EMI × 44.45</span><span class="r">Safe loan</span><span class="l">Lesson 12</span></a>
+      <a href="#rules"><span class="f">licence, wages, GST, tax, subsidy</span><span class="r">Rules</span><span class="l">Lesson 13</span></a>
+      <a href="#your-plan"><span class="f">save, learn, lease, build small</span><span class="r">Your plan</span><span class="l">Lesson 14</span></a>
+    </div>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">How each lesson works</h2>
+    <ul class="blocks">
+      <li><b>The question</b><span>One question, answered in plain words.</span></li>
+      <li><b>Worked out</b><span>The calculation line by line, with a source link (↗) beside each number.</span></li>
+      <li><b>Try it</b><span>Sliders that recalculate with the same model as the calculator.</span></li>
+      <li><b>What I assumed</b><span>The choices behind the numbers. <span class="est">estimate</span> means no source was found, so use your own quote.</span></li>
+      <li><b>Check yourself</b><span>Two quick questions. Answers are explained.</span></li>
+      <li><b>Remember</b><span>The two or three things to keep.</span></li>
+    </ul>
+  </div>
+
+  <div class="actions" id="start-actions"><a class="btn primary" href="#three-businesses" id="start-btn">Start lesson 1</a><a class="btn secondary" href="#three-businesses" id="continue-btn" hidden>Continue</a></div>
+</article>
+
+<!-- ======================= LESSON 1 ======================= -->
+<article class="lesson" id="three-businesses" data-n="1" data-part="1" data-short="Three businesses" data-min="4" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">1</span></div>
+    <div>
+      <p class="eyebrow">Part 1 · The business · 4 min</p>
+      <h1 tabindex="-1">Three businesses called “exotic plants”</h1>
+      <p class="asks">Which kind of exotic-plant farm makes money near Hyderabad?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p>“Exotic plants” can mean three different businesses. Each sells a different thing to different buyers. The study ran all three on the same land, labour and transport numbers, so they can be compared fairly.</p>
+  </div>
+  <div class="cards3">
+    <div class="card"><h3>Indoor-plant nursery</h3><p>You grow potted foliage plants such as Syngonium, Aglaonema and areca palm, and sell them to nurseries, landscapers and online sellers. A 6-inch plant sells wholesale for ₹40–150 [[aglaonema]] [[areca]]. A batch is ready in about 6 months.</p></div>
+    <div class="card"><h3>Polyhouse vegetables</h3><p>You grow coloured capsicum, English cucumber or lettuce under plastic, and sell to hotels, supermarkets and traders. Coloured capsicum swings between ₹40 and ₹300 a kg [[icarCapsicum]].</p></div>
+    <div class="card"><h3>Dragon fruit</h3><p>You plant cactus vines on concrete poles and sell the fruit to traders. Full yield takes about 4 years. The price fell from ₹130–200 to ₹40–70 a kg as planting boomed [[dragonTG]] [[dragonPrice]].</p></div>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: break-even price against the market</h2>
+    <p class="small">The break-even price is the selling price at which sales just cover all running costs. If the market often pays less than that, the business loses money.</p>
+    <div class="key" aria-hidden="true"><span><i class="band"></i>Market price range</span><span><i class="dot" style="background:var(--ink)"></i>Price the model uses</span><span><i class="be"></i>Break-even price</span></div>
+    <div id="w-biz"></div>
+  </div>
+
+  <div class="idea">
+    <h3>Why the nursery wins</h3>
+    <ul>
+      <li><strong>Money turns over fast.</strong> Two batches a year, and the first sales come within months.</li>
+      <li><strong>You control the biggest cost.</strong> Rooting your own cuttings cuts the cost of each plant from about ₹42 to ₹30 (Lesson 2).</li>
+      <li><strong>Plants wait.</strong> A potted plant keeps for weeks. Vegetables must be sold within days, so the buyer sets the price.</li>
+      <li><strong>The polyhouse is costly to run.</strong> It needs a paid supervisor and an expensive structure. In this model capsicum needs about ₹109 a kg all year just to break even.</li>
+    </ul>
+    <p>The market is real: India’s indoor-plant market is about US$610–660 million and grows about 7–8% a year [[marketSize]] [[marketSize2]]. The main competitor is Kadiyam near Rajahmundry, with 600+ nurseries selling small plants at ₹25–100 [[kadiyamScale]] [[kadiyamListing]].</p>
+  </div>
+
+  <div class="blk-wrap why">
+    <h2 class="blk">What I assumed, and why</h2>
+    <ul>
+      <li>Sizes: 2,000 m² for the nursery and the polyhouse, 2 acres for dragon fruit. These are small enough for one owner with a full-time job.</li>
+      <li>You keep your job, so the farm pays someone to run it daily: a head gardener at ₹15,000 a month for the nursery, a supervisor at ₹20,000 for the polyhouse [[mali]] [[farmManager]].</li>
+      <li>All three are on leased land 40 km out (dragon fruit 75 km), so land cost doesn’t decide the comparison.</li>
+    </ul>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l1q1" data-answer="1">
+        <p class="q">On leased land, which business did the model find clearly profitable?</p>
+        <div class="opts"><button type="button" class="opt">Polyhouse vegetables</button><button type="button" class="opt">Indoor-plant nursery</button><button type="button" class="opt">Dragon fruit</button></div>
+        <p class="explain" hidden aria-live="polite">The nursery makes about ₹13.8 lakh a year when you root your own cuttings. Polyhouse capsicum loses ₹3.4 lakh a year. Dragon fruit makes ₹1.7 lakh a year on ₹18 lakh invested, which takes more than 10 years to pay back.</p>
+      </div>
+      <div class="check" data-id="l1q2" data-answer="0">
+        <p class="q">Dragon fruit’s ₹70 a kg is above its ₹52 break-even. Why is it still risky?</p>
+        <div class="opts"><button type="button" class="opt">Prices already fell from ₹130–200 to ₹40–70, and full yield takes about 4 years</button><button type="button" class="opt">It must be grown in a polyhouse</button><button type="button" class="opt">It can’t be sold in Hyderabad</button></div>
+        <p class="explain" hidden aria-live="polite">Lots of new planting pushed prices down fast. At ₹70 it only just clears its costs, and only once the vines are mature. Another drop to ₹40–50 would wipe out the profit.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>Compare businesses by their break-even price against the real market range.</li>
+      <li>The nursery is the one worth studying. The rest of the course follows it.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 2 ======================= -->
+<article class="lesson" id="one-plant" data-n="2" data-part="1" data-short="One plant" data-min="5" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">2</span></div>
+    <div>
+      <p class="eyebrow">Part 1 · The business · 5 min</p>
+      <h1 tabindex="-1">One plant, from cutting to sale</h1>
+      <p class="asks">How much does one plant cost to grow, and how much does it bring in?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p>Start with a single plant. If one plant doesn’t make money, a hundred thousand won’t.</p>
+    <p>A young plant starts as a cutting or a lab-grown plantlet. It goes into a 6-inch pot with potting mix, gets fed and sprayed, and is sold about 6 months later.</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: cost to start one plant</h2>
+    <div class="ledger">
+      <div class="row"><span>Bought plantlet (liner) [[tcSyngonium]] [[kfri]]</span><span class="amt">₹20</span></div>
+      <div class="row"><span>6-inch pot [[pots]]</span><span class="amt">₹9</span></div>
+      <div class="row"><span>Potting mix [[cocopeat]]</span><span class="amt">₹5–10</span></div>
+      <div class="row"><span>Feed and sprays; sleeve <span class="est">estimate</span></span><span class="amt">₹4–10</span></div>
+      <div class="row sum"><span>With a bought plantlet</span><span class="amt">≈ ₹42</span></div>
+      <div class="row sum"><span>Rooting a cutting from your own mother plants instead of buying the liner</span><span class="amt">≈ ₹30</span></div>
+    </div>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: what 100 plants bring in</h2>
+    <div class="ledger">
+      <div class="row"><span>Plants started</span><span class="amt">100</span></div>
+      <div class="row"><span>Die or thrown away (10%)</span><span class="amt">− 10</span></div>
+      <div class="row"><span>Sold at the full ₹75 (85% of the 90 that survive)</span><span class="amt">76.5</span></div>
+      <div class="row"><span>Cleared at 40% of the price, ₹30 (the other 15%)</span><span class="amt">13.5</span></div>
+      <div class="row sum"><span>Average price per plant sold: 0.85 × ₹75 + 0.15 × ₹30</span><span class="amt">₹68.25</span></div>
+      <div class="row sum"><span>Money in per plant started: 0.90 × ₹68.25</span><span class="amt">₹61.43</span></div>
+      <div class="row"><span>Minus the cost to start it (own cuttings)</span><span class="amt">− ₹30.00</span></div>
+      <div class="row sum"><span>Left per plant started, to pay wages, transport and everything else</span><span class="amt">₹31.43</span></div>
+    </div>
+    <p class="small">With bought plantlets only ₹19.43 is left. That ₹12 gap, over 100,000 plants a year, is ₹12 lakh a year. It is the biggest single lever in the whole study.</p>
+  </div>
+
+  <section class="try" aria-label="Try it: one plant">
+    <div class="try-head"><h2 class="blk">Try it</h2><p>Each dot is one plant out of 100 started.</p><button type="button" class="reset">Reset</button></div>
+    <div class="ctls" id="c-plant"></div>
+    <div class="result">
+      <div class="pots" id="pots" role="img" aria-label="100 plants: sold at full price, cleared at a discount, or lost"></div>
+      <div class="key" id="pots-key"></div>
+      <div class="ledger" id="r-plant"></div>
+    </div>
+  </section>
+
+  <div class="blk-wrap why">
+    <h2 class="blk">What I assumed, and why</h2>
+    <ul>
+      <li>₹75 wholesale: the middle of ₹40–150 for 6-inch plants. Aglaonema sells for ₹85–100 and areca palm for ₹100 [[aglaonema]] [[aglaRaj]] [[areca]].</li>
+      <li>10% of plants lost <span class="est">estimate</span>. No published figure was found.</li>
+      <li>85% sold at full price, the rest cleared at 40% of it <span class="est">estimate</span>. Selling is the biggest risk (Lesson 11).</li>
+      <li>Online retail pays 2–4 times more (₹169–599) [[nurserylive]] [[ugaoo]], but needs packing, delivery and returns. The model sells wholesale to stay safe.</li>
+      <li>₹30 with own cuttings is built from the parts above: the ₹20 liner is replaced by a cutting that costs a few rupees to root.</li>
+    </ul>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l2q1" data-answer="1">
+        <p class="q">100 plants are started. 10 die. 85% of the rest sell at ₹75 and the others at ₹30. About how much money comes in?</p>
+        <div class="opts"><button type="button" class="opt">₹7,500</button><button type="button" class="opt">₹6,143</button><button type="button" class="opt">₹6,825</button></div>
+        <p class="explain" hidden aria-live="polite">90 plants sold × ₹68.25 average = ₹6,143. ₹7,500 assumes every plant sells at full price. ₹6,825 forgets the 10 that died.</p>
+      </div>
+      <div class="check" data-id="l2q2" data-answer="0">
+        <p class="q">Which adds more profit per plant started?</p>
+        <div class="opts"><button type="button" class="opt">Cutting the plant cost by ₹12</button><button type="button" class="opt">Raising the price by ₹5</button><button type="button" class="opt">They add the same</button></div>
+        <p class="explain" hidden aria-live="polite">A ₹12 saving lands on every plant started. A ₹5 price rise only reaches the 90% that survive, and only fully on the 85% sold at full price: about ₹4.10 per plant started.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>Each plant started brings in about ₹61. It costs ₹30 with your own cuttings or ₹42 bought.</li>
+      <li>The cost of each plant and the share you sell at full price matter most.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 3 ======================= -->
+<article class="lesson" id="scale" data-n="3" data-part="1" data-short="From one plant to a nursery" data-min="4" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">3</span></div>
+    <div>
+      <p class="eyebrow">Part 1 · The business · 4 min</p>
+      <h1 tabindex="-1">From one plant to a nursery</h1>
+      <p class="asks">How many plants can 2,000 m² produce, and what does that mean every day?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p>A shade-net house is a steel-pipe frame covered with green net that cuts the harsh sun. 2,000 m² is about half an acre (1 acre is 4,047 m²). The rest of the acre holds the shed, paths, mother plants and the water tank.</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: 2,000 m² of shade net</h2>
+    <div class="ledger">
+      <div class="row"><span>Pots per m², with room for spacing and paths (43 fit if pots touch) [[paes]]</span><span class="amt">25</span></div>
+      <div class="row"><span>Pots at one time: 2,000 × 25</span><span class="amt">50,000</span></div>
+      <div class="row"><span>Batches a year: 12 months ÷ 6 months [[agristarts]] [[gpn]]</span><span class="amt">2</span></div>
+      <div class="row sum"><span>Plants started a year: 50,000 × 2</span><span class="amt">100,000</span></div>
+      <div class="row"><span>Plants sold (90% survive)</span><span class="amt">90,000</span></div>
+      <div class="row sum"><span>Sales: 90,000 × ₹68.25</span><span class="amt">₹61.4 lakh</span></div>
+      <div class="row sum"><span>Plants to sell each day: 90,000 ÷ 365</span><span class="amt">≈ 250</span></div>
+      <div class="row"><span>Tata Ace loads a year at about 320 racked pots each [[aceDeck]]</span><span class="amt">282</span></div>
+    </div>
+    <p class="small">250 plants a day, every day of the year, is the real job. It needs buyers lined up before you build.</p>
+  </div>
+
+  <section class="try" aria-label="Try it: nursery size">
+    <div class="try-head"><h2 class="blk">Try it</h2><p>Average price stays ₹68.25 and 10% of plants are lost.</p><button type="button" class="reset">Reset</button></div>
+    <div class="ctls" id="c-scale"></div>
+    <div class="result"><div class="stats" id="s-scale"></div><div class="ledger" id="r-scale"></div></div>
+  </section>
+
+  <div class="blk-wrap why">
+    <h2 class="blk">What I assumed, and why</h2>
+    <ul>
+      <li>6 months to saleable size: a mix of fast Syngonium (3–4 months) and slower Aglaonema (5–6+ months) [[agristarts]] [[gpn]].</li>
+      <li>A new nursery doesn’t start at full speed: 40% of full output in year 1, 80% in year 2, 100% from year 3 <span class="est">estimate</span>. Lesson 10 uses this.</li>
+      <li>Truck loads: about 320 racked 6-inch pots in a Tata Ace, or 125 in a single layer [[aceDeck]].</li>
+    </ul>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l3q1" data-answer="1">
+        <p class="q">If plants take 8 months instead of 6, how many plants does 2,000 m² start each year?</p>
+        <div class="opts"><button type="button" class="opt">100,000</button><button type="button" class="opt">75,000</button><button type="button" class="opt">66,667</button></div>
+        <p class="explain" hidden aria-live="polite">12 ÷ 8 = 1.5 batches a year, × 50,000 pots = 75,000. Slower plants mean fewer sales from the same shade net.</p>
+      </div>
+      <div class="check" data-id="l3q2" data-answer="1">
+        <p class="q">About how many plants a day must a 2,000 m² nursery sell?</p>
+        <div class="opts"><button type="button" class="opt">About 50</button><button type="button" class="opt">About 250</button><button type="button" class="opt">About 1,000</button></div>
+        <p class="explain" hidden aria-live="polite">90,000 plants a year ÷ 365 days ≈ 250. On a 6-day week it is about 300 per working day.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>2,000 m² → 100,000 plants started → 90,000 sold → about 250 a day → ₹61.4 lakh of sales.</li>
+      <li>Area and crop time decide how much you grow. Buyers decide whether you can sell it.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 4 ======================= -->
+<article class="lesson" id="year-costs" data-n="4" data-part="1" data-short="A year of running costs" data-min="6" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">4</span></div>
+    <div>
+      <p class="eyebrow">Part 1 · The business · 6 min</p>
+      <h1 tabindex="-1">A full year of running costs</h1>
+      <p class="asks">After every running cost, how much of ₹61.4 lakh in sales is left?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p>This is <strong>plan C</strong>: 2,000 m² on 1 acre of leased land 40 km out, own cuttings, a hired Tata Ace, 2 workers and a head gardener. These are the costs of a normal year at full output.</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: plan C, one year</h2>
+    <div class="ledger">
+      <div class="row head"><span>Sales: 90,000 plants × ₹68.25</span><span class="amt">₹61.4 lakh</span></div>
+      <div class="row"><span>Young plants, pots, mix and feed: 100,000 × ₹30</span><span class="amt">− ₹30.0 lakh</span></div>
+      <div class="row"><span>Transport: 282 trips × ₹2,050, plus 2.4% of sales damaged in transit [[transrentals]] [[mover]] [[tollNH65]]<span class="sub">Each trip: ₹1,500 minimum fare (₹30 × 40 km = ₹1,200 is less) + ₹200 toll + ₹350 loader</span></span><span class="amt">− ₹7.3 lakh</span></div>
+      <div class="row"><span>Wages: 2 workers × 300 days × ₹595, plus a head gardener at ₹15,000 a month [[wageChevella]] [[mali]]</span><span class="amt">− ₹5.4 lakh</span></div>
+      <div class="row"><span>Selling costs: 5% of sales for commission, packing and listings <span class="est">estimate</span></span><span class="amt">− ₹3.1 lakh</span></div>
+      <div class="row"><span>Power, phone, insurance, licence. Nursery power is billed at ₹4 a unit [[tariff]]</span><span class="amt">− ₹0.7 lakh</span></div>
+      <div class="row"><span>Maintenance: 3% of the ₹20.2 lakh setup <span class="est">estimate</span></span><span class="amt">− ₹0.6 lakh</span></div>
+      <div class="row"><span>Your car: 4 visits a month × 80 km return × ₹10 a km</span><span class="amt">− ₹0.4 lakh</span></div>
+      <div class="row"><span>Lease rent: 1 acre × ₹20,000 [[lease]] [[lease2]]</span><span class="amt">− ₹0.2 lakh</span></div>
+      <div class="row sum"><span>Operating profit a year</span><span class="amt">₹13.8 lakh</span></div>
+    </div>
+    <p class="small">Operating profit is before loan interest and before you pay yourself. Your salary stays separate. Plants are 63% of all costs; wages only 11%.</p>
+  </div>
+
+  <section class="try" aria-label="Try it: one year of plan C">
+    <div class="try-head"><h2 class="blk">Try it</h2><p>Hover or tap a row to see how it is worked out.</p><button type="button" class="reset">Reset</button></div>
+    <div class="ctls" id="c-year"></div>
+    <div class="result">
+      <div class="key" aria-hidden="true"><span><i class="rect" style="background:var(--pos)"></i>Money in</span><span><i class="rect" style="background:var(--neg)"></i>Money out</span></div>
+      <div class="wf" id="wf-year"></div>
+      <div class="stats" id="s-year"></div>
+    </div>
+  </section>
+
+  <details class="more">
+    <summary>Show the maths: how the ₹57 break-even price is found</summary>
+    <p class="small">Selling costs (5%) and damage (2.4%) rise and fall with the price, so they are taken out first. Everything else stays the same whatever the price.</p>
+<pre class="eq">Costs that don't depend on price
+  = ₹47.6 L − (5% + 2.4%) × ₹61.4 L  = ₹43.0 L
+
+Each ₹1 of full price brings in, per year:
+  90,000 sold × 0.91 price mix × 0.926 kept
+  = ₹75,839
+
+Break-even = ₹43.0 L ÷ ₹75,839 = <b>₹57 a plant</b></pre>
+    <p class="small">0.91 is the price mix from Lesson 2 (85% at full price, 15% at 40% of it). 0.926 is what is kept after the 7.4% that rises with price.</p>
+  </details>
+
+  <div class="blk-wrap why">
+    <h2 class="blk">What I assumed, and why</h2>
+    <ul>
+      <li>Daily wage ₹595 at 40 km: ₹600 near the city falling to ₹540 at 150 km, never below the ₹538 legal minimum [[wageChevella]] [[minWage]].</li>
+      <li>Damage in transit: 2% of the load’s value per trip, plus 1% per 100 km <span class="est">estimate</span>. No Indian source was found.</li>
+      <li>Lease rent ₹20,000 per acre a year. Telangana’s average is ₹14,936, and land with assured water costs ₹25,000–35,000 [[lease]] [[lease2]].</li>
+      <li>Tax is covered in Lesson 13. Interest on any loan is covered in Lesson 12.</li>
+    </ul>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l4q1" data-answer="1">
+        <p class="q">What is the biggest cost in a nursery year?</p>
+        <div class="opts"><button type="button" class="opt">Wages</button><button type="button" class="opt">Young plants, pots and mix</button><button type="button" class="opt">Transport</button></div>
+        <p class="explain" hidden aria-live="polite">₹30 lakh of the ₹47.6 lakh total. That is why rooting your own cuttings matters so much. Wages are only ₹5.4 lakh.</p>
+      </div>
+      <div class="check" data-id="l4q2" data-answer="1">
+        <p class="q">Plan C breaks even at ₹57 a plant. If your selling price falls from ₹75 to ₹55, plan C…</p>
+        <div class="opts"><button type="button" class="opt">still makes a small profit</button><button type="button" class="opt">loses money</button><button type="button" class="opt">is unchanged, because costs stay the same</button></div>
+        <p class="explain" hidden aria-live="polite">Below the break-even price, sales no longer cover costs. Try ₹55 in the sliders above: the profit turns negative.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>Plan C: ₹61.4 lakh sales − ₹47.6 lakh costs = ₹13.8 lakh a year.</li>
+      <li>Break-even price ₹57. Wholesale prices run ₹40–150, so your plant mix and buyers decide which side you land on.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 5 ======================= -->
+<article class="lesson" id="land-curve" data-n="5" data-part="2" data-short="Land prices and distance" data-min="5" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">5</span></div>
+    <div>
+      <p class="eyebrow">Part 2 · Where to farm · 5 min</p>
+      <h1 tabindex="-1">Land prices fall with distance</h1>
+      <p class="asks">How much cheaper does farmland get as you move away from Hyderabad?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p>The research collected 59 asking prices and news reports for farmland in six directions around Hyderabad. Each dot below is one place. Prices fall fast over the first 50 km, then level off near ₹40 lakh an acre.</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: the price curve</h2>
+<pre class="eq"><b>P(d) = Pf + (P0 − Pf) × e^(−d/λ)</b>      ₹ lakh per acre
+
+Pf      = ₹39 L    price far away, where it levels off
+P0      = ₹931 L   where the curve starts at the city edge
+P0 − Pf = ₹892 L   the city premium
+λ       = 21 km    how fast the premium fades</pre>
+    <div class="idea"><p>The premium shrinks to about a third (e<sup>−1</sup> = 0.37) every 21 km, so it halves every 0.69 × 21 ≈ 15 km. At 75 km:</p></div>
+<pre class="eq">e^(−75/21) = e^(−3.57) = 0.028
+P(75) = 39 + 892 × 0.028
+      = 39 + 25 = <b>₹64 lakh an acre</b> (asking)</pre>
+  </div>
+
+  <section class="try" aria-label="Try it: land price by distance">
+    <div class="try-head"><h2 class="blk">Try it</h2><p>Pick a direction to highlight its listings and scale the curve. Hover a dot for the place.</p><button type="button" class="reset">Reset</button></div>
+    <div class="ctls" id="c-land"></div>
+    <div class="result">
+      <div class="key" id="land-key" aria-hidden="true"></div>
+      <div class="chart" id="ch-land"></div>
+      <div class="ledger" id="r-land"></div>
+      <details class="tableview"><summary>Show all 62 data points with links</summary><div class="scroll-x" id="t-land"></div></details>
+    </div>
+  </section>
+
+  <div class="blk-wrap why">
+    <h2 class="blk">What I considered</h2>
+    <ul>
+      <li><strong>Direction matters.</strong> The curve and one price factor per direction were fitted together (least squares on the log of price). West (Chevella, Sangareddy) runs ×1.7, the Future City belt ×1.25, Sagar road ×0.85, and south, north and east ×1.0.</li>
+      <li><strong>Real quotes scatter.</strong> A typical listing sits about 40% above or below the curve. Use the curve for planning and real quotes for buying.</li>
+      <li><strong>Asking prices, not sales.</strong> The model takes 10% off for negotiation. 2025 saw distress sales of farmland [[distress]].</li>
+      <li>Three points were left out of the fit: two government compensation awards and one road-facing plot, which price differently.</li>
+      <li>Government land values were revised in June 2026 [[govtValue]]. They set stamp duty, not the market price. Distances are road km, ±10%.</li>
+    </ul>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l5q1" data-answer="1">
+        <p class="q">What does λ = 21 km tell you?</p>
+        <div class="opts"><button type="button" class="opt">Land is almost free beyond 21 km</button><button type="button" class="opt">The city premium shrinks to about a third every 21 km</button><button type="button" class="opt">Prices fall 21% for every km</button></div>
+        <p class="explain" hidden aria-live="polite">λ is the distance over which the premium above the far-away price (₹892 lakh at the city edge) falls to 37% of itself. The far-away price of ₹39 lakh stays.</p>
+      </div>
+      <div class="check" data-id="l5q2" data-answer="0">
+        <p class="q">Land on the west side, towards Chevella, at the same distance costs…</p>
+        <div class="opts"><button type="button" class="opt">about 1.7 times the curve</button><button type="button" class="opt">the same as the curve</button><button type="button" class="opt">about half the curve</button></div>
+        <p class="explain" hidden aria-live="polite">The IT corridor and highway widening push western prices up. Sagar road is the cheapest direction at about 0.85 times the curve.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>P(d) = 39 + 892 × e<sup>−d/21</sup> ₹ lakh per acre: about ₹64 lakh at 75 km.</li>
+      <li>Direction moves prices by up to 1.7 times. Real quotes vary ±40% around the curve.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 6 ======================= -->
+<article class="lesson" id="owning-land" data-n="6" data-part="2" data-short="Owning land costs every year" data-min="5" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">6</span></div>
+    <div>
+      <p class="eyebrow">Part 2 · Where to farm · 5 min</p>
+      <h1 tabindex="-1">Owning land still costs you every year</h1>
+      <p class="asks">If you pay for land once, why does the model charge it as a yearly cost?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p>Money locked in land can’t earn anything else. If it came from a loan, you pay interest on it every year. If it came from savings, you give up the interest those savings would have earned. This is called the <strong>cost of money</strong> (or opportunity cost).</p>
+    <p>If land prices rise, part of that cost comes back when you sell. So the yearly cost of owning is the price × (cost of money − yearly price rise).</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: 1 acre at 75 km</h2>
+    <div class="ledger">
+      <div class="row"><span>Asking price from the curve (Lesson 5)</span><span class="amt">₹64.1 lakh</span></div>
+      <div class="row"><span>Minus 10% negotiated off the asking price <span class="est">estimate</span></span><span class="amt">₹57.7 lakh</span></div>
+      <div class="row"><span>Plus 9%: 5.5% stamp duty + 1.5% transfer + 0.5% registration + about 1.5% broker [[stamp]] [[stampGov]]</span><span class="amt">₹62.9 lakh</span></div>
+      <div class="row"><span>Plus title check, survey and lawyer <span class="est">estimate</span></span><span class="amt">₹0.3 lakh</span></div>
+      <div class="row sum"><span>All-in price</span><span class="amt">₹63.2 lakh</span></div>
+      <div class="row sum"><span>Yearly cost of owning: ₹63.2 lakh × (9% − 0%)</span><span class="amt">₹5.7 lakh</span></div>
+      <div class="row"><span>Lease instead: 1 acre × ₹20,000 a year [[lease]] [[lease3]]</span><span class="amt">₹0.2 lakh</span></div>
+    </div>
+    <p class="small">Owning costs about 28 times more per year than leasing. It also needs ₹63 lakh before you sell a single plant, four times what your salary can borrow (Lesson 12).</p>
+  </div>
+
+  <section class="try" aria-label="Try it: yearly cost of owning land">
+    <div class="try-head"><h2 class="blk">Try it</h2><p>See how distance, interest and expected price rise change the yearly cost of owning.</p><button type="button" class="reset">Reset</button></div>
+    <div class="ctls" id="c-own"></div>
+    <div class="result"><div class="ledger" id="r-own"></div><div id="b-own"></div><p class="small" id="n-own"></p></div>
+  </section>
+
+  <div class="blk-wrap why">
+    <h2 class="blk">What I assumed, and why</h2>
+    <ul>
+      <li>9% cost of money: between a fixed deposit (about 6–6.5%) [[fd]] and a personal loan (13–16%) [[plRealistic]].</li>
+      <li>0% land price rise. A farm should pay on its own; any rise is a bonus. Farmland values fell in 2025 [[distress]].</li>
+      <li>Rural farmland sold later pays no capital-gains tax, so a price rise would come back in full [[incomeTax]] <span class="est">check</span>.</li>
+      <li>Rythu Bharosa pays ₹12,000 per acre a year, but only on land in your name with a crop booked each season [[rythuBharosa]]. The nursery plans don’t count it.</li>
+    </ul>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l6q1" data-answer="1">
+        <p class="q">You pay ₹63 lakh in cash for land. That money could earn 9% elsewhere, and land prices stay flat. What does owning cost you each year?</p>
+        <div class="opts"><button type="button" class="opt">Nothing, because I paid cash</button><button type="button" class="opt">About ₹5.7 lakh</button><button type="button" class="opt">₹63 lakh</button></div>
+        <p class="explain" hidden aria-live="polite">₹63 lakh × 9% = ₹5.7 lakh of interest you give up every year. Paying cash only changes who you lose it to.</p>
+      </div>
+      <div class="check" data-id="l6q2" data-answer="1">
+        <p class="q">If land prices rise 5% a year, the yearly cost of owning becomes…</p>
+        <div class="opts"><button type="button" class="opt">higher</button><button type="button" class="opt">lower, because 9% − 5% = 4%</button><button type="button" class="opt">the same</button></div>
+        <p class="explain" hidden aria-live="polite">The rise gives back part of the interest when you sell. That is also why expected growth pulls the best distance closer to the city in Lesson 8.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>Yearly cost of owned land = all-in price × (cost of money − price rise).</li>
+      <li>At 75 km that is about ₹5.7 lakh a year, against ₹20,000 to lease.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 7 ======================= -->
+<article class="lesson" id="distance-costs" data-n="7" data-part="2" data-short="Costs that grow per km" data-min="5" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">7</span></div>
+    <div>
+      <p class="eyebrow">Part 2 · Where to farm · 5 min</p>
+      <h1 tabindex="-1">Costs that grow with every kilometre</h1>
+      <p class="asks">What does each extra kilometre from Hyderabad add to a year’s costs?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p>Moving farther out changes four costs: truck trips cost more, more plants get damaged on the way, your own trips take longer, and wages are a little lower.</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: one truck trip</h2>
+<pre class="eq"><b>Trip cost = higher of (₹1,500, ₹30 × km) + ₹200 toll + ₹350 loader</b>
+
+40 km:  ₹1,500 + ₹550 = ₹2,050   minimum fare applies up to 50 km
+75 km:  ₹2,250 + ₹550 = ₹2,800
+150 km: ₹4,500 + ₹550 = ₹5,050</pre>
+    <p class="small">₹30 per km of distance already pays for the empty return trip [[transrentals]] [[porter]] [[truckguru]]. Loader ₹300–400 [[mover]]; tolls about ₹190–200 a return trip [[tollNH65]].</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: M, the cost of one more km a year</h2>
+    <div class="ledger">
+      <div class="row"><span>Truck trips: 282 trips × ₹30</span><span class="amt">₹8,460</span></div>
+      <div class="row"><span>Plant damage: ₹61.4 lakh of sales × 1% per 100 km ÷ 100</span><span class="amt">₹614</span></div>
+      <div class="row"><span>Your visits: 96 one-way drives × (₹10 car + ₹400 an hour ÷ 40 km/h) [[fuel]] [[carCost]]</span><span class="amt">₹1,920</span></div>
+      <div class="row"><span>Wages: 2 workers × 300 days × ₹0.50 less per km [[wageChevella]] [[wageSeries]]</span><span class="amt">− ₹300</span></div>
+      <div class="row sum"><span>M, per km per year</span><span class="amt">₹10,694</span></div>
+    </div>
+    <p class="small">Truck trips are 79% of M. That is why the choice of truck moves the best distance the most.</p>
+  </div>
+
+  <section class="try" aria-label="Try it: the cost of one more km">
+    <div class="try-head"><h2 class="blk">Try it</h2><p>Change the truck or your visits and watch M.</p><button type="button" class="reset">Reset</button></div>
+    <div class="ctls" id="c-km"></div>
+    <div class="result"><div class="stats" id="s-km"></div><div id="b-km"></div><div class="ledger" id="r-km"></div></div>
+  </section>
+
+  <div class="blk-wrap why">
+    <h2 class="blk">What I assumed, and why</h2>
+    <ul>
+      <li>A 14 ft truck carries about 1,250 pots, four times a Tata Ace, at about ₹38 per km with a ₹4,000 minimum [[truck14]] [[truckguru]]. A used Tata Ace costs about ₹2.85 lakh to buy [[aceUsed]].</li>
+      <li>Your time counts at ₹400 an hour (₹70,000 ÷ 176 working hours), because a farm 150 km away eats your weekends. It is used only to choose the location, not in cash profit.</li>
+      <li>Wages fall in a straight line from ₹600 a day at 30 km to ₹540 at 150 km, never below the ₹538 legal minimum [[minWage]].</li>
+      <li>Fuel on 8 Nov 2026: petrol ₹116.15 a litre, diesel ₹104.23 [[fuel]].</li>
+    </ul>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l7q1" data-answer="0">
+        <p class="q">For a nursery using a hired Tata Ace, which part of M is largest?</p>
+        <div class="opts"><button type="button" class="opt">Truck trips</button><button type="button" class="opt">Your visits</button><button type="button" class="opt">Wages</button></div>
+        <p class="explain" hidden aria-live="polite">₹8,460 of ₹10,694. Nearly one truck a day, each paying ₹30 for every km of distance.</p>
+      </div>
+      <div class="check" data-id="l7q2" data-answer="0">
+        <p class="q">A 14 ft truck carries 4 times as many pots per trip. What happens to M?</p>
+        <div class="opts"><button type="button" class="opt">It falls, because there are far fewer trips</button><button type="button" class="opt">It rises, because the truck costs more per km</button><button type="button" class="opt">No change</button></div>
+        <p class="explain" hidden aria-live="polite">282 trips become 72. Even at ₹38 per km, M falls from ₹10,694 to about ₹4,970.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>M = trips × ₹ per km + damage + your drives + wage change ≈ ₹10,694 per km a year.</li>
+      <li>Fewer, bigger loads make distance cheaper.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 8 ======================= -->
+<article class="lesson" id="equation" data-n="8" data-part="2" data-short="The best-distance equation" data-min="7" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">8</span></div>
+    <div>
+      <p class="eyebrow">Part 2 · Where to farm · 7 min</p>
+      <h1 tabindex="-1">The equation: finding the best distance</h1>
+      <p class="asks">At what distance is land + transport + visits + wages lowest for the year?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p>Put Lessons 5–7 together. The yearly land cost falls fast near the city and slowly far away. Transport, visits and wages rise by about M for every km. Added up, they make a valley. The bottom of the valley is the best distance.</p>
+<pre class="eq"><b>C(d)</b> = Land(d) + Transport(d) + Visits(d) + Wages(d)</pre>
+    <p>At the bottom, one more km saves exactly as much land cost as it adds in transport.</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: from the idea to the formula</h2>
+<pre class="eq">1. Land cost above the far-away floor:   K × e^(−d/λ)
+   K = (i − g) × A × (P0 − Pf) × (1 − gap) × (1 + s)
+
+2. One more km saves:   (K ÷ λ) × e^(−d/λ)
+3. One more km adds:    M
+
+4. Best where they are equal:
+   (K ÷ λ) × e^(−d/λ) = M   →   e^(−d/λ) = λM ÷ K
+
+5. Take the log of both sides:
+   <b>d* = λ × ln( K ÷ (λ × M) )</b></pre>
+    <dl class="terms">
+      <dt>i − g</dt><dd>cost of money minus land price rise (9% − 0%)</dd>
+      <dt>A</dt><dd>acres bought (1)</dd>
+      <dt>P0 − Pf</dt><dd>city premium in the land curve (₹892 lakh)</dd>
+      <dt>gap, s</dt><dd>negotiated discount (10%); duties and broker (9%)</dd>
+      <dt>λ</dt><dd>how fast land prices fall (21 km)</dd>
+      <dt>M</dt><dd>what one more km adds a year (₹10,694, Lesson 7)</dd>
+    </dl>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: with the research numbers</h2>
+<pre class="eq">K       = 9% × 1 × ₹892 L × 0.90 × 1.09  = <b>₹78.8 lakh a year</b>
+λ × M   = 21 × ₹10,694                   = ₹2.25 lakh
+K ÷ λM  = 78.8 ÷ 2.25                     = 35.1
+ln 35.1 = 3.56
+d*      = 21 × 3.56                       = <b>75 km</b></pre>
+    <p class="small">K is the most land cost per year that moving away can ever save. Because d* uses a logarithm, it moves slowly: doubling K only adds 21 × ln 2 ≈ 15 km.</p>
+  </div>
+
+  <section class="try" aria-label="Try it: best distance">
+    <div class="try-head"><h2 class="blk">Try it</h2><p>The chart checks every km from 15 to 200, including the truck’s minimum fare that the formula ignores.</p><button type="button" class="reset">Reset</button></div>
+    <div class="ctls" id="c-eq"></div>
+    <div class="result">
+      <div class="stats" id="s-eq"></div>
+      <div class="legend" id="lg-eq"></div>
+      <div class="chart" id="ch-eq"></div>
+      <div class="ledger" id="r-eq"></div>
+      <details class="tableview"><summary>Show as table</summary><div class="scroll-x" id="t-eq"></div></details>
+    </div>
+  </section>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: what moves the best distance</h2>
+    <div class="scroll-x"><table class="tbl compact">
+      <thead><tr><th>If you buy land for…</th><th class="r">Trips a year</th><th class="r">M (₹/km)</th><th class="r">Best</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td>Nursery, hired Tata Ace</td><td class="r">282</td><td class="r">10,694</td><td class="r">75 km</td></tr>
+        <tr><td>Nursery, hired 14 ft truck</td><td class="r">72</td><td class="r">4,970</td><td class="r">90–105 km</td></tr>
+        <tr><td>Polyhouse capsicum</td><td class="r">104</td><td class="r">4,841</td><td class="r">91 km</td></tr>
+        <tr><td>Dragon fruit, 2 acres</td><td class="r">20</td><td class="r">2,440</td><td class="r">120 km</td></tr>
+        <tr><td>Nursery, west side (land ×1.7)</td><td class="r">282</td><td class="r">10,694</td><td class="r">86 km</td></tr>
+        <tr><td>Nursery, Sagar road (land ×0.85)</td><td class="r">282</td><td class="r">10,694</td><td class="r">71 km</td></tr>
+        <tr><td>Nursery, if land rises 5% a year</td><td class="r">282</td><td class="r">10,694</td><td class="r">58 km</td></tr>
+        <tr><td>Any plan on leased land</td><td class="r">–</td><td class="r">–</td><td class="r">closest with water</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small">The 14 ft truck shows a range because its ₹4,000 minimum fare covers every trip up to 105 km. The formula, which ignores the minimum, says 91 km; the km-by-km check says 105 km. Lease rent hardly changes with distance, so a leased farm has no land term and should be as close as you can find good water.</p>
+  </div>
+
+  <div class="blk-wrap why">
+    <h2 class="blk">What I considered</h2>
+    <ul>
+      <li>This is the classic land-rent trade-off first described by von Thünen in 1826 [[thunen]].</li>
+      <li>The bottom is flat. For the Tata Ace nursery, anywhere from about 60 to 95 km costs within ₹1 lakh a year of the best. Choose inside that band by water, road access and clean title.</li>
+      <li>The formula skips two real-world limits: the minimum truck fare and the wage floor. The chart includes both, which is why it is the final word.</li>
+    </ul>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l8q1" data-answer="0">
+        <p class="q">You switch from a Tata Ace to a 14 ft truck. The best distance…</p>
+        <div class="opts"><button type="button" class="opt">moves farther out</button><button type="button" class="opt">moves closer</button><button type="button" class="opt">stays at 75 km</button></div>
+        <p class="explain" hidden aria-live="polite">Fewer trips make M smaller. A smaller M makes K ÷ (λ × M) bigger, so d* grows: 90–105 km.</p>
+      </div>
+      <div class="check" data-id="l8q2" data-answer="1">
+        <p class="q">You expect land to rise 5% a year instead of 0%. The best distance…</p>
+        <div class="opts"><button type="button" class="opt">moves farther out</button><button type="button" class="opt">moves closer, to about 58 km</button><button type="button" class="opt">stays the same</button></div>
+        <p class="explain" hidden aria-live="polite">Holding land now costs 9% − 5% = 4% a year, so K falls and pricier land near the city becomes affordable to hold.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>d* = λ × ln(K ÷ (λ × M)): about 75 km for a nursery with a hired Tata Ace.</li>
+      <li>The bottom is flat (about 60–95 km). On leased land, go as close as you can find water.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 9 ======================= -->
+<article class="lesson" id="startup-money" data-n="9" data-part="3" data-short="Money at the start" data-min="5" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">9</span></div>
+    <div>
+      <p class="eyebrow">Part 3 · Money · 5 min</p>
+      <h1 tabindex="-1">The money you need at the start</h1>
+      <p class="asks">How much cash goes in before the first plant is sold?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p>Three kinds of money go in at the start: <strong>setup</strong> (things you build once), <strong>working money</strong> (cash to run the farm until sales come in), and <strong>land</strong> if you buy it.</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: plan C, 2,000 m² on leased land</h2>
+    <div class="ledger">
+      <div class="row"><span>Shade-net house, GI pipe: 2,000 m² × ₹600 (quotes ₹480–710; govt norm ₹710) [[netHouse]] [[nhbNorms]]</span><span class="amt">₹12.0 lakh</span></div>
+      <div class="row"><span>Misting + irrigation: 2,000 m² × ₹80 [[mist]] [[drip]]</span><span class="amt">₹1.6 lakh</span></div>
+      <div class="row"><span>Weed mat, trays, benches: 2,000 m² × ₹15 <span class="est">estimate</span></span><span class="amt">₹0.3 lakh</span></div>
+      <div class="row"><span>Borewell + pump [[borewell]] [[borewellTG]]</span><span class="amt">₹2.5 lakh</span></div>
+      <div class="row"><span>Water sump or tank <span class="est">estimate</span></span><span class="amt">₹1.0 lakh</span></div>
+      <div class="row"><span>Fencing: 835 ft around 1 acre × ₹100 [[fence]]</span><span class="amt">₹0.8 lakh</span></div>
+      <div class="row"><span>Shed, store, worker room: 400 sq ft × ₹250 [[shed]]</span><span class="amt">₹1.0 lakh</span></div>
+      <div class="row"><span>Power connection; tools and crates <span class="est">estimate</span></span><span class="amt">₹1.0 lakh</span></div>
+      <div class="row"><span>Contingency, 10%, because overruns happen [[tgPolyLoss]]</span><span class="amt">₹2.0 lakh</span></div>
+      <div class="row sum"><span>Setup</span><span class="amt">₹22.3 lakh</span></div>
+      <div class="row"><span>Working money: first batch at 40% output, 100,000 × ₹30 × 6⁄12 × 40%</span><span class="amt">₹6.0 lakh</span></div>
+      <div class="row"><span>Working money: 3 months of wages and fixed costs</span><span class="amt">₹1.5 lakh</span></div>
+      <div class="row sum"><span>Total if you lease</span><span class="amt">₹29.8 lakh</span></div>
+      <div class="row"><span>Land: 1 acre at 75 km, all-in (Lesson 6)</span><span class="amt">₹63.2 lakh</span></div>
+      <div class="row sum"><span>Total if you buy</span><span class="amt">₹92.9 lakh</span></div>
+    </div>
+    <p class="small">The small start, <strong>plan F</strong>, halves the shade net to 1,000 m² on half an acre with 1 worker: ₹13.0 lakh setup + ₹1.3 lakh contingency + ₹4.1 lakh working money = <strong>₹18.4 lakh</strong>.</p>
+  </div>
+
+  <div class="idea">
+    <h3>The subsidy comes later</h3>
+    <p>The MIDH scheme pays 50% of the government cost norm for the shade net (₹600 × 2,000 m² × 50% = ₹6.0 lakh) and 55% of the misting (₹0.9 lakh): up to ₹6.9 lakh [[midh]] [[pmksy]]. It is paid after you build, and only if it was sanctioned before you started. So it doesn’t reduce the money you need on day one. Most schemes also need the land in your name (a pattadar passbook) [[tgHorti]]. Ask the Horticulture Officer whether a registered lease qualifies.</p>
+  </div>
+
+  <section class="try" aria-label="Try it: money at the start">
+    <div class="try-head"><h2 class="blk">Try it</h2><p>Land area and workers follow the shade-net size: about half an acre and 1 worker per 1,000 m².</p><button type="button" class="reset">Reset</button></div>
+    <div class="ctls" id="c-start"></div>
+    <div class="result"><div class="stats" id="s-start"></div><div class="ledger" id="r-start"></div></div>
+  </section>
+
+  <div class="blk-wrap why">
+    <h2 class="blk">What I assumed, and why</h2>
+    <ul>
+      <li>₹600 per m² for the shade-net house: inside the ₹480–710 quotes found [[netHouse]].</li>
+      <li>Working money covers the first batch of plants (6 months of inputs at 40% output) and 3 months of wages and fixed costs. It comes back at the end, when the last stock is sold.</li>
+      <li>Borewell: 400–600 ft with casing and a 5 HP pump. Borewells can fail in dry years [[borewellTG]].</li>
+    </ul>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l9q1" data-answer="0">
+        <p class="q">Why doesn’t the ₹6.9 lakh subsidy reduce the money you need on day one?</p>
+        <div class="opts"><button type="button" class="opt">It is paid after you build, and only if sanctioned first</button><button type="button" class="opt">It is paid as seeds, not money</button><button type="button" class="opt">It only covers land</button></div>
+        <p class="explain" hidden aria-live="polite">It is a back-ended subsidy: you spend the full amount, then claim. Plan the cash as if it never comes, and treat it as a bonus.</p>
+      </div>
+      <div class="check" data-id="l9q2" data-answer="1">
+        <p class="q">What is working money?</p>
+        <div class="opts"><button type="button" class="opt">Money to buy the land</button><button type="button" class="opt">Cash for the first batch of plants and 3 months of wages before sales come in</button><button type="button" class="opt">Your monthly salary</button></div>
+        <p class="explain" hidden aria-live="polite">Plants take 6 months to sell, so you pay for them and for wages long before the first sale. Forgetting this is a common way small farms run out of cash.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>Lease: ₹29.8 lakh for 2,000 m², or ₹18.4 lakh for 1,000 m² (plan F). Buying 1 acre at 75 km adds ₹63 lakh.</li>
+      <li>The subsidy arrives after you build, if at all.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 10 ======================= -->
+<article class="lesson" id="ten-years" data-n="10" data-part="3" data-short="Ten years of cash" data-min="5" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">10</span></div>
+    <div>
+      <p class="eyebrow">Part 3 · Money · 5 min</p>
+      <h1 tabindex="-1">Ten years of cash, and payback</h1>
+      <p class="asks">When do you get your money back?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p>Each year’s cash = sales − running costs − any net replacement + the subsidy (year 1 only, if sanctioned). The running total starts at minus the money at start. <strong>Payback</strong> is when the running total crosses zero.</p>
+    <p>A new nursery starts slowly: 40% of full output in year 1, 80% in year 2 and 100% from year 3.</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: plan F, the small start</h2>
+    <div class="ledger">
+      <div class="row"><span>Start: money in</span><span class="amt">− ₹18.4 lakh</span></div>
+      <div class="row"><span>Year 1 at 40% output, with ₹3.4 lakh subsidy (−₹1.0 lakh without it)</span><span class="amt">+ ₹2.5 lakh</span></div>
+      <div class="row"><span>Year 2 at 80%</span><span class="amt">+ ₹3.3 lakh</span></div>
+      <div class="row"><span>Year 3 at full output</span><span class="amt">+ ₹5.4 lakh</span></div>
+      <div class="row"><span>Year 4, part of the shade net replaced (₹0.5 lakh)</span><span class="amt">+ ₹4.9 lakh</span></div>
+      <div class="row"><span>Year 5: running total turns positive</span><span class="amt">+ ₹5.4 lakh</span></div>
+      <div class="row sum"><span>Payback (4 years + ₹2.4 lakh still owed ÷ ₹5.4 lakh)</span><span class="amt">4.4 years</span></div>
+      <div class="row note"><span>Without the subsidy</span><span class="amt">5.1 years</span></div>
+    </div>
+    <p class="small">Why not ₹18.4 lakh ÷ ₹5.4 lakh = 3.4 years? Because the first two years run at 40% and 80%. Year 10 also counts the last stock coming back as cash.</p>
+  </div>
+
+  <section class="try" aria-label="Try it: ten years of cash">
+    <div class="try-head"><h2 class="blk">Try it</h2><p>Pick any of the 11 plans from the report.</p><button type="button" class="reset">Reset</button></div>
+    <div class="ctls" id="c-ten"></div>
+    <div class="result">
+      <div class="stats" id="s-ten"></div>
+      <div class="legend"><span><i class="rect" style="background:var(--pos)"></i>Cash in that year</span><span><i class="rect" style="background:var(--neg)"></i>Cash out that year</span><span><i style="background:var(--ink)"></i>Running total</span></div>
+      <div class="chart" id="ch-ten"></div>
+      <details class="tableview"><summary>Show as table</summary><div class="scroll-x" id="t-ten"></div></details>
+      <p class="small"><a id="ten-calc" href="calculator.html#plan-f">Open this plan in the calculator</a> to change any number.</p>
+    </div>
+  </section>
+
+  <div class="blk-wrap">
+    <h2 class="blk">The 11 plans side by side</h2>
+    <div class="scroll-x"><table class="tbl compact">
+      <thead><tr><th>Plan</th><th class="r">Money at start</th><th class="r">Profit a year</th><th class="r">Payback</th></tr></thead>
+      <tbody id="plans-body"></tbody>
+    </table></div>
+    <p class="small">Profit is at full output, before loan interest and before paying yourself. Payback counts the subsidy and leaves out any land resale value. Tap a letter to open the plan in the calculator.</p>
+  </div>
+
+  <div class="blk-wrap why">
+    <h2 class="blk">What I assumed, and why</h2>
+    <ul>
+      <li>Output ramps up 40%, 80%, 100% over three years <span class="est">estimate</span>.</li>
+      <li>The shade net is partly replaced every 4 years, at 8% of the structure cost <span class="est">estimate</span>.</li>
+      <li>Your own time isn’t counted as cash. Profit is before tax and loan interest.</li>
+    </ul>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l10q1" data-answer="2">
+        <p class="q">Which plan pays back fastest?</p>
+        <div class="opts"><button type="button" class="opt">A: buy land, bought plantlets</button><button type="button" class="opt">G: best nursery on bought land</button><button type="button" class="opt">E: leased, own cuttings, 14 ft truck, premium mix at ₹90</button></div>
+        <p class="explain" hidden aria-live="polite">E pays back in about 1.8 years. The same nursery on bought land (G) takes 4.2 years, and plan A never pays back.</p>
+      </div>
+      <div class="check" data-id="l10q2" data-answer="0">
+        <p class="q">In which year does plan F’s running total turn positive?</p>
+        <div class="opts"><button type="button" class="opt">Year 5</button><button type="button" class="opt">Year 2</button><button type="button" class="opt">Year 9</button></div>
+        <p class="explain" hidden aria-live="polite">After year 4 you are still ₹2.4 lakh down. Year 5 brings ₹5.4 lakh, so you are even about 0.4 of the way through it: 4.4 years.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>Payback = when the running total of cash turns positive. Slow first years push it out.</li>
+      <li>Plan F: 4.4 years. Plan C: 2.9 years. Buying land stretches even the best plan to 4.2 years.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 11 ======================= -->
+<article class="lesson" id="risks" data-n="11" data-part="3" data-short="What moves the profit" data-min="5" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">11</span></div>
+    <div>
+      <p class="eyebrow">Part 3 · Money · 5 min</p>
+      <h1 tabindex="-1">What moves the profit, and what can go wrong</h1>
+      <p class="asks">Which numbers matter most, and what are the real risks?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p>Change one number at a time and watch plan C’s ₹13.8 lakh profit. This is a <strong>sensitivity test</strong>. It shows where to spend your attention.</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: change in plan C’s profit a year</h2>
+    <div class="key" aria-hidden="true"><span><i class="rect" style="background:var(--pos)"></i>Adds profit</span><span><i class="rect" style="background:var(--neg)"></i>Takes profit away</span></div>
+    <div id="b-sens"></div>
+    <p class="small">Selling price, sales volume and plant cost matter far more than wages or distance.</p>
+  </div>
+
+  <section class="try" aria-label="Try it: stress test">
+    <div class="try-head"><h2 class="blk">Try it</h2><p>Stress-test plan C. Move several numbers at once.</p><button type="button" class="reset">Reset</button></div>
+    <div class="ctls" id="c-risk"></div>
+    <div class="result"><div class="stats" id="s-risk"></div><div class="verdict" id="v-risk"></div></div>
+  </section>
+
+  <div class="blk-wrap">
+    <h2 class="blk">The risks behind those numbers</h2>
+    <div class="rules">
+      <div class="rule"><div class="rule-h"><b>Selling 250 plants a day</b></div><p>The biggest risk is selling, not growing. If only 60% sell at full price instead of 85%, plan C loses ₹9.4 lakh of its ₹13.8 lakh. Line up buyers before you build.</p></div>
+      <div class="rule"><div class="rule-h"><b>Kadiyam competition</b></div><p>600+ nurseries sell common plants at ₹25–100 and ship to Hyderabad [[kadiyamScale]] [[kadiyamListing]] [[kadiyamFreight]]. Compete on freshness, reliable supply and fast delivery inside the city.</p></div>
+      <div class="rule"><div class="rule-h"><b>Contractors and late subsidy</b></div><p>Telangana polyhouse farmers lost money to stalled contractors and delayed subsidy [[tgPolyLoss]]. Pay in stages against finished work.</p></div>
+      <div class="rule"><div class="rule-h"><b>Price crashes</b></div><p>Dragon fruit fell from ₹130–200 to ₹40–70 a kg as planting boomed [[dragonPrice]] [[dragonCrash]]. Polyhouses were abandoned in Himachal for lack of markets [[himachal]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Running it from a distance</b></div><p>With a full-time job you depend on your head gardener. Every extra km also lengthens your weekend trips.</p></div>
+      <div class="rule"><div class="rule-h"><b>Water and title</b></div><p>Borewells fail in dry years [[borewellTG]]. Thousands of acres of private land were wrongly put on the 22-A prohibited list [[sec22aMess]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Fuel and interest</b></div><p>Diesel is ₹104.23 a litre [[fuel]] and interest rates are rising [[repo]].</p></div>
+    </div>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l11q1" data-answer="1">
+        <p class="q">Which hurts plan C more?</p>
+        <div class="opts"><button type="button" class="opt">Wages ₹100 a day higher</button><button type="button" class="opt">Only 60% sold at full price instead of 85%</button><button type="button" class="opt">They hurt the same</button></div>
+        <p class="explain" hidden aria-live="polite">Weaker sales cost about ₹9.4 lakh a year. Higher wages cost about ₹0.6 lakh.</p>
+      </div>
+      <div class="check" data-id="l11q2" data-answer="0">
+        <p class="q">What is the best protection against the biggest risk?</p>
+        <div class="opts"><button type="button" class="opt">Line up 5–10 buyers before building</button><button type="button" class="opt">Buy land instead of leasing</button><button type="button" class="opt">Hire more workers</button></div>
+        <p class="explain" hidden aria-live="polite">Retail nurseries, landscapers, offices and online sellers. Knowing who buys, at what price and how often, comes before any money goes in.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>Price, sell-through and plant cost decide the outcome. Wages and distance barely move it.</li>
+      <li>The biggest risk is selling, not growing.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 12 ======================= -->
+<article class="lesson" id="loan" data-n="12" data-part="3" data-short="How much to borrow" data-min="6" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">12</span></div>
+    <div>
+      <p class="eyebrow">Part 3 · Money · 6 min</p>
+      <h1 tabindex="-1">How much your salary can borrow</h1>
+      <p class="asks">How big a loan can ₹70,000 a month carry safely?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p>A loan is repaid in equal monthly instalments, the <strong>EMI</strong>. Banks cap all your EMIs together at 40–50% of take-home pay. This cap is called <strong>FOIR</strong>, the fixed obligations to income ratio [[foir]].</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: the EMI formula, both ways</h2>
+<pre class="eq"><b>EMI = L × r × (1 + r)^n ÷ ((1 + r)^n − 1)</b>
+
+r = yearly rate ÷ 12 = 12.5% ÷ 12 = 1.042% a month
+n = 5 years × 12 = 60 months
+
+Turned around, the loan an EMI can carry:
+<b>L = EMI × (1 − (1 + r)^−n) ÷ r = EMI × 44.45</b></pre>
+    <div class="ledger">
+      <div class="row"><span>Take-home pay</span><span class="amt">₹70,000</span></div>
+      <div class="row"><span>Bank cap at 50% of pay</span><span class="amt">₹35,000 EMI</span></div>
+      <div class="row sum"><span>Most the bank will lend: ₹35,000 × 44.45</span><span class="amt">₹15.6 lakh</span></div>
+      <div class="row"><span>Living costs (an example; set your own below)</span><span class="amt">₹30,000</span></div>
+      <div class="row sum"><span>Free each month to save or repay</span><span class="amt">₹40,000</span></div>
+    </div>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Worked out: the safer plan</h2>
+    <div class="ledger">
+      <div class="row"><span>Already saved (an example)</span><span class="amt">₹3.0 lakh</span></div>
+      <div class="row"><span>Save ₹40,000 a month for 12 months</span><span class="amt">+ ₹4.8 lakh</span></div>
+      <div class="row"><span>Plan F needs</span><span class="amt">₹18.4 lakh</span></div>
+      <div class="row sum"><span>Loan: ₹18.4 lakh − ₹7.8 lakh</span><span class="amt">₹10.6 lakh</span></div>
+      <div class="row sum"><span>EMI at 12.5% for 5 years: ₹10.6 lakh ÷ 44.45</span><span class="amt">≈ ₹23,900</span></div>
+      <div class="row"><span>Still free each month for surprises</span><span class="amt">₹16,100</span></div>
+      <div class="row"><span>Interest paid over the 5 years</span><span class="amt">₹3.7 lakh</span></div>
+    </div>
+    <p class="small">Borrowing without the year of saving needs ₹15.4 lakh at an EMI of ₹34,700, leaving only ₹5,300 a month. From year 2 the farm’s cash (₹3.3 lakh) covers a year of the safer EMIs (₹2.9 lakh).</p>
+  </div>
+
+  <section class="try" aria-label="Try it: your loan">
+    <div class="try-head"><h2 class="blk">Try it</h2><p>Put in your own numbers. Nothing leaves this page.</p><button type="button" class="reset">Reset</button></div>
+    <div class="ctls" id="c-loan"></div>
+    <div class="result"><div class="verdict" id="v-loan"></div><div class="stats" id="s-loan"></div><div class="ledger" id="r-loan"></div></div>
+  </section>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Which loan fits</h2>
+    <div class="rules">
+      <div class="rule"><div class="rule-h"><b>Personal loan</b><span class="chip good">Fits the small start</span></div><p>No security. 10–16% for up to 5–6 years; 13–16% is realistic for a first loan [[plRealistic]] [[plRates]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Loan against property</b></div><p>9–11.5%, but you need property to pledge [[lap]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Farmland purchase loan</b></div><p>For small and marginal farmers, tenants and sharecroppers, not salaried buyers [[sbiLand]] [[bobLand]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Shade-net or polyhouse loan</b></div><p>Up to 7 years with a 3–12 month break and a 10% margin, but the land is the security [[centPoly]] [[sbiPoly]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Kisan Credit Card</b></div><p>Crop loans at 7% (4% if repaid on time), once land is in your name [[kcc]].</p></div>
+    </div>
+    <p class="small">Rates are rising: RBI raised the repo rate to 5.50% on 7 Oct 2026 [[repo]] and banks lifted MCLR to about 8.9% [[mclr]]. Don’t borrow for land: ₹63 lakh is four times the loan your salary supports.</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l12q1" data-answer="1">
+        <p class="q">The bank would lend ₹15.6 lakh. Why borrow only ₹10.6 lakh?</p>
+        <div class="opts"><button type="button" class="opt">Smaller loans get a lower interest rate</button><button type="button" class="opt">To keep about ₹16,000 a month free if the first year is weak</button><button type="button" class="opt">Plan F can’t use more than ₹10.6 lakh</button></div>
+        <p class="explain" hidden aria-live="polite">Year 1 runs at 40% output and may make no cash at all. Your salary must carry the EMI and still leave room for surprises.</p>
+      </div>
+      <div class="check" data-id="l12q2" data-answer="0">
+        <p class="q">At 12.5% for 5 years, each ₹1,000 of monthly EMI carries a loan of about…</p>
+        <div class="opts"><button type="button" class="opt">₹44,450</button><button type="button" class="opt">₹60,000</button><button type="button" class="opt">₹12,000</button></div>
+        <p class="explain" hidden aria-live="polite">₹1,000 × 44.45. Sixty payments of ₹1,000 make ₹60,000, but about ₹15,550 of that is interest.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>Most banks allow EMIs up to about 50% of take-home. At 12.5% for 5 years, loan ≈ EMI × 44.45.</li>
+      <li>Save for a year, then borrow about ₹10.6 lakh (EMI ≈ ₹23,900). Never borrow for land.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 13 ======================= -->
+<article class="lesson" id="rules" data-n="13" data-part="4" data-short="The rules that apply" data-min="6" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">13</span></div>
+    <div>
+      <p class="eyebrow">Part 4 · Rules and your plan · 6 min</p>
+      <h1 tabindex="-1">The rules that apply to you</h1>
+      <p class="asks">Which Telangana and central rules apply, and what do they cost?</p>
+    </div>
+  </header>
+
+  <div class="idea">
+    <p><span class="chip good">Verified</span> means checked against an official, court or news page. <span class="chip warn">Check</span> means from a secondary source or knowledge as of mid-2026; confirm it before you rely on it.</p>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Before you start</h2>
+    <div class="rules">
+      <div class="rule"><div class="rule-h"><b>Nursery licence</b><span class="chip good">Verified</span></div><p>Required. Apply to the Horticulture Officer. ₹1,000 for up to 4 lakh plants, valid 3 years. Keep records and use approved mother plants [[nurseryAct]] [[nurseryRules]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Buying farmland</b><span class="chip good">Verified</span></div><p>A salaried non-farmer can buy farmland in Telangana. Avoid assigned land, land on the Section 22-A list, ceiling-surplus land and Scheduled (Agency) Areas. Register and mutate through Bhu Bharati and get a pattadar passbook [[buyLand]] [[sec22a]] [[bhuBharati]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Land use</b><span class="chip warn">Check</span></div><p>Shade net, polyhouse and drip count as farming. A farmhouse, worker quarters or a shop needs NALA conversion and building permission [[nala]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Plant varieties and imports</b><span class="chip warn">Check</span></div><p>You may save, use, exchange and sell your own plant material, but don’t propagate protected varieties for sale without a licence [[ppvfr]]. Imported plants need a permit and a phytosanitary certificate, so buy from Indian labs or importers [[pq]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Protected plants</b><span class="chip warn">Check</span></div><p>Blue and Red Vanda, slipper orchids and <i>Nepenthes khasiana</i> need a Chief Wildlife Warden licence to grow or sell. Avoid them [[wildlife]].</p></div>
+    </div>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">When you hire</h2>
+    <div class="rules">
+      <div class="rule"><div class="rule-h"><b>Minimum wage</b><span class="chip warn">Check</span></div><p>₹538 a day (₹14,000 a month) for rural unskilled work from 1 June 2026; more for skilled work. The order is being challenged in the High Court, with no stay reported [[minWage]] [[minWageCourt]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Labour codes</b><span class="chip good">Verified</span></div><p>In force from 21 Nov 2025. Pay on time (daily workers at the end of the shift, monthly staff by the 7th), equal pay, a weekly off, overtime at twice the rate. Injury cover from the first worker in horticulture. ESIC from 10 workers, EPF from 20 [[labourCodes]] [[payTime]] [[ecSchedule]] [[epf]].</p></div>
+    </div>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">When you sell, and tax</h2>
+    <div class="rules">
+      <div class="rule"><div class="rule-h"><b>GST</b><span class="chip warn">Check</span></div><p>Nil on live plants, fresh fruit and vegetables. No registration is needed to sell your own produce. GST on pots, film and pesticides is a cost you can’t claim back [[gst]] [[gstCouncil]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Power</b><span class="chip good">Verified</span></div><p>A horticulture nursery connection pays ₹4 a unit. Farm pumps get free power [[tariff]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Income tax</b><span class="chip warn">Check</span></div><p>Plants you grow yourself, nursery plants included, count as agricultural income. It isn’t taxed itself, but it is added to your salary to set your tax rate (“partial integration”) [[incomeTax]]. Reselling bought-in plants is business income, so keep separate records.</p><p>My estimate with 2025–26 new-regime slabs and your ₹8.4 lakh salary: no extra tax while farm profit stays under about ₹9 lakh a year (plan F’s ₹5.4 lakh is fine), and about ₹21,000 a year at plan C’s ₹13.8 lakh. Confirm with a CA.</p></div>
+    </div>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Support schemes</h2>
+    <div class="rules">
+      <div class="rule"><div class="rule-h"><b>MIDH subsidy</b><span class="chip warn">Check</span></div><p>50% of the government cost norm for shade-net houses (₹710 per m²) and polyhouses, up to 4,000 m². Drip and misting: 55% for small farmers, 45% for others. Apply and get sanction before you build; a passbook is usually needed [[midh]] [[pmksy]] [[tgHorti]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Rythu Bharosa</b><span class="chip good">Verified</span></div><p>₹12,000 per acre a year, only on land in your name where a crop is booked each season [[rythuBharosa]] [[rbCropped]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Not available to you</b><span class="chip good">Verified</span></div><p>PM-KISAN (land bought after 1 Feb 2019 doesn’t count), Rythu Bima (cover lapsed in Aug 2026) and PMFBY crop insurance (not running in Telangana) [[pmkisan]] [[rythuBima]] [[pmfby]].</p></div>
+      <div class="rule"><div class="rule-h"><b>Other schemes</b><span class="chip warn">Check</span></div><p>NHB pays 40–50% for larger bank-financed projects [[nhb]]. Mudra loans up to ₹20 lakh suit a plant shop [[mudra]]. PMEGP excludes horticulture [[pmegp]].</p></div>
+    </div>
+  </div>
+
+  <section class="try" aria-label="Try it: your rules checklist">
+    <div class="try-head"><h2 class="blk">Try it: your checklist</h2><p>Tick items as you do them. Saved in this browser only.</p><span class="count" id="rules-count"></span></div>
+    <ul class="todo" id="todo-rules" data-count="rules-count">
+      <li><label><input type="checkbox" id="r1"><span class="t"><b>Check the land’s title on Bhu Bharati</b><small>Not assigned land, not on the 22-A list, not ceiling-surplus.</small></span></label></li>
+      <li><label><input type="checkbox" id="r2"><span class="t"><b>Sign a registered lease of 5+ years</b><small>Subsidy and bank officers ask for it.</small></span></label></li>
+      <li><label><input type="checkbox" id="r3"><span class="t"><b>Apply for the nursery licence</b><small>₹1,000, valid 3 years.</small></span></label></li>
+      <li><label><input type="checkbox" id="r4"><span class="t"><b>Ask the Horticulture Officer about MIDH subsidy</b><small>Does your lease qualify? Get sanction before you build.</small></span></label></li>
+      <li><label><input type="checkbox" id="r5"><span class="t"><b>Pay at least ₹538 a day, on time, with a weekly off</b><small>Daily workers at the end of the shift; monthly staff by the 7th.</small></span></label></li>
+      <li><label><input type="checkbox" id="r6"><span class="t"><b>Arrange injury cover from the first worker</b><small>Required for horticulture under the labour codes.</small></span></label></li>
+      <li><label><input type="checkbox" id="r7"><span class="t"><b>Keep separate records for own-grown and bought-in plants</b><small>Own-grown is agricultural income; resale is business income.</small></span></label></li>
+      <li><label><input type="checkbox" id="r8"><span class="t"><b>Avoid protected orchids and Nepenthes</b><small>They need a wildlife licence.</small></span></label></li>
+    </ul>
+  </section>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Check yourself</h2>
+    <div class="checks">
+      <div class="check" data-id="l13q1" data-answer="2">
+        <p class="q">Do you charge GST when you sell potted plants you grew?</p>
+        <div class="opts"><button type="button" class="opt">Yes, 5%</button><button type="button" class="opt">Yes, 18%</button><button type="button" class="opt">No, live plants are nil-rated</button></div>
+        <p class="explain" hidden aria-live="polite">GST on live plants is nil, and selling your own produce needs no registration. You still pay GST when you buy pots and inputs.</p>
+      </div>
+      <div class="check" data-id="l13q2" data-answer="0">
+        <p class="q">What is the minimum daily wage for rural unskilled work from June 2026?</p>
+        <div class="opts"><button type="button" class="opt">₹538</button><button type="button" class="opt">₹396</button><button type="button" class="opt">₹800</button></div>
+        <p class="explain" hidden aria-live="polite">₹538 a day (₹14,000 a month). ₹396–468 was the older agriculture schedule; ₹800 was a peak-season rate in Nalgonda.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="remember">
+    <h2 class="blk">Remember</h2>
+    <ul>
+      <li>Licence ₹1,000; wages at least ₹538 a day; GST nil; injury cover from the first worker.</li>
+      <li>Get subsidy sanction before you build, and ask whether your lease qualifies.</li>
+    </ul>
+  </div>
+</article>
+
+<!-- ======================= LESSON 14 ======================= -->
+<article class="lesson" id="your-plan" data-n="14" data-part="4" data-short="Your plan, in order" data-min="4" hidden>
+  <header class="lhead">
+    <div class="stone" aria-hidden="true"><span class="cap">LESSON</span><span class="n">14</span></div>
+    <div>
+      <p class="eyebrow">Part 4 · Rules and your plan · 4 min</p>
+      <h1 tabindex="-1">Your plan, and how this was worked out</h1>
+      <p class="asks">What should you do, in what order?</p>
+    </div>
+  </header>
+
+  <section class="try" aria-label="Your plan">
+    <div class="try-head"><h2 class="blk">Your plan, step by step</h2><p>Tick each step as you finish it.</p><span class="count" id="steps-count"></span></div>
+    <ul class="todo" id="todo-steps" data-count="steps-count">
+      <li><label><input type="checkbox" id="p1"><span class="t"><b>1. Keep your job and save ₹40,000 a month for 12 months</b><small>About ₹7.8 lakh with what you already have (Lesson 12).</small></span></label></li>
+      <li><label><input type="checkbox" id="p2"><span class="t"><b>2. Learn the trade meanwhile</b><small>Spend weekends at a Hyderabad nursery [[kukatpally]], root cuttings at home, and line up 5–10 buyers: retail nurseries, landscapers, offices and online sellers.</small></span></label></li>
+      <li><label><input type="checkbox" id="p3"><span class="t"><b>3. Lease 0.5–1 acre with a working borewell, 30–60 km out</b><small>On a registered lease of 5+ years. On leased land, closer is better (Lesson 8) [[lease]] [[lease2]].</small></span></label></li>
+      <li><label><input type="checkbox" id="p4"><span class="t"><b>4. Get the licence and the subsidy answer before building</b><small>Ask whether your lease qualifies and wait for the sanction [[nurseryRules]] [[midh]].</small></span></label></li>
+      <li><label><input type="checkbox" id="p5"><span class="t"><b>5. Build 1,000 m² of shade net</b><small>About ₹18.4 lakh with working money (plan F). Root your own cuttings; buy only mother plants.</small></span></label></li>
+      <li><label><input type="checkbox" id="p6"><span class="t"><b>6. Borrow at most ₹10–11 lakh</b><small>EMI about ₹23,900 at 12.5% over 5 years.</small></span></label></li>
+      <li><label><input type="checkbox" id="p7"><span class="t"><b>7. Grow to 2,000 m² only after six months of selling about 120 plants a day</b><small>1,000 m² sells 45,000 plants a year, about 123 a day.</small></span></label></li>
+      <li><label><input type="checkbox" id="p8"><span class="t"><b>8. Buy land only after 2–3 profitable years</b><small>From farm profits, using real quotes in the calculator’s distance chart.</small></span></label></li>
+    </ul>
+  </section>
+
+  <div class="blk-wrap">
+    <h2 class="blk">The 12 numbers to remember</h2>
+    <div class="ledger">
+      <div class="row"><span>Cost to start a plant: own cuttings vs bought plantlets</span><span class="amt">₹30 vs ₹42</span></div>
+      <div class="row"><span>Average price per plant sold</span><span class="amt">₹68.25</span></div>
+      <div class="row"><span>Plants started a year on 2,000 m²</span><span class="amt">100,000</span></div>
+      <div class="row"><span>Plants to sell every day</span><span class="amt">≈ 250</span></div>
+      <div class="row"><span>Plan C profit a year</span><span class="amt">₹13.8 lakh</span></div>
+      <div class="row"><span>Break-even price per plant</span><span class="amt">₹57</span></div>
+      <div class="row"><span>λ: how fast land prices fall with distance</span><span class="amt">21 km</span></div>
+      <div class="row"><span>M: what one more km adds a year</span><span class="amt">₹10,694</span></div>
+      <div class="row"><span>Best distance if you buy (Tata Ace nursery)</span><span class="amt">≈ 75 km</span></div>
+      <div class="row"><span>Small start, plan F</span><span class="amt">₹18.4 lakh</span></div>
+      <div class="row"><span>Plan F payback</span><span class="amt">4.4 years</span></div>
+      <div class="row"><span>Safe loan, after a year of saving</span><span class="amt">₹10.6 lakh</span></div>
+    </div>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">How the research was done</h2>
+    <div class="idea">
+      <p>Three research agents worked in parallel on topics that didn’t overlap: land, transport and wages; plant prices and growing costs; and rules, taxes and support. A coordinator handled loans, built the model and checked the numbers.</p>
+      <p>This follows Google Research’s 2025 study of agent teams. With a coordinator, errors grew 4.4 times instead of 17.2 times for agents working alone, and parallel finance research improved by 80.9% [[googleBlog]] [[arxiv]] [[mitPage]].</p>
+      <p><strong>Limits.</strong> Web pages couldn’t be opened directly, so figures come from search results and the documents they quote. The search budget ran out near the end; items marked <span class="chip warn">Check</span> rest on knowledge as of mid-2026. Land prices are asking prices, not sales. Distances are approximate road km (±10%).</p>
+    </div>
+  </div>
+
+  <div class="blk-wrap">
+    <h2 class="blk">Keep going</h2>
+    <div class="actions"><a class="btn primary" href="calculator.html#plan-f">Open plan F in the calculator</a><a class="btn secondary" href="@@REPORT_URL@@" target="_blank" rel="noopener">Read the full report</a></div>
+    <p class="small">The calculator holds every number in this course. Change any of them, or start from any of the 11 plans.</p>
+  </div>
+</article>
+
+</main>
+</div>
+
+<script>
+/*@@CHARTS_JS@@*/
+</script>
+<script>
+/*@@MODEL_JS@@*/
+</script>
+<script>
+/*@@DATA_JS@@*/
+</script>
+<script>
+/*@@COURSE_JS@@*/
+</script>
+</body>
+</html>

@@ -40,6 +40,7 @@ const parts = {
   '/*@@DATA_JS@@*/': read('src/land_points.js') + '\n' + read('src/data.js'),
   '/*@@APP_JS@@*/': read('src/app.js'),
   '/*@@REPORT_JS@@*/': fs.existsSync(path.join(SRC_DIR, 'report.js')) ? read('src/report.js') : '',
+  '/*@@COURSE_JS@@*/': fs.existsSync(path.join(SRC_DIR, 'course.js')) ? read('src/course.js') : '',
   '<!--@@SOURCES@@-->': sourcesHtml,
   '<!--@@NSRC@@-->': String(Object.values(SRC).filter(s => !s.u.startsWith('#')).length + ctx.LAND_POINTS.length),
 };
@@ -47,19 +48,31 @@ function fill(html) {
   for (const [k, v] of Object.entries(parts)) html = html.split(k).join(v);
   return html.replace(/\[\[([a-zA-Z0-9]+)(?:\|([^\]]+))?\]\]/g, (_, k, label) => link(k, label));
 }
+// Fragment for the artifact host: drop doctype/html/head/body wrappers and the charset/viewport metas.
+const fragment = html => html.replace(/<!doctype html>\s*/i, '').replace(/<html[^>]*>\s*/i, '').replace(/<\/html>\s*$/i, '')
+  .replace(/<head>\s*/i, '').replace(/<\/head>\s*/i, '').replace(/<body>\s*/i, '').replace(/<\/body>\s*/i, '')
+  .replace(/<meta charset="utf-8">\s*/i, '').replace(/<meta name="viewport"[^>]*>\s*/i, '');
 const outSite = path.join(SP, 'out/site'), outArt = path.join(SP, 'out/artifact');
+const COURSE_ART = 'https://claude.ai/artifact/8VtHBL41q8UnHNCaMTBamY';
 fs.mkdirSync(outSite, { recursive: true }); fs.mkdirSync(outArt, { recursive: true });
 const calc = fill(read('src/calculator.html'));
 fs.writeFileSync(path.join(outSite, 'calculator.html'), calc);
 fs.writeFileSync(path.join(outArt, 'calculator.html'), calc);
 if (fs.existsSync(path.join(SRC_DIR, 'report.html'))) {
   const rep = fill(read('src/report.html'));
-  fs.writeFileSync(path.join(outSite, 'index.html'), rep);
-  // Fragment for the artifact host: drop doctype/html/head/body wrappers and the charset/viewport metas.
-  let frag = rep.replace(/<!doctype html>\s*/i, '').replace(/<html[^>]*>\s*/i, '').replace(/<\/html>\s*$/i, '')
-    .replace(/<head>\s*/i, '').replace(/<\/head>\s*/i, '').replace(/<body>\s*/i, '').replace(/<\/body>\s*/i, '')
-    .replace(/<meta charset="utf-8">\s*/i, '').replace(/<meta name="viewport"[^>]*>\s*/i, '');
-  fs.writeFileSync(path.join(outArt, 'report.html'), frag);
+  fs.writeFileSync(path.join(outSite, 'index.html'), rep.split('@@COURSE_URL@@').join('course.html'));
+  fs.writeFileSync(path.join(outArt, 'report.html'), fragment(rep.split('@@COURSE_URL@@').join(COURSE_ART)));
+}
+// The course: its own artifact (out/course/index.html + a calculator copy that links back to it).
+const REPORT_ART = 'https://claude.ai/artifact/WJUvmUrdB7VcjVW7v6RGun';
+if (fs.existsSync(path.join(SRC_DIR, 'course.html'))) {
+  const course = fill(read('src/course.html'));
+  fs.writeFileSync(path.join(outSite, 'course.html'), course.split('@@REPORT_URL@@').join('index.html'));
+  const outCourse = path.join(SP, 'out/course'); fs.mkdirSync(outCourse, { recursive: true });
+  fs.writeFileSync(path.join(outCourse, 'index.html'), fragment(course.split('@@REPORT_URL@@').join(REPORT_ART)));
+  const back = '<a href="index.html">Read the full report</a>';
+  if (!calc.includes(back)) throw new Error('calculator report link not found');
+  fs.writeFileSync(path.join(outCourse, 'calculator.html'), calc.replace(back, `<a href="index.html">Back to the course</a><a href="${REPORT_ART}" target="_blank" rel="noopener">Read the full report</a>`));
 }
 const unresolved = fs.readdirSync(outSite).map(f => fs.readFileSync(path.join(outSite, f), 'utf8')).join('').match(/\[\[[a-zA-Z0-9]+(?:\|[^\]]+)?\]\]|@@[A-Z_]+@@/g);
 console.log('built', fs.readdirSync(outSite), fs.readdirSync(outArt), unresolved ? 'UNRESOLVED ' + unresolved : '');

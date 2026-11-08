@@ -491,7 +491,7 @@ function cashChart(host, o) {
 }
 
 // ---------- Scatter (log y) with a fitted curve ----------
-// o = { points:[{x,y,label,sub}], curve:(x)=>y, xMax, yTicks:[], xTitle, yTitle, label }
+// o = { points:[{x,y,label,sub,color}], curve:(x)=>y, xMax, yTicks:[], xTitle, yTitle, label, marker:{x,y,label} }
 function scatterChart(host, o) {
   const W = Math.max(280, host.clientWidth || 600);
   const H = o.height || Math.round(Math.min(380, Math.max(260, W * 0.55)));
@@ -522,6 +522,13 @@ function scatterChart(host, o) {
     g.addEventListener('pointerleave', hideTip);
     g.addEventListener('focus', () => { const b = g.getBoundingClientRect(); showTip(b.left + b.width / 2, b.top, p.label, rows()); });
     g.addEventListener('blur', hideTip);
+  }
+  if (o.marker && o.marker.x >= 0 && o.marker.x <= o.xMax) {
+    const mx = X(o.marker.x);
+    sv('line', { x1: mx, x2: mx, y1: m.t - 4, y2: H - m.b, stroke: 'var(--accent)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }, svg);
+    if (o.marker.y != null) sv('circle', { cx: mx, cy: Y(o.marker.y), r: 6, fill: 'var(--accent)', class: 'ring' }, svg);
+    const right = mx > W * 0.6;
+    svText(svg, mx + (right ? -8 : 8), m.t + 6, o.marker.label, 'lbl', right ? 'end' : 'start');
   }
   host.replaceChildren(svg);
 }
